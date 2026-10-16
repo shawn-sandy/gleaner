@@ -165,10 +165,10 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 
 | Destination | How to choose it | Needs |
 |---|---|---|
-| **Google Drive** → `Browser Research/<category>/` | Default | Google Drive connector |
+| **Google Drive** → `Browser Research/<category>/` | Default in the Chrome side panel and Cowork; "save to Drive" in Claude Code | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `clips/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
-| **This project** → `clips/<category>/` | "save to this project" (Claude Code only) | A Claude Code session |
+| **This project** → `clips/<category>/` | Default in Claude Code | A Claude Code session |
 
 Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead.
 
@@ -232,8 +232,8 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 **Things to know:**
 - **Separate sign-ins.** The pane has its own browser profile, apart from your Chrome. Sign in to paywalled or members-only sites in the pane once, and the login sticks.
 - **Site approvals.** The first time Gleaner reads a new site, you'll be asked to allow it.
-- **Save into your repo.** Say **"save this to this project"** to drop the clip into `clips/<category>/` in the folder Claude Code is working in. Gleaner never commits it; commit the clip or add `clips/` to `.gitignore`, your call.
-- **Drive works here too** when you're signed in to Claude Code with your Claude account, since your claude.ai connectors carry over. If Drive isn't available, Gleaner saves to this project and tells you.
+- **Clips land in your project folder.** In Claude Code, clips are saved to `clips/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `clips/` to `.gitignore`, your call.
+- **Want Drive instead?** Say "save to Drive." Your claude.ai connectors carry over when you're signed in to Claude Code with your Claude account.
 
 ## Phrase cheat sheet
 
@@ -350,11 +350,14 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**1.2.0** (2026-10-16)
+- In Claude Code, clips now save to the project folder by default. Say "save to Drive" to use Drive instead.
+
 **1.1.0** (2026-10-16)
 - Works in Claude Code desktop with its built-in browser: clips the active tab in the Browser pane, highlights included (tested).
 - Picks the right browser automatically: Chrome side panel, Claude Code's built-in browser, or Claude in Chrome.
 - Clip any URL: "save https://…" opens the page and clips it.
-- New destination for Claude Code: "save to this project" writes to `clips/<category>/` in the working folder.
+- New destination for Claude Code: `clips/<category>/` in the working folder.
 - Handles site approvals and separate browser sign-ins.
 
 **1.0.0** (2026-10-16)

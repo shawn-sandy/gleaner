@@ -9,9 +9,9 @@ Gather the best of what you read into tagged, searchable clips.
 
 Save what the user is reading as a summarized, tagged clip in one of three places:
 
-- **Google Drive** (default): uses the Google Drive connector.
+- **Google Drive** (default in the Chrome side panel and Cowork): uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
-- **This project** (Claude Code only): the folder the Claude Code session is working in.
+- **This project** (default in Claude Code): the folder the Claude Code session is working in.
 
 This skill does not write to claude.ai Projects; those can only be read from Cowork, not written to.
 
@@ -103,8 +103,8 @@ To add a part:
 2. **Pick the destination.**
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
    - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
-   - In Claude Code, Drive stays the default. If the Google Drive connector isn't available there, use This project instead and say so in the confirmation (connectors come from the user's claude.ai account when they're signed in to Claude Code with it).
-   - Otherwise, default to Google Drive in a folder named `Browser Research`.
+   - **In Claude Code, the default is This project** (the folder the session is working in). Use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research").
+   - Everywhere else, default to Google Drive in a folder named `Browser Research`.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
      - Cowork project or This project: search `clips/` for the URL.
@@ -217,6 +217,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
 1. **Gather.**
    - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
    - Cowork project or This project: search `clips/` recursively.
+   - Search wherever this surface saves by default (in Claude Code, the project's `clips/` folder; elsewhere, Drive). Include the other location when the user asks for it or names it.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with "(N parts)" after the title. Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
