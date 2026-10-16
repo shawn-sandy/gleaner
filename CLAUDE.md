@@ -1,0 +1,37 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this repo is
+
+A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner`, with one skill, `clip`. There is no application code, build, or test suite: the product is the prose in `plugins/gleaner/skills/clip/SKILL.md`, which the model reads raw at runtime.
+
+## Validate
+
+CI (`.github/workflows/validate.yml`) runs these three. The README shows the validate commands without `--strict`, so use the form below:
+
+```bash
+claude plugin validate . --strict
+claude plugin validate ./plugins/gleaner --strict
+npx --yes markdownlint-cli2@0.18.1
+```
+
+Markdownlint takes its globs and rule overrides from `.markdownlint-cli2.jsonc`, where the disabled rules record house style; fix findings rather than disabling more rules. A PostToolUse hook in `.claude/settings.json` reruns both validates after any edit under `.claude-plugin/` or `plugins/`.
+
+Validation covers manifests, frontmatter, and Markdown syntax only. Live testing against Chrome, Drive, Notion, and Cowork is done by the maintainer; never report a change as live-tested.
+
+## Versioning and changelog
+
+- The version lives only in `plugins/gleaner/.claude-plugin/plugin.json`. `marketplace.json` has no version field; do not add one.
+- The changelog is the last section of `README.md` (there is no CHANGELOG.md). Use `/release` to cut a version.
+- Bump only for changes to what the skill does. Wording, typo, and doc-only fixes ship without a bump.
+
+## Editing rules
+
+- The list of destinations and surfaces appears in four places: the `marketplace.json` plugin description, the `plugin.json` description, the SKILL.md frontmatter `description`, and the README intro paragraph. When destinations or surfaces change, update all four in the same commit.
+- The README "Customizing" section refers to SKILL.md by step number (steps 2, 3, 4 of `## Steps`). Renumbering or reordering steps means updating those references.
+- Because SKILL.md is read as raw text, avoid literal backticks inside code spans and be deliberate with backslashes: describe awkward characters in words (see commit 4d6800d, where a backtick-in-code-span attempt produced a garbled escape list).
+
+## Git
+
+Work on a branch and open a PR to `main` so the validate workflow runs before merge. Release commits use the subject `Gleaner X.Y.Z: <lowercase summary>`; other commits use a plain imperative subject.

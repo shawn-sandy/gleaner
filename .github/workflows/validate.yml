@@ -19,3 +19,5 @@ jobs:
         run: claude plugin validate . --strict
       - name: Validate plugin
         run: claude plugin validate ./plugins/gleaner --strict
+      - name: Lint Markdown
+        run: npx --yes markdownlint-cli2@0.18.1

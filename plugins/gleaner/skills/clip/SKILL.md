@@ -1,14 +1,14 @@
 ---
 name: clip
 description: Save web pages or parts of them as summarized, tagged clips in Google Drive, Notion, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading or a URL, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
-argument-hint: "[--to drive | local | <path>]"
+argument-hint: '[--to drive | notion | local | cowork:"Project" | <path>]'
 ---
 
 # Gleaner
 
 Gather the best of what you read into tagged, searchable clips.
 
-Save what the user is reading as a summarized, tagged clip in one of three places:
+Save what the user is reading as a summarized, tagged clip in one of four places:
 
 - **Google Drive** (default in the Chrome side panel and Cowork): uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in \"$CLAUDE_PROJECT_DIR\"/.claude-plugin/*|\"$CLAUDE_PROJECT_DIR\"/plugins/*) cd \"$CLAUDE_PROJECT_DIR\" && { out=$(claude plugin validate . --strict 2>&1 && claude plugin validate ./plugins/gleaner --strict 2>&1) || { echo \"$out\" >&2; exit 2; }; } ;; esac",
+            "timeout": 60,
+            "statusMessage": "Validating plugin manifests"
+          }
+        ]
+      }
+    ]
+  }
+}

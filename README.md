@@ -2,9 +2,9 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser. Ask it in plain language to keep a page, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive or a Cowork project. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser. Ask it in plain language to keep a page, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, or your Claude Code project. Later, ask what you saved and it finds it.
 
-```
+```text
 You:     grab the part about animation lengths, for the motion post
 Gleaner: Added part 1: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.
 You:     and this table too
@@ -61,6 +61,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - A paid Claude plan with the new Chrome side panel (the Cowork-style panel; its three-dot menu shows "Switch back to classic").
 - The **Google Drive** connector, for the default destination.
 - *Optional:* the Claude desktop app, open and connected, for saving to Cowork projects.
+- *Optional:* the **Notion** connector, for saving to Notion.
 
 ### Claude app and Cowork
 
@@ -70,7 +71,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 
 ### Claude Code
 
-```
+```text
 /plugin marketplace add shawn-sandy/gleaner
 /plugin install gleaner@shawn-sandy
 ```
@@ -199,7 +200,7 @@ The first time, Gleaner asks which Notion page should hold the database and crea
 
 For a quick, explicit override, add `--to` (or `-t`) to any request or to the slash command. It applies to that save only.
 
-```
+```text
 save this page --to drive
 grab the part about easing -t local
 /gleaner:clip --to ./notes
@@ -368,10 +369,13 @@ Fork this repo, make your edits in `plugins/gleaner/skills/clip/SKILL.md`, bump 
 
 ## Repository layout
 
-```
+```text
 gleaner/
 ├── .claude-plugin/
 │   └── marketplace.json        # marketplace "shawn-sandy"
+├── .github/
+│   └── workflows/
+│       └── validate.yml        # CI: plugin validation, Markdown lint
 ├── plugins/
 │   └── gleaner/
 │       ├── .claude-plugin/
