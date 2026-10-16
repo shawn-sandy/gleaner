@@ -396,6 +396,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**1.5.1** (2026-10-16)
+- Notion: tested end to end. New tags are now added to the database's Tags options before a clip is saved (Notion rejects unknown tags), keeping every existing option.
+- Notion: duplicate checks use filtered row queries, and page bodies use Notion-flavored Markdown escaping.
+
 **1.5.0** (2026-10-16)
 - Notion destination: "save to Notion" or `--to notion` saves each clip as a page in a Browser Research database, with category, type, tags, note, source, and date as properties. The database doubles as a live, filterable clip index.
 

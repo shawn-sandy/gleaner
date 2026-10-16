@@ -135,7 +135,7 @@ To add a part:
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
      - Cowork project or This project: search `browser-research/` for the URL.
-     - Notion: query the destination database for pages whose **Source** property equals the URL.
+     - Notion: query the destination database for pages whose **Source** property equals the URL. Use a structured rows query with a property filter rather than SQL, which is rate-limited on some Notion plans.
      - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. If they don't answer, save the updated copy.
      - An updated copy keeps the same category and tags unless the content clearly changed, and adds a `**Supersedes:** <link or path to the old clip>` line under **Tags**. Never edit or delete the old clip.
 
@@ -249,8 +249,12 @@ To add a part:
      | Scope | text | `selection` or `N parts from M pages`, if any |
      | Supersedes | URL | link to the older clip, if any |
 
+     With the Notion connector's `create-database`, pass the schema as SQL DDL, for example `CREATE TABLE ("Name" TITLE, "Category" SELECT('AI & Agents':purple, …), "Type" SELECT(…), "Tags" MULTI_SELECT(), "Note" RICH_TEXT, "Source" URL, "Saved" DATE, "Scope" RICH_TEXT, "Supersedes" URL)`.
      If the database exists but is missing a property, add it rather than failing; never rename or delete the user's existing properties.
-   - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down) in the page content as Markdown. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
+   - **Fetch the database first** to get its data source URL (`collection://…`), then create pages with that data source as the parent.
+   - **Add new tags before saving.** Notion rejects a multi-select value that isn't already an option. If any of the clip's tags are new, update the Tags property with `ALTER COLUMN "Tags" SET MULTI_SELECT(…)` listing **every existing option plus the new ones**, since options left out of the list are deleted. Then create the page.
+   - **Property values:** Tags without the `#`; Saved as `date:Saved:start` (YYYY-MM-DD) with `date:Saved:is_datetime` 0; leave empty properties out rather than sending blank strings.
+   - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down) in the page content using Notion-flavored Markdown: escape `\ * ~ ` + "`" + ` $ [ ] < > { } | ^` outside code, and keep code (such as TypeScript generics) in code spans or blocks. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
    - **Duplicates:** never edit or delete an existing page. An updated copy is a new page with **Supersedes** set.
    - Confirm with the page link and the database name.
 

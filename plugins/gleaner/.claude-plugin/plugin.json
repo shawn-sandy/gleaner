@@ -1,7 +1,7 @@
 {
   "name": "gleaner",
   "displayName": "Gleaner",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Gather the best of what you read into tagged, searchable clips. Save whole pages or collected parts, with your notes, to Google Drive, Notion, a Cowork project, or your Claude Code project, from the Chrome side panel or the Claude Code desktop browser.",
   "author": {
     "name": "Shawn Sandy",
