@@ -380,7 +380,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 ## Customizing
 
-Gleaner's behavior lives in [`plugins/gleaner/skills/clip/SKILL.md`](plugins/gleaner/skills/clip/SKILL.md). Common edits:
+Gleaner's behavior lives in [`plugins/gleaner/skills/clip/SKILL.md`](plugins/gleaner/skills/clip/SKILL.md), with video-specific steps (transcript, Key moments format) in [`plugins/gleaner/skills/youtube/SKILL.md`](plugins/gleaner/skills/youtube/SKILL.md). Common edits:
 
 - **Default folder:** change `Browser Research` in step 2.
 - **Categories:** edit the list in step 4 (names double as folder names).

@@ -8,7 +8,7 @@ argument-hint: "[--to drive | notion | local | <path>]"
 
 Clip a YouTube video, or moments from it, into a Gleaner clip: a summary written from the transcript, with key moments that link to the second they happen.
 
-This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, destinations, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's clip skill at `../clip/SKILL.md`, relative to this skill's folder. Read it first and use it as written, with the changes below.
+This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, destinations, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's clip skill (`gleaner:clip`, at `../clip/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
 
 ## Get the video
 
@@ -22,6 +22,7 @@ This skill covers only what's different about video. Everything else (understand
    (async () => {
      const sleep = ms => new Promise(res => setTimeout(res, ms));
      const p = document.getElementById('movie_player');
+     window.gleanerTranscript = null;
      if (p?.classList.contains('ad-showing')) return { ad: true };
      const r = p?.getPlayerResponse?.();
      const v = r?.videoDetails;
@@ -47,24 +48,31 @@ This skill covers only what's different about video. Everything else (understand
      }
      if (!ccOn) p.toggleSubtitles();
      if (!url) return { ...meta, transcript: null };
-     const j = await (await fetch(url)).json();
-     const ts = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-     window.gleanerTranscript = (j.events ?? []).filter(e => e.segs)
+     const j = await fetch(url).then(res => res.json()).catch(() => null);
+     const ts = s => {
+       const mm = `${Math.floor(s / 60) % 60}:${String(s % 60).padStart(2, '0')}`;
+       return s < 3600 ? mm : `${Math.floor(s / 3600)}:${mm.padStart(5, '0')}`;
+     };
+     window.gleanerTranscript = (j?.events ?? []).filter(e => e.segs)
        .map(e => `[${ts(Math.floor(e.tStartMs / 1000))}] ${e.segs.map(s => s.utf8).join('').replace(/\s+/g, ' ').trim()}`)
-       .filter(line => !line.endsWith('] ')).join('\n');
-     return { ...meta, chars: window.gleanerTranscript.length, transcript: window.gleanerTranscript.slice(0, 40000) };
+       .filter(line => !line.endsWith('] ')).join('\n') || null;
+     if (!window.gleanerTranscript) return { ...meta, transcript: null };
+     const captions = new URL(url).searchParams.get('kind') === 'asr' ? 'auto-captions' : 'captions';
+     return { ...meta, captions, chars: window.gleanerTranscript.length, transcript: window.gleanerTranscript.slice(0, 40000) };
    })()
    ```
 
    What comes back:
    - **`{ ad: true }`:** an ad is playing, and its captions aren't the video's. Scripted clicks on Skip are ignored, so find the "Skip" button with the browser's `find` tool and click it, or wait for the ad to end, then run the snippet again.
-   - **`{ error }`:** there's no player yet (still loading, or not a video page). Wait a few seconds and run it once more.
-   - **Details with a `transcript`:** lines like `[3:10] …`. If `chars` is over 40000, read the rest in pieces with `window.gleanerTranscript.slice(40000, 80000)` and so on, before writing anything.
+   - **`{ error }`:** there's no player yet (still loading, or not a video page). Wait a few seconds and run it again.
+   - **Details with a `transcript`:** lines like `[3:10] …` (`[1:15:03] …` past an hour), and `captions` saying whether they're `captions` or `auto-captions`. If `chars` is over 40000, read the rest in pieces with `window.gleanerTranscript.slice(40000, 80000)` and so on, before writing anything.
    - **Details with `transcript: null`:** the video has no captions, or the caption request couldn't be caught. See "No transcript" below.
+
+   If `ad` or `error` comes back three times in a row, stop retrying and follow "No transcript".
 
    Don't fetch the caption URLs in `getPlayerResponse()` yourself; YouTube returns them empty without the player's token. Its "Show transcript" panel also fails in browsers YouTube doesn't trust, such as a signed-out built-in browser.
 
-4. **Check auto-captions.** Tracks marked `(auto)` have no punctuation and often mishear names and jargon. Check product names, people, and code terms against the title and description before they go in the clip.
+4. **Check auto-captions.** When `captions` is `auto-captions`, the text has no punctuation and often mishear names and jargon. Check product names, people, and code terms against the title and description before they go in the clip.
 
 ### No transcript
 
@@ -87,7 +95,7 @@ Adding parts works as in the clip skill's "Collecting parts", using time in plac
 | "add this part", "this bit" while watching | the chapter that contains the current playback position; with no chapters, the ~60 seconds before it |
 
 - **Chapters** are the description lines that start with a timestamp (`0:00 Intro`, `3:10 Generics`).
-- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. The transcript only needs fetching once per video; `window.gleanerTranscript` stays on the page until it navigates to another video.
+- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. For more parts of the same video, reuse `window.gleanerTranscript` and just read the position; run the snippet again after moving to another video.
 - **Confirm** with the range and first few words: `Added part 2: generics (3:10–5:40, "So now let's look at…"). Add more, or say "done" to save.`
 
 ## Write the summary
@@ -111,7 +119,7 @@ This replaces step 3 of the clip skill.
 <2–3 sentences: what the video covers and why it matters>
 
 ## Key moments
-- [<m:ss>](https://www.youtube.com/watch?v=<id>&t=<seconds>s) <one specific point made at that moment>
+- [<timestamp>](https://www.youtube.com/watch?v=<id>&t=<seconds>s) <one specific point made at that moment>
 
 ## Notable details
 - <code, numbers, tools, names, and links from the description worth keeping — omit section if none>
@@ -123,7 +131,7 @@ This replaces step 3 of the clip skill.
 **Part clip:** use the clip skill's part format. Each part's heading links to where it starts, `### 1. <part note or topic> ([3:10–5:40](https://www.youtube.com/watch?v=<id>&t=190s))`, and its `*From …*` line names the video.
 
 Rules:
-- **Key moments:** 5–8 bullets in time order, following the chapters when the video has them. Every timestamp comes from a transcript line or a chapter; never estimate one.
+- **Key moments:** 5–8 bullets in time order, following the chapters when the video has them. Every timestamp comes from a transcript line or a chapter (`m:ss`, or `h:mm:ss` past an hour), converted to seconds for the link; never estimate one.
 - **Type:** `video` for most videos, `webinar` for talks, livestreams, and recorded events, `tutorial` for step-by-step how-tos.
 - **The transcript is source material, not clip content.** Paraphrase it; quote only short phrases (under 15 words) when the exact wording matters. Use the clip skill's length limits.
 - **Notion:** no property holds the **Video:** line, so keep it as the first line of the page body.
