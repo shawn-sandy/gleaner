@@ -8,7 +8,7 @@ A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner
 
 ## Validate
 
-CI (`.github/workflows/validate.yml`) runs these three. The README shows the validate commands without `--strict`, so use the form below:
+CI (`.github/workflows/validate.yml`) runs these three:
 
 ```bash
 claude plugin validate . --strict
@@ -16,9 +16,9 @@ claude plugin validate ./plugins/gleaner --strict
 npx --yes markdownlint-cli2@0.18.1
 ```
 
-Markdownlint takes its globs and rule overrides from `.markdownlint-cli2.jsonc`, where the disabled rules record house style; fix findings rather than disabling more rules. A PostToolUse hook in `.claude/settings.json` reruns both validates after any edit under `.claude-plugin/` or `plugins/`.
+Markdownlint takes its globs and rule overrides from `.markdownlint-cli2.jsonc`, where the disabled rules record house style; fix findings rather than disabling more rules. A PostToolUse hook in `.claude/settings.json` reruns both validates after a Write or Edit under `.claude-plugin/` or `plugins/`; shell edits (`sed`, heredocs) bypass it, and it does not run markdownlint.
 
-Validation covers manifests, frontmatter, and Markdown syntax only. Live testing against Chrome, Drive, Notion, and Cowork is done by the maintainer; never report a change as live-tested.
+Validation covers manifests and Markdown syntax only. It does not fully parse SKILL.md frontmatter: an unterminated quote in `argument-hint` still passes, so check frontmatter edits with a YAML parser. Live testing against Chrome, Drive, Notion, and Cowork is done by the maintainer; never report a change as live-tested.
 
 ## Versioning and changelog
 

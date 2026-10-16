@@ -18,11 +18,12 @@ Cut a Gleaner release. Bump type: `$ARGUMENTS` (if empty, ask: patch, minor, or 
 
    Use today's date. Describe what changed for the user, not the implementation.
 4. **Check the four descriptions.** If this release changes destinations or surfaces, confirm the `marketplace.json` plugin description, the `plugin.json` description, the SKILL.md frontmatter `description`, and the README intro paragraph all name the same set. Fix any that drift.
-5. **Validate.** Run both and read the output; both must print `Validation passed`:
+5. **Validate.** Run all three, the same checks CI runs, and read the output; both validates must print `Validation passed` and markdownlint must report `0 error(s)`:
 
    ```bash
    claude plugin validate . --strict
    claude plugin validate ./plugins/gleaner --strict
+   npx --yes markdownlint-cli2@0.18.1
    ```
 
 6. **Commit on a branch** (create one if on `main`), all modified files in one commit:

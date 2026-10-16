@@ -390,8 +390,9 @@ gleaner/
 Validate changes before pushing:
 
 ```bash
-claude plugin validate .
-claude plugin validate ./plugins/gleaner
+claude plugin validate . --strict
+claude plugin validate ./plugins/gleaner --strict
+npx --yes markdownlint-cli2@0.18.1
 ```
 
 ## License
