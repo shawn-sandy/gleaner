@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); [ -n \"$f\" ] || exit 0; root=$(git -C \"$(dirname \"$f\")\" rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -f \"$root/plugins/gleaner/.claude-plugin/plugin.json\" ] || exit 0; case \"$f\" in \"$root\"/.claude-plugin/*|\"$root\"/plugins/*) cd \"$root\" && { out=$(claude plugin validate . --strict 2>&1 && claude plugin validate ./plugins/gleaner --strict 2>&1) || { echo \"$out\" >&2; exit 2; }; } ;; esac",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); [ -n \"$f\" ] || exit 0; f=$(realpath \"$f\" 2>/dev/null) || exit 0; root=$(git -C \"$(dirname \"$f\")\" rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -f \"$root/plugins/gleaner/.claude-plugin/plugin.json\" ] || exit 0; case \"$f\" in \"$root\"/.claude-plugin/*|\"$root\"/plugins/*) cd \"$root\" && { out=$(claude plugin validate . --strict 2>&1 && claude plugin validate ./plugins/gleaner --strict 2>&1) || { echo \"$out\" >&2; exit 2; }; } ;; esac",
             "timeout": 60,
             "statusMessage": "Validating plugin manifests"
           }
