@@ -1,18 +1,46 @@
 ---
 name: clip
-description: Save web pages or parts of them as summarized, tagged clips in Google Drive or a Cowork project folder, from plain-language requests. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", or "file this under design", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+description: Save web pages or parts of them as summarized, tagged clips in Google Drive, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading or a URL, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
 ---
 
 # Gleaner
 
 Gather the best of what you read into tagged, searchable clips.
 
-Save what the user is reading as a summarized, tagged clip in one of two places:
+Save what the user is reading as a summarized, tagged clip in one of three places:
 
-- **Google Drive** (default): uses the Google Drive connector. Works from the Chrome side panel without the desktop app.
+- **Google Drive** (default): uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
+- **This project** (Claude Code only): the folder the Claude Code session is working in.
 
 This skill does not write to claude.ai Projects; those can only be read from Cowork, not written to.
+
+## Where Gleaner runs
+
+Gleaner works wherever Claude can see a web page. Before reading anything, work out which browser you're in by checking which tools are available, and use that browser for every page read and highlight check in the request.
+
+| Surface | Browser tools | "The page" means |
+|---|---|---|
+| **Chrome side panel** | the side panel's page tools | the tab the user is viewing |
+| **Claude Code desktop, built-in browser** | `mcp__Claude_Browser__*` (or `mcp__remote-devices__Claude_Browser__*` when linked from the cloud) | the active tab in the Browser pane |
+| **Claude in Chrome** (Claude Code with `--chrome`, or Cowork) | `mcp__claude-in-chrome__*` | a tab Gleaner opens; this extension works in its own tabs, so ask for a URL if none was given |
+
+If more than one is available, prefer the one the user names, then the side panel, then the built-in browser, then Claude in Chrome.
+
+**Reading pages in each browser:**
+- **Page text:** use the browser's page-text tool (`get_page_text`). In the built-in browser, omit `tabId` to read the active tab.
+- **Highlight:** run `window.getSelection()?.toString().trim() ?? ''` with the browser's JavaScript tool (`javascript_tool`, action `javascript_exec`).
+- **Finding a described part:** use the page text, or the browser's `find` tool to locate a heading or phrase.
+
+**Built-in browser specifics:**
+- **Pane closed or no tabs:** if `tabs_context` shows no open tabs and the user didn't give a URL, ask them to open the page in the Browser pane (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows) or paste the URL. Don't guess which page they meant.
+- **Pane hidden:** reading still works while the pane is hidden. Just mention which page you clipped, since the user may not be looking at it.
+- **Site approvals:** if a tool says the site isn't allowed yet, call `request_access` for that site (scope `once`) when the tool exists, wait for the answer, then retry. If access is declined, say so and stop.
+- **Sign-ins:** the pane has its own browser profile, separate from the user's Chrome. If a page is behind a login or paywall there, clip what's visible and mention that signing in within the pane would get the rest.
+
+**A URL in the request** ("save https://…", "clip this: https://…"): open it in the current browser (`preview_start` in the built-in browser, a new tab in Claude in Chrome) and clip that page. If no browser is available, fetch the page with WebFetch and say it was read without a browser, so highlights don't apply.
+
+**No browser at all:** if the user didn't give a URL or pasted text, explain in one line that Gleaner needs a page open in a browser it can reach, and name the options for this surface.
 
 ## Understanding requests
 
@@ -42,7 +70,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 |---|---|---|
 | **Topic** of a part | "about", "on", "covering", "the bit where" | "the part about animation lengths" → `animation lengths` |
 | **Note** (why they're saving it) | "for", "because", "so I can", "good example of", or any comment after the request | "keep this, great example of scroll-driven animation" → `great example of scroll-driven animation` |
-| **Destination** | "to/in my … folder", "in Drive", "to my … project" | "save to my Serve513 project" → Cowork project `Serve513` |
+| **Destination** | "to/in my … folder", "in Drive", "to my … project" | "save to my Serve513 project" → Cowork project `Serve513`; "save it to this project/repo" → This project |
 | **Category** | "file under", "put in", "as" plus a category name | "file this under design" → `Design Engineering` |
 | **Tags** | "tag it", hashtags, "label it" | "tag it motion and css" → `#motion #css` |
 
@@ -60,7 +88,7 @@ Ask one short question only when acting would likely do the wrong thing, such as
 A part is a piece of text plus its page title, URL, topic, and note. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.
 
 To add a part:
-1. **Read the highlight.** Run `window.getSelection()?.toString().trim() ?? ''` on the active tab. Text of at least ~40 characters is the part.
+1. **Read the highlight.** Run `window.getSelection()?.toString().trim() ?? ''` in the current browser (see Where Gleaner runs). Text of at least ~40 characters is the part.
 2. **No highlight but a topic given:** find the passage on the page that best matches the topic (a section, paragraph, table, or code block) and use that. Quote its first few words when confirming so the user can check it.
 3. **Pasted text** in the request is the part.
 4. **Nothing usable** (no highlight, no topic, or the highlight couldn't be read, as in embedded frames, Chrome's PDF viewer, or Google Docs): say so in one line and suggest highlighting again, describing the part, or pasting it. Don't add anything.
@@ -69,16 +97,17 @@ To add a part:
 ## Steps
 
 1. **Gather the content.**
-   - **Page clip:** read the full text of the active tab (title, URL, and main content). Ignore navigation, ads, cookie banners, footers, and comment sections. If the page is long or paginated, read all of it.
+   - **Page clip:** read the full text of the page in the current browser (title, URL, and main content). Ignore navigation, ads, cookie banners, footers, and comment sections. If the page is long or paginated, read all of it.
    - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
 
 2. **Pick the destination.**
-   - If the user names Drive, a Drive folder, or a Cowork project, use that.
+   - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
    - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
+   - In Claude Code, Drive stays the default. If the Google Drive connector isn't available there, use This project instead and say so in the confirmation (connectors come from the user's claude.ai account when they're signed in to Claude Code with it).
    - Otherwise, default to Google Drive in a folder named `Browser Research`.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
-     - Cowork project: search `clips/` for the URL.
+     - Cowork project or This project: search `clips/` for the URL.
      - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. If they don't answer, save the updated copy.
      - An updated copy keeps the same category and tags unless the content clearly changed, and adds a `**Supersedes:** <link or path to the old clip>` line under **Tags**. Never edit or delete the old clip.
 
@@ -171,6 +200,10 @@ To add a part:
    - Confirm you can reach the project's folder on the user's computer. If you can't (desktop app closed, asleep, or not connected), tell the user in one line to open the Claude desktop app and use the fallback below.
    - Save to `clips/<category>/` in the project's first folder, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
 
+   **This project** (Claude Code)
+   - Save to `clips/<category>/` under the session's working directory, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
+   - If the working directory is a git repository, don't commit or stage anything; mention that the clip is a new untracked file so the user can decide whether to commit it or add `clips/` to `.gitignore`.
+
    **Fallback:** give the user the Markdown file and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
 7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link, or project and path), the tags, and a one-line TL;DR. Don't repeat the full summary. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
@@ -183,7 +216,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
 
 1. **Gather.**
    - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
-   - Cowork project: search `clips/` recursively.
+   - Cowork project or This project: search `clips/` recursively.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with "(N parts)" after the title. Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.

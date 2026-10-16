@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude skill for the Chrome side panel. Ask it in plain language to keep a page, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive or a Cowork project. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser. Ask it in plain language to keep a page, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive or a Cowork project. Later, ask what you saved and it finds it.
 
 ```
 You:     grab the part about animation lengths, for the motion post
@@ -29,6 +29,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
   - [Categories and tags](#categories-and-tags)
   - [Finding your clips](#finding-your-clips)
   - [Index spreadsheet](#index-spreadsheet)
+  - [Using Gleaner in Claude Code desktop](#using-gleaner-in-claude-code-desktop)
 - [Phrase cheat sheet](#phrase-cheat-sheet)
 - [What a clip looks like](#what-a-clip-looks-like)
 - [How Gleaner decides](#how-gleaner-decides)
@@ -49,7 +50,8 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
 - **No duplicates.** Saving a page you've already clipped offers an updated copy that links to the original. Nothing is ever overwritten or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
-- **Drive or local.** Saves to Google Drive by default (works without the desktop app), or to a Cowork project folder on your computer.
+- **Drive or local.** Saves to Google Drive by default, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
+- **Works where you browse.** The Chrome side panel, or the built-in browser in Claude Code desktop. Hand it a URL and it opens the page for you.
 
 ## Install
 
@@ -79,6 +81,13 @@ claude plugin install gleaner@shawn-sandy --scope user
 ```
 
 In Claude Code the skill is also available as `/gleaner:clip`.
+
+### Claude Code desktop
+
+1. Click **+** next to the prompt box, then **Plugins → Add plugin**.
+2. Add the marketplace `shawn-sandy/gleaner` and install **Gleaner**.
+
+A plugin installed from the terminal at user scope also appears in the desktop app's local sessions, and the reverse. If Gleaner doesn't respond right away, run `/reload-plugins`.
 
 ### Upgrading from page-to-project
 
@@ -159,6 +168,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 | **Google Drive** → `Browser Research/<category>/` | Default | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `clips/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
+| **This project** → `clips/<category>/` | "save to this project" (Claude Code only) | A Claude Code session |
 
 Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead.
 
@@ -209,6 +219,22 @@ Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every 
 
 ---
 
+### Using Gleaner in Claude Code desktop
+
+Claude Code desktop has a built-in browser pane, and Gleaner reads whatever tab is active there.
+
+1. Open the Browser pane: **Cmd+Shift+B** (Mac) or **Ctrl+Shift+B** (Windows), or click **Browser** in the title bar.
+2. Browse to a page, and highlight text if you want just a part.
+3. In the prompt box, ask as usual: "save this page," "grab the part about easing," "done." Or type `/gleaner:clip`.
+
+You can also skip the browsing and pass a link: **"save https://example.com/article"** opens it in the pane and clips it.
+
+**Things to know:**
+- **Separate sign-ins.** The pane has its own browser profile, apart from your Chrome. Sign in to paywalled or members-only sites in the pane once, and the login sticks.
+- **Site approvals.** The first time Gleaner reads a new site, you'll be asked to allow it.
+- **Save into your repo.** Say **"save this to this project"** to drop the clip into `clips/<category>/` in the folder Claude Code is working in. Gleaner never commits it; commit the clip or add `clips/` to `.gitignore`, your call.
+- **Drive works here too** when you're signed in to Claude Code with your Claude account, since your claude.ai connectors carry over. If Drive isn't available, Gleaner saves to this project and tells you.
+
 ## Phrase cheat sheet
 
 | Goal | Say something like |
@@ -219,7 +245,8 @@ Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every 
 | Save collected parts | "done" · "save them" · "wrap it up" |
 | Review or fix parts | "what have I got?" · "drop part 2" · "start over" |
 | Add a reason | add ", for …" or ", because …" to any request |
-| Pick a folder | "…to my Research folder" · "…to my Serve513 project" |
+| Pick a folder | "…to my Research folder" · "…to my Serve513 project" · "…to this project" |
+| Clip a link | "save https://…" |
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
 | Find clips | "what did I save about X?" · "clips from this week" |
@@ -274,6 +301,8 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 | Problem | Fix |
 |---|---|
+| Claude Code says no page is open | Open the Browser pane (Cmd/Ctrl+Shift+B) and load the page, or include the URL in your request. |
+| Clip is cut off at a login or paywall (Claude Code) | Sign in to the site inside the Browser pane once; it has its own logins, separate from Chrome. |
 | Gleaner doesn't respond to "save this" | Check you're on the new side panel (not classic) and that Gleaner is enabled in your skills. |
 | It saved the whole page instead of my highlight | Highlight again right before asking, or name the part: "grab the part about X." Some sites clear highlights when you click away. |
 | "Couldn't reach the project folder" | Open the Claude desktop app and make sure it's connected, then ask again. |
@@ -320,6 +349,13 @@ claude plugin validate ./plugins/gleaner
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.1.0** (2026-10-16)
+- Works in Claude Code desktop with its built-in browser: clips the active tab in the Browser pane, highlights included (tested).
+- Picks the right browser automatically: Chrome side panel, Claude Code's built-in browser, or Claude in Chrome.
+- Clip any URL: "save https://…" opens the page and clips it.
+- New destination for Claude Code: "save to this project" writes to `clips/<category>/` in the working folder.
+- Handles site approvals and separate browser sign-ins.
 
 **1.0.0** (2026-10-16)
 - Renamed from *page-to-project* to **Gleaner** and published as a plugin marketplace.

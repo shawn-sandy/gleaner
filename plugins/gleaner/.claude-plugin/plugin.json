@@ -1,8 +1,8 @@
 {
   "name": "gleaner",
   "displayName": "Gleaner",
-  "version": "1.0.0",
-  "description": "Gather the best of what you read into tagged, searchable clips. Save whole pages or collected parts, with your notes, to Google Drive or a Cowork project.",
+  "version": "1.1.0",
+  "description": "Gather the best of what you read into tagged, searchable clips. Save whole pages or collected parts, with your notes, to Google Drive, a Cowork project, or your Claude Code project, from the Chrome side panel or the Claude Code desktop browser.",
   "author": {
     "name": "Shawn Sandy",
     "url": "https://github.com/shawn-sandy"
@@ -10,5 +10,15 @@
   "homepage": "https://github.com/shawn-sandy/gleaner",
   "repository": "https://github.com/shawn-sandy/gleaner",
   "license": "MIT",
-  "keywords": ["research", "web-clipper", "chrome", "side-panel", "google-drive", "cowork", "notes", "tags"]
+  "keywords": [
+    "chrome",
+    "claude-code",
+    "cowork",
+    "google-drive",
+    "notes",
+    "research",
+    "side-panel",
+    "tags",
+    "web-clipper"
+  ]
 }
