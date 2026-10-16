@@ -1,6 +1,7 @@
 ---
 name: clip
 description: Save web pages or parts of them as summarized, tagged clips in Google Drive, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading or a URL, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+argument-hint: "[--to drive | local | <path>]"
 ---
 
 # Gleaner
@@ -79,6 +80,26 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 - A part's topic doubles as its heading. If the user gives a topic and a reason ("the part about easing, for the motion post"), record both: `easing — for the motion post`.
 - Details belong to the request they appear in: a note given while adding a part belongs to that part; a note given when saving belongs to the whole clip.
 
+### Destination flag
+
+Any request can carry a `--to` flag (short form `-t`) that sets the destination for that save only. It works typed into the message ("save this page --to drive") or as an argument to the slash command (`/gleaner:clip --to ./notes`).
+
+| Flag | Saves to |
+|---|---|
+| `--to drive` | Google Drive → `Browser Research/<Category>/` |
+| `--to drive:"Folder Name"` | Google Drive → `<Folder Name>/<Category>/` (quotes needed only if the name has spaces) |
+| `--to local` | The working folder → `browser-research/<category-folder>/` (Claude Code), or the current Cowork project |
+| `--to cowork:"Project Name"` | That Cowork project's folder → `browser-research/<category-folder>/` |
+| `--to <path>` | A local folder, such as `./notes`, `../research`, or `~/Documents/clips` → `<path>/<category-folder>/` |
+
+Rules:
+- **Precedence:** a `--to` flag beats a destination described in words, which beats the surface's default. If the flag and the words disagree in the same request, follow the flag and mention it.
+- **Paths:** a value starting with `./`, `../`, `/`, or `~` is a local path. Relative paths resolve from the session's working directory. Create the folder if it's missing, but only inside the working directory or the user's home folder; for anything else, ask first.
+- **Unavailable destinations:** local paths need local file access (Claude Code, or a desktop session with the folder connected), and `drive` needs the Google Drive connector. If the flagged destination can't be reached, don't silently switch: say so in one line and use the fallback in step 6.
+- **Scope:** the flag applies to the clip being saved now. When collecting parts, a flag on any part request or on the final save applies to the whole clip; if different parts carry conflicting flags, use the one on the final save, or the most recent one.
+- **Unknown values:** if the value isn't recognized (`--to dropbox`), say which values work and don't save.
+- Strip the flag from the request before reading the note, so `--to drive` never ends up in a clip's note.
+
 ### When to ask
 
 Ask one short question only when acting would likely do the wrong thing, such as when two very different readings are equally plausible, or a named destination doesn't exist. Otherwise act, and say in the confirmation what you assumed so the user can correct it ("Saved the whole page — say 'just the highlighted part' if you meant only that").
@@ -101,6 +122,7 @@ To add a part:
    - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
 
 2. **Pick the destination.**
+   - A `--to` flag decides the destination (see Destination flag).
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
    - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
    - **In Claude Code, the default is This project** (the folder the session is working in). Use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research").

@@ -26,6 +26,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
   - [Saving parts of pages](#saving-parts-of-pages)
   - [Adding notes](#adding-notes)
   - [Choosing where clips go](#choosing-where-clips-go)
+    - [The `--to` flag](#the---to-flag)
   - [Categories and tags](#categories-and-tags)
   - [Finding your clips](#finding-your-clips)
   - [Index spreadsheet](#index-spreadsheet)
@@ -176,6 +177,28 @@ If a destination can't be reached, Gleaner gives you the clip as a file and says
 
 > Gleaner can't write to claude.ai Projects. Cowork can read them but not add files to them.
 
+#### The `--to` flag
+
+For a quick, explicit override, add `--to` (or `-t`) to any request or to the slash command. It applies to that save only.
+
+```
+save this page --to drive
+grab the part about easing -t local
+/gleaner:clip --to ./notes
+save https://example.com/article --to drive:"Design Inspiration"
+done --to cowork:Serve513
+```
+
+| Flag | Saves to |
+|---|---|
+| `--to drive` | Drive → `Browser Research/<Category>/` |
+| `--to drive:"Folder Name"` | Drive → `<Folder Name>/<Category>/` |
+| `--to local` | Your working folder → `browser-research/<category>/` |
+| `--to cowork:"Project Name"` | That Cowork project → `browser-research/<category>/` |
+| `--to <path>` | Any local folder, like `./notes` or `~/Documents/research` → `<path>/<category>/` |
+
+A flag beats a destination you describe in words, which beats the default. If the flagged destination can't be reached, Gleaner tells you rather than quietly saving somewhere else.
+
 ### Categories and tags
 
 Each clip gets exactly one **category**, which is also its folder:
@@ -249,6 +272,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Add a reason | add ", for …" or ", because …" to any request |
 | Pick a folder | "…to my Research folder" · "…to my Serve513 project" · "…to this project" |
 | Clip a link | "save https://…" |
+| Force a destination | add `--to drive`, `--to local`, or `--to ./path` |
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
 | Find clips | "what did I save about X?" · "clips from this week" |
@@ -351,6 +375,9 @@ claude plugin validate ./plugins/gleaner
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.4.0** (2026-10-16)
+- New `--to` flag (`-t`) to set the destination for one save: `drive`, `drive:"Folder"`, `local`, `cowork:"Project"`, or a local path.
 
 **1.3.0** (2026-10-16)
 - Local clips (Claude Code and Cowork projects) now save to `browser-research/<category>/`, with kebab-case category folders such as `design-engineering`. Drive is unchanged.
