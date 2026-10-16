@@ -1,0 +1,17 @@
+{
+  "name": "shawn-sandy",
+  "description": "Claude plugins by Shawn Sandy for design engineers and researchers.",
+  "owner": {
+    "name": "Shawn Sandy",
+    "url": "https://github.com/shawn-sandy"
+  },
+  "plugins": [
+    {
+      "name": "gleaner",
+      "source": "./plugins/gleaner",
+      "description": "Save web pages, or just the parts that matter, as summarized, tagged, searchable clips in Google Drive or a Cowork project, using plain language from the Claude in Chrome side panel.",
+      "category": "productivity",
+      "tags": ["research", "web-clipper", "chrome", "google-drive", "notes", "knowledge-management"]
+    }
+  ]
+}

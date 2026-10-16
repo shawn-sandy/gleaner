@@ -1,0 +1,14 @@
+{
+  "name": "gleaner",
+  "displayName": "Gleaner",
+  "version": "1.0.0",
+  "description": "Gather the best of what you read into tagged, searchable clips. Save whole pages or collected parts, with your notes, to Google Drive or a Cowork project.",
+  "author": {
+    "name": "Shawn Sandy",
+    "url": "https://github.com/shawn-sandy"
+  },
+  "homepage": "https://github.com/shawn-sandy/gleaner",
+  "repository": "https://github.com/shawn-sandy/gleaner",
+  "license": "MIT",
+  "keywords": ["research", "web-clipper", "chrome", "side-panel", "google-drive", "cowork", "notes", "tags"]
+}

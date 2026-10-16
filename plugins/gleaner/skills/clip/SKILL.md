@@ -1,0 +1,200 @@
+---
+name: clip
+description: Save web pages or parts of them as summarized, tagged clips in Google Drive or a Cowork project folder, from plain-language requests. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", or "file this under design", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+---
+
+# Gleaner
+
+Gather the best of what you read into tagged, searchable clips.
+
+Save what the user is reading as a summarized, tagged clip in one of two places:
+
+- **Google Drive** (default): uses the Google Drive connector. Works from the Chrome side panel without the desktop app.
+- **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
+
+This skill does not write to claude.ai Projects; those can only be read from Cowork, not written to.
+
+## Understanding requests
+
+Users speak naturally; don't wait for exact phrasing. Read each request for an **intent** and any **details**, then act. When the meaning is clear enough to act on, act; mistakes are cheap because clips are never overwritten.
+
+### Intents
+
+| Intent | What it does | Sounds like |
+|---|---|---|
+| **Save page** | Saves a summary of the whole page now | "save this page", "keep this article", "bookmark this for later", "file this under design", "I want to remember this one", "stash this doc" |
+| **Add part** | Adds a part to the clip being collected; nothing saved yet | "save this part about animation lengths", "add this", "grab this bit", "keep this section too", "and this paragraph on easing", "this table matters" |
+| **Save clip** | Saves all collected parts (plus a current highlight not yet added) as one clip | "save this clip", "that's it, save them", "done", "wrap it up", "save what I've got" |
+| **Manage parts** | Lists, removes, edits, or discards parts | "what have I got so far?", "drop the second one", "change part 1's note to …", "start over" |
+| **Find clips** | Searches saved clips (see Clip index) | "what did I save about Cowork?", "show my clips from this week", "anything on view transitions?" |
+
+**Deciding between them:**
+- A request naming the whole thing ("this page", "this article", "the whole doc") is **Save page**, even with text highlighted.
+- A request naming a piece ("this part", "this bit", "this section", "this paragraph", "this quote", "this table", "the part about X") is **Add part**.
+- A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**.
+- "Done", "that's all", or "save them" with parts collected is **Save clip**. With nothing collected, say there's nothing to save and offer to save the page.
+- A follow-up like "and this one" or "this too" right after adding a part is another **Add part**.
+- If parts are collected and the user asks to save the page, ask once: save the page on its own (keeping the parts), or include the parts?
+
+### Details to pull out
+
+| Detail | Cue words | Example → value |
+|---|---|---|
+| **Topic** of a part | "about", "on", "covering", "the bit where" | "the part about animation lengths" → `animation lengths` |
+| **Note** (why they're saving it) | "for", "because", "so I can", "good example of", or any comment after the request | "keep this, great example of scroll-driven animation" → `great example of scroll-driven animation` |
+| **Destination** | "to/in my … folder", "in Drive", "to my … project" | "save to my Serve513 project" → Cowork project `Serve513` |
+| **Category** | "file under", "put in", "as" plus a category name | "file this under design" → `Design Engineering` |
+| **Tags** | "tag it", hashtags, "label it" | "tag it motion and css" → `#motion #css` |
+
+- Keep the user's words for notes and topics, lightly trimmed of the request itself. Never invent a note, and never ask for one. With no note given, leave the note line out.
+- Match loose category words to the closest category ("design" → Design Engineering, "AI stuff" → AI & Agents). If nothing is close, use their words and mention it.
+- A part's topic doubles as its heading. If the user gives a topic and a reason ("the part about easing, for the motion post"), record both: `easing — for the motion post`.
+- Details belong to the request they appear in: a note given while adding a part belongs to that part; a note given when saving belongs to the whole clip.
+
+### When to ask
+
+Ask one short question only when acting would likely do the wrong thing, such as when two very different readings are equally plausible, or a named destination doesn't exist. Otherwise act, and say in the confirmation what you assumed so the user can correct it ("Saved the whole page — say 'just the highlighted part' if you meant only that").
+
+### Collecting parts
+
+A part is a piece of text plus its page title, URL, topic, and note. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.
+
+To add a part:
+1. **Read the highlight.** Run `window.getSelection()?.toString().trim() ?? ''` on the active tab. Text of at least ~40 characters is the part.
+2. **No highlight but a topic given:** find the passage on the page that best matches the topic (a section, paragraph, table, or code block) and use that. Quote its first few words when confirming so the user can check it.
+3. **Pasted text** in the request is the part.
+4. **Nothing usable** (no highlight, no topic, or the highlight couldn't be read, as in embedded frames, Chrome's PDF viewer, or Google Docs): say so in one line and suggest highlighting again, describing the part, or pasting it. Don't add anything.
+5. **Confirm briefly:** `Added part 2: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.`
+
+## Steps
+
+1. **Gather the content.**
+   - **Page clip:** read the full text of the active tab (title, URL, and main content). Ignore navigation, ads, cookie banners, footers, and comment sections. If the page is long or paginated, read all of it.
+   - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
+
+2. **Pick the destination.**
+   - If the user names Drive, a Drive folder, or a Cowork project, use that.
+   - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
+   - Otherwise, default to Google Drive in a folder named `Browser Research`.
+   - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
+     - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
+     - Cowork project: search `clips/` for the URL.
+     - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. If they don't answer, save the updated copy.
+     - An updated copy keeps the same category and tags unless the content clearly changed, and adds a `**Supersedes:** <link or path to the old clip>` line under **Tags**. Never edit or delete the old clip.
+
+3. **Write the summary** in Markdown.
+
+   **Page clip:**
+
+   ```markdown
+   # <Page title>
+
+   **Source:** <URL>
+   **Saved:** <today's date, YYYY-MM-DD>
+   **Category:** <one category from step 4>
+   **Type:** <article | docs | video | webinar | tutorial | release-notes | repo | tool | other>
+   **Tags:** #<tag> #<tag> #<tag>
+   **Note:** <the user's note — only if given>
+
+   ## TL;DR
+   <2–3 sentences: what this page is and why it matters>
+
+   ## Key points
+   - <5–8 bullets, each one specific fact, idea, or claim>
+
+   ## Notable details
+   - <code snippets, numbers, APIs, dates, or names worth keeping — omit section if none>
+
+   ## Takeaways
+   - <1–3 bullets on how this could be used or what to follow up on>
+   ```
+
+   **Part clip:**
+
+   ```markdown
+   # <Topic that ties the parts together>
+
+   **Source:** <URL>   (one per line if parts come from several pages)
+   **Saved:** <today's date, YYYY-MM-DD>
+   **Category:** <one category from step 4>
+   **Type:** <type of the main source page>
+   **Tags:** #<tag> #<tag> #<tag>
+   **Note:** <the clip-level note — only if given>
+   **Scope:** <N> parts from <M> page(s)
+
+   ## TL;DR
+   <2–3 sentences: what these parts add up to>
+
+   ## Parts
+
+   ### 1. <part note, or a short topic if there's no note>
+   *From [<page title>](<URL>)*
+   **Note:** <part note — only if given>
+   - <2–4 bullets summarizing this part, keeping specific numbers, names, and code>
+
+   ### 2. …
+
+   ## Takeaways
+   - <1–3 bullets on how the parts fit together or what to follow up on>
+   ```
+
+   Rules:
+   - Paraphrase in your own words. Quote only short phrases (under 15 words) when exact wording matters.
+   - Keep page clips under ~400 words and part clips under ~150 words per part, unless the user asks for more depth.
+   - For technical content (docs, release notes, tutorials), keep code examples short. Write any JavaScript as type-safe TypeScript.
+
+4. **Categorize it** so clips are easy to find later.
+   - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.
+     - `AI & Agents`: models, prompting, Claude, agents, MCP, skills
+     - `Design Engineering`: UI/UX, design systems, CSS, prototyping, accessibility
+     - `Frontend Dev`: Astro, React, TypeScript, build tools, performance
+     - `Tools & Workflow`: apps, productivity, dev tooling, automation
+     - `Content & Writing`: blogging, newsletters, social media, writing craft
+     - `Business & Career`: product, marketing, hiring, freelancing
+     - `Other`: anything that doesn't fit; mention it so the user can add a category
+   - **Type:** the kind of page (article, docs, video, webinar, tutorial, release-notes, repo, tool, other).
+   - **Tags:** 3–6 lowercase, kebab-case tags with a `#` prefix (for example `#cowork #prompting #claude-opus`). Prefer specific names (products, libraries, techniques) over generic words. Reuse existing tags when they fit: if possible, look at a few recent clips in the destination and match their spelling instead of inventing near-duplicates.
+   - If the user gives a category or tags, use theirs.
+
+5. **Name the file** `<yyyy-mm-dd>-<short-kebab-title>` (kebab-case, max ~60 characters). For a part clip, base the name on the topic tying the parts together.
+
+6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`).
+
+   **Google Drive**
+   - Find the destination folder: search Drive for a folder with that exact title (`mimeType = 'application/vnd.google-apps.folder'`, owned by the user, not trashed). If several match, ask which one. If none exist, create it in My Drive.
+   - Inside it, find or create the category subfolder the same way (search with `parentId` set to the destination folder).
+   - Check for a file with the same title in the category subfolder. If one exists, add `-2`, `-3`, and so on. Never overwrite.
+   - Upload the summary into the category subfolder with `contentMimeType: text/markdown`, letting Drive convert it to a Google Doc so headings and lists render. If the user asked to keep raw Markdown, set `disableConversionToGoogleType: true` and add `.md` to the title.
+   - If the Drive connector isn't available or the upload fails, say so and use the fallback below.
+
+   **Cowork project**
+   - Confirm you can reach the project's folder on the user's computer. If you can't (desktop app closed, asleep, or not connected), tell the user in one line to open the Claude desktop app and use the fallback below.
+   - Save to `clips/<category>/` in the project's first folder, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
+
+   **Fallback:** give the user the Markdown file and say plainly where it was *not* saved. Never claim a save that didn't happen.
+
+7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link, or project and path), the tags, and a one-line TL;DR. Don't repeat the full summary. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
+
+## Clip index (on demand)
+
+The clips themselves are the index: each one carries its source URL, date, category, type, tags, and notes. There is no separate index file to keep in sync.
+
+When the user asks to find or list clips ("show my clip index", "what did I save about Cowork?", "list my #prompting clips", "clips from this week"):
+
+1. **Gather.**
+   - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
+   - Cowork project: search `clips/` recursively.
+2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
+3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with "(N parts)" after the title. Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
+4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
+
+### Snapshot sheet
+
+If the user asks for a spreadsheet ("make me an index sheet"), build the table above for all clips and create a **new** Google Sheet in `Browser Research` titled `Clip Index <yyyy-mm-dd>`. Upload it as CSV (`contentMimeType: text/csv`) so Drive converts it to a Sheet, with the columns Date, Title, Category, Type, Tags, Note, Source URL, Clip link. Tell the user it's a point-in-time snapshot: it won't update itself, and they can ask for a fresh one anytime. Never try to edit an existing index sheet.
+
+## Edge cases
+
+- **Paywalled or sign-in pages:** summarize only what's visible and say so.
+- **PDFs or videos in the tab:** summarize the text or transcript if readable; otherwise tell the user what couldn't be read.
+- **Several tabs at once:** if the user groups tabs and says "save these pages", write one page clip per tab, or one combined clip if they ask for it.
+- **Session ended mid-collection:** collected parts exist only in the conversation. If the user comes back in a new session asking about unsaved parts, say they weren't saved and offer to start again.
