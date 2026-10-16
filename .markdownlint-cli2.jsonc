@@ -1,0 +1,18 @@
+{
+  "config": {
+    // House style: one line per paragraph or list item, no hard wrap.
+    "MD013": false,
+    // Changelog entries put the bullet list directly under the bold version line.
+    "MD032": false,
+    // Bold labels such as "**Page clip**" are used as inline captions.
+    "MD036": false,
+    // Adjacent callout blockquotes (Tip, Heads up) are separate on purpose.
+    "MD028": false,
+    // Example requests quote bare URLs exactly as a user would type them.
+    "MD034": false,
+    // Skill bodies follow frontmatter and need not open with a heading.
+    "MD041": false
+  },
+  "globs": ["**/*.md"],
+  "ignores": [".claude/worktrees/**", "node_modules/**"]
+}
