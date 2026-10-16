@@ -1,6 +1,6 @@
 ---
 name: clip
-description: Save web pages or parts of them as summarized, tagged clips in Google Drive, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading or a URL, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+description: Save web pages or parts of them as summarized, tagged clips in Google Drive, Notion, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading or a URL, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
 argument-hint: "[--to drive | local | <path>]"
 ---
 
@@ -13,6 +13,7 @@ Save what the user is reading as a summarized, tagged clip in one of three place
 - **Google Drive** (default in the Chrome side panel and Cowork): uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
 - **This project** (default in Claude Code): the folder the Claude Code session is working in.
+- **Notion** (on request): a page per clip in a Notion database, using the Notion connector.
 
 This skill does not write to claude.ai Projects; those can only be read from Cowork, not written to.
 
@@ -87,6 +88,8 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 | Flag | Saves to |
 |---|---|
 | `--to drive` | Google Drive → `Browser Research/<Category>/` |
+| `--to notion` | Notion → the `Browser Research` database |
+| `--to notion:"Database Name"` | Notion → that database |
 | `--to drive:"Folder Name"` | Google Drive → `<Folder Name>/<Category>/` (quotes needed only if the name has spaces) |
 | `--to local` | The working folder → `browser-research/<category-folder>/` (Claude Code), or the current Cowork project |
 | `--to cowork:"Project Name"` | That Cowork project's folder → `browser-research/<category-folder>/` |
@@ -98,6 +101,7 @@ Rules:
 - **Unavailable destinations:** local paths need local file access (Claude Code, or a desktop session with the folder connected), and `drive` needs the Google Drive connector. If the flagged destination can't be reached, don't silently switch: say so in one line and use the fallback in step 6.
 - **Scope:** the flag applies to the clip being saved now. When collecting parts, a flag on any part request or on the final save applies to the whole clip; if different parts carry conflicting flags, use the one on the final save, or the most recent one.
 - **Unknown values:** if the value isn't recognized (`--to dropbox`), say which values work and don't save.
+- `notion` needs the Notion connector. If it isn't connected, say so in one line and suggest connecting it.
 - Strip the flag from the request before reading the note, so `--to drive` never ends up in a clip's note.
 
 ### When to ask
@@ -123,6 +127,7 @@ To add a part:
 
 2. **Pick the destination.**
    - A `--to` flag decides the destination (see Destination flag).
+   - "Save to Notion" or "put it in Notion" in words means the Notion destination, the same as `--to notion`.
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
    - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
    - **In Claude Code, the default is This project** (the folder the session is working in). Use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research").
@@ -130,6 +135,7 @@ To add a part:
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
      - Cowork project or This project: search `browser-research/` for the URL.
+     - Notion: query the destination database for pages whose **Source** property equals the URL.
      - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. If they don't answer, save the updated copy.
      - An updated copy keeps the same category and tags unless the content clearly changed, and adds a `**Supersedes:** <link or path to the old clip>` line under **Tags**. Never edit or delete the old clip.
 
@@ -227,6 +233,27 @@ To add a part:
    - Save to `browser-research/<category-folder>/` under the session's working directory, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
    - If the working directory is a git repository, don't commit or stage anything; mention that the clip is a new untracked file so the user can decide whether to commit it or add `browser-research/` to `.gitignore`.
 
+   **Notion**
+   - **Find the database.** Search Notion for a database titled `Browser Research` (or the name the user gave). If several match, ask which one.
+   - **No database yet:** ask once where to create it ("Which Notion page should hold your Browser Research database?"), then create it there with these properties:
+
+     | Property | Type | Values |
+     |---|---|---|
+     | Name | title | the clip title |
+     | Category | select | the seven categories from step 4, readable names |
+     | Type | select | article, docs, video, webinar, tutorial, release-notes, repo, tool, other |
+     | Tags | multi-select | tags without the `#` |
+     | Note | text | the user's note, if any |
+     | Source | URL | the page URL (first one for multi-page part clips) |
+     | Saved | date | today |
+     | Scope | text | `selection` or `N parts from M pages`, if any |
+     | Supersedes | URL | link to the older clip, if any |
+
+     If the database exists but is missing a property, add it rather than failing; never rename or delete the user's existing properties.
+   - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down) in the page content as Markdown. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
+   - **Duplicates:** never edit or delete an existing page. An updated copy is a new page with **Supersedes** set.
+   - Confirm with the page link and the database name.
+
    **Fallback:** give the user the Markdown file and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
 7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link, or project and path), the tags, and a one-line TL;DR. Don't repeat the full summary. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
@@ -240,6 +267,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
 1. **Gather.**
    - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
    - Cowork project or This project: search `browser-research/` recursively.
+   - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other location when the user asks for it or names it.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with "(N parts)" after the title. Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
@@ -247,7 +275,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
 
 ### Snapshot sheet
 
-If the user asks for a spreadsheet ("make me an index sheet"), build the table above for all clips and create a **new** Google Sheet in `Browser Research` titled `Clip Index <yyyy-mm-dd>`. Upload it as CSV (`contentMimeType: text/csv`) so Drive converts it to a Sheet, with the columns Date, Title, Category, Type, Tags, Note, Source URL, Clip link. Tell the user it's a point-in-time snapshot: it won't update itself, and they can ask for a fresh one anytime. Never try to edit an existing index sheet.
+Notion users already have a live index in the database; offer its link first. If the user still wants a spreadsheet ("make me an index sheet"), build the table above for all clips and create a **new** Google Sheet in `Browser Research` titled `Clip Index <yyyy-mm-dd>`. Upload it as CSV (`contentMimeType: text/csv`) so Drive converts it to a Sheet, with the columns Date, Title, Category, Type, Tags, Note, Source URL, Clip link. Tell the user it's a point-in-time snapshot: it won't update itself, and they can ask for a fresh one anytime. Never try to edit an existing index sheet.
 
 ## Edge cases
 

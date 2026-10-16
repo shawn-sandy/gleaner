@@ -26,6 +26,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
   - [Saving parts of pages](#saving-parts-of-pages)
   - [Adding notes](#adding-notes)
   - [Choosing where clips go](#choosing-where-clips-go)
+    - [Saving to Notion](#saving-to-notion)
     - [The `--to` flag](#the---to-flag)
   - [Categories and tags](#categories-and-tags)
   - [Finding your clips](#finding-your-clips)
@@ -51,7 +52,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
 - **No duplicates.** Saving a page you've already clipped offers an updated copy that links to the original. Nothing is ever overwritten or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
-- **Drive or local.** Saves to Google Drive by default, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
+- **Drive, Notion, or local.** Saves to Google Drive by default, to a Notion database, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
 - **Works where you browse.** The Chrome side panel, or the built-in browser in Claude Code desktop. Hand it a URL and it opens the page for you.
 
 ## Install
@@ -170,12 +171,29 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
 | **This project** → `browser-research/<category>/` | Default in Claude Code | A Claude Code session |
+| **Notion** → `Browser Research` database | "save to Notion", or `--to notion` | Notion connector |
 
 Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead.
 
 If a destination can't be reached, Gleaner gives you the clip as a file and says plainly that it wasn't saved. It never claims a save that didn't happen.
 
 > Gleaner can't write to claude.ai Projects. Cowork can read them but not add files to them.
+
+#### Saving to Notion
+
+Connect the **Notion** connector, then say "save to Notion" or add `--to notion`. Each clip becomes a page in a **Browser Research** database, with its details as real database properties:
+
+| Property | Holds |
+|---|---|
+| Name | clip title |
+| Category, Type | select fields |
+| Tags | multi-select (no `#`) |
+| Note | your note |
+| Source | page URL |
+| Saved | date |
+| Scope, Supersedes | for part clips and updated copies |
+
+The first time, Gleaner asks which Notion page should hold the database and creates it there. After that, the database *is* your clip index: filter by tag, group by category, or sort by date right in Notion, and it's always up to date. Use `--to notion:"Other Database"` to save somewhere else.
 
 #### The `--to` flag
 
@@ -193,6 +211,8 @@ done --to cowork:Serve513
 |---|---|
 | `--to drive` | Drive → `Browser Research/<Category>/` |
 | `--to drive:"Folder Name"` | Drive → `<Folder Name>/<Category>/` |
+| `--to notion` | Notion → `Browser Research` database |
+| `--to notion:"Database Name"` | Notion → that database |
 | `--to local` | Your working folder → `browser-research/<category>/` |
 | `--to cowork:"Project Name"` | That Cowork project → `browser-research/<category>/` |
 | `--to <path>` | Any local folder, like `./notes` or `~/Documents/research` → `<path>/<category>/` |
@@ -272,7 +292,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Add a reason | add ", for …" or ", because …" to any request |
 | Pick a folder | "…to my Research folder" · "…to my Serve513 project" · "…to this project" |
 | Clip a link | "save https://…" |
-| Force a destination | add `--to drive`, `--to local`, or `--to ./path` |
+| Force a destination | add `--to drive`, `--to notion`, `--to local`, or `--to ./path` |
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
 | Find clips | "what did I save about X?" · "clips from this week" |
@@ -375,6 +395,9 @@ claude plugin validate ./plugins/gleaner
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.5.0** (2026-10-16)
+- Notion destination: "save to Notion" or `--to notion` saves each clip as a page in a Browser Research database, with category, type, tags, note, source, and date as properties. The database doubles as a live, filterable clip index.
 
 **1.4.0** (2026-10-16)
 - New `--to` flag (`-t`) to set the destination for one save: `drive`, `drive:"Folder"`, `local`, `cowork:"Project"`, or a local path.
