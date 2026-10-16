@@ -167,8 +167,8 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 |---|---|---|
 | **Google Drive** → `Browser Research/<category>/` | Default in the Chrome side panel and Cowork; "save to Drive" in Claude Code | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
-| **Cowork project** → `clips/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
-| **This project** → `clips/<category>/` | Default in Claude Code | A Claude Code session |
+| **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
+| **This project** → `browser-research/<category>/` | Default in Claude Code | A Claude Code session |
 
 Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead.
 
@@ -189,6 +189,8 @@ Each clip gets exactly one **category**, which is also its folder:
 | Content & Writing | blogging, newsletters, social media, writing craft |
 | Business & Career | product, marketing, hiring, freelancing |
 | Other | anything else (Gleaner will mention it) |
+
+In Drive, folders use the names above. In local folders, they use kebab-case: `browser-research/ai-agents/`, `browser-research/design-engineering/`, and so on.
 
 It also gets a **type** (article, docs, video, webinar, tutorial, release-notes, repo, tool, other) and **3–6 tags** like `#view-transitions` or `#claude-opus`. Gleaner checks your recent clips and reuses existing tag spellings to avoid near-duplicates.
 
@@ -232,7 +234,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 **Things to know:**
 - **Separate sign-ins.** The pane has its own browser profile, apart from your Chrome. Sign in to paywalled or members-only sites in the pane once, and the login sticks.
 - **Site approvals.** The first time Gleaner reads a new site, you'll be asked to allow it.
-- **Clips land in your project folder.** In Claude Code, clips are saved to `clips/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `clips/` to `.gitignore`, your call.
+- **Clips land in your project folder.** In Claude Code, clips are saved to `browser-research/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `browser-research/` to `.gitignore`, your call.
 - **Want Drive instead?** Say "save to Drive." Your claude.ai connectors carry over when you're signed in to Claude Code with your Claude account.
 
 ## Phrase cheat sheet
@@ -350,6 +352,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**1.3.0** (2026-10-16)
+- Local clips (Claude Code and Cowork projects) now save to `browser-research/<category>/`, with kebab-case category folders such as `design-engineering`. Drive is unchanged.
+
 **1.2.0** (2026-10-16)
 - In Claude Code, clips now save to the project folder by default. Say "save to Drive" to use Drive instead.
 
@@ -357,7 +362,7 @@ MIT © Shawn Sandy
 - Works in Claude Code desktop with its built-in browser: clips the active tab in the Browser pane, highlights included (tested).
 - Picks the right browser automatically: Chrome side panel, Claude Code's built-in browser, or Claude in Chrome.
 - Clip any URL: "save https://…" opens the page and clips it.
-- New destination for Claude Code: `clips/<category>/` in the working folder.
+- New destination for Claude Code: `browser-research/<category>/` in the working folder.
 - Handles site approvals and separate browser sign-ins.
 
 **1.0.0** (2026-10-16)

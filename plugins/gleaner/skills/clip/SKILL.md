@@ -107,7 +107,7 @@ To add a part:
    - Everywhere else, default to Google Drive in a folder named `Browser Research`.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
-     - Cowork project or This project: search `clips/` for the URL.
+     - Cowork project or This project: search `browser-research/` for the URL.
      - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. If they don't answer, save the updated copy.
      - An updated copy keeps the same category and tags unless the content clearly changed, and adds a `**Supersedes:** <link or path to the old clip>` line under **Tags**. Never edit or delete the old clip.
 
@@ -181,6 +181,7 @@ To add a part:
      - `Content & Writing`: blogging, newsletters, social media, writing craft
      - `Business & Career`: product, marketing, hiring, freelancing
      - `Other`: anything that doesn't fit; mention it so the user can add a category
+   - **Folder names:** in Drive, the category name is used as-is (`AI & Agents`). In local folders (Cowork project or This project), use its kebab-case form: `ai-agents`, `design-engineering`, `frontend-dev`, `tools-workflow`, `content-writing`, `business-career`, `other`. The **Category:** line in the clip always uses the readable name.
    - **Type:** the kind of page (article, docs, video, webinar, tutorial, release-notes, repo, tool, other).
    - **Tags:** 3–6 lowercase, kebab-case tags with a `#` prefix (for example `#cowork #prompting #claude-opus`). Prefer specific names (products, libraries, techniques) over generic words. Reuse existing tags when they fit: if possible, look at a few recent clips in the destination and match their spelling instead of inventing near-duplicates.
    - If the user gives a category or tags, use theirs.
@@ -198,11 +199,11 @@ To add a part:
 
    **Cowork project**
    - Confirm you can reach the project's folder on the user's computer. If you can't (desktop app closed, asleep, or not connected), tell the user in one line to open the Claude desktop app and use the fallback below.
-   - Save to `clips/<category>/` in the project's first folder, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
+   - Save to `browser-research/<category-folder>/` in the project's first folder, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
 
    **This project** (Claude Code)
-   - Save to `clips/<category>/` under the session's working directory, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
-   - If the working directory is a git repository, don't commit or stage anything; mention that the clip is a new untracked file so the user can decide whether to commit it or add `clips/` to `.gitignore`.
+   - Save to `browser-research/<category-folder>/` under the session's working directory, creating folders as needed, as `<name>.md`. If the name is taken, add `-2`, `-3`, and so on. Never overwrite.
+   - If the working directory is a git repository, don't commit or stage anything; mention that the clip is a new untracked file so the user can decide whether to commit it or add `browser-research/` to `.gitignore`.
 
    **Fallback:** give the user the Markdown file and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
@@ -216,8 +217,8 @@ When the user asks to find or list clips ("show my clip index", "what did I save
 
 1. **Gather.**
    - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
-   - Cowork project or This project: search `clips/` recursively.
-   - Search wherever this surface saves by default (in Claude Code, the project's `clips/` folder; elsewhere, Drive). Include the other location when the user asks for it or names it.
+   - Cowork project or This project: search `browser-research/` recursively.
+   - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other location when the user asks for it or names it.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with "(N parts)" after the title. Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
