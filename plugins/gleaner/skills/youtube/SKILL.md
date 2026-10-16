@@ -14,7 +14,7 @@ This skill covers only what's different about video. Everything else (understand
 
 1. **Find the video ID** in the URL the user gave or the tab they're on: `youtube.com/watch?v=<id>`, `youtu.be/<id>`, `youtube.com/shorts/<id>`, `youtube.com/live/<id>`, or `m.youtube.com`. The clip's **Source** is always `https://www.youtube.com/watch?v=<id>`, with `t=`, `list=`, `si=`, and tracking parameters dropped, so the duplicate check matches the same video saved from any link.
 
-2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the clip skill). The snippet below needs the regular player.
+2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the clip skill), adding back any `t=` from the user's link so the player starts where they meant. The snippet below needs the regular player.
 
 3. **Read the video and its transcript** by running this with the browser's JavaScript tool:
 
@@ -77,6 +77,8 @@ This skill covers only what's different about video. Everything else (understand
 ### No transcript
 
 Act instead of asking: save a description-only clip from the title, description, and chapters, with `none` as its transcript source, and say in the confirmation that a transcript wasn't available. Mention that pasting the transcript (on YouTube: "…more" under the video, then "Show transcript", then copy) gets a full summary as an updated copy. If the user pastes one, its timestamps work the same as the snippet's.
+
+That fallback is for whole videos only. A part (a time range, a topic, or "this part") needs transcript lines, so don't save one without them: say the part can't be clipped without a transcript, ask for it pasted, and offer a description-only clip of the whole video instead.
 
 Never summarize what you didn't read: with no transcript, there's no **Key moments** section unless the description has chapters, and then the moments are the chapters.
 
