@@ -9,7 +9,7 @@
     {
       "name": "gleaner",
       "source": "./plugins/gleaner",
-      "description": "Save web pages, or just the parts that matter, as summarized, tagged, searchable clips in Google Drive, Notion, a Cowork project, or your Claude Code project, using plain language from the Chrome side panel or the Claude Code desktop browser.",
+      "description": "Save web pages and YouTube videos, or just the parts that matter, as summarized, tagged, searchable clips in Google Drive, Notion, a Cowork project, or your Claude Code project, using plain language from the Chrome side panel or the Claude Code desktop browser.",
       "category": "productivity",
       "tags": [
         "chrome",
@@ -19,7 +19,8 @@
         "notes",
         "notion",
         "research",
-        "web-clipper"
+        "web-clipper",
+        "youtube"
       ]
     }
   ]

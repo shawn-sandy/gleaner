@@ -24,6 +24,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
   - [Saving parts of pages](#saving-parts-of-pages)
+  - [Saving YouTube videos](#saving-youtube-videos)
   - [Adding notes](#adding-notes)
   - [Choosing where clips go](#choosing-where-clips-go)
     - [Saving to Notion](#saving-to-notion)
@@ -48,6 +49,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 
 - **Plain-language requests.** "Keep this article," "grab the bit about easing," "done": no commands to memorize.
 - **Whole pages or just the good parts.** Highlight text, or describe a section and Gleaner finds it. Collect parts across tabs and sites, then save them as one clip.
+- **YouTube videos too.** Save a video, or just the moments that matter, as a summary built from its transcript, with key moments that link to the exact second.
 - **Your reasons, kept.** Add a note to any request ("…for the motion post") and it's saved with the clip. Gleaner never invents notes.
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
 - **No duplicates.** Saving a page you've already clipped offers an updated copy that links to the original. Nothing is ever overwritten or deleted.
@@ -82,7 +84,7 @@ claude plugin marketplace add shawn-sandy/gleaner
 claude plugin install gleaner@shawn-sandy --scope user
 ```
 
-In Claude Code the skill is also available as `/gleaner:clip`.
+In Claude Code the skills are also available as `/gleaner:clip` and `/gleaner:youtube`.
 
 ### Claude Code desktop
 
@@ -149,6 +151,24 @@ All parts are saved as one clip, grouped under headings with a link to each sour
 > **Tip:** Parts can come from different tabs and sites. Collect from three articles, then save once.
 
 > **Heads up:** Collected parts live in the side panel conversation until you save. Close the session first and they're gone.
+
+### Saving YouTube videos
+
+On a YouTube video, ask the same way you would for a page, or pass a link:
+
+> save this video
+> clip this talk, for the motion post
+> save https://youtu.be/… to Notion
+
+Gleaner reads the video's transcript and writes a TL;DR, **key moments** that each link to the second they happen, notable details, and takeaways. A **Video** line records the channel, publish date, length, and whether the transcript came from captions or auto-captions.
+
+Collect moments as parts by time or topic:
+
+> keep 3:10 to 5:40
+> grab the part about generics
+> add this part *(the chapter you're watching, or the last minute or so)*
+
+If a video has no captions, Gleaner saves a clip from the title, description, and chapters, and says so. Paste the transcript (**…more → Show transcript** on YouTube) to get a full summary as an updated copy.
 
 ### Adding notes
 
@@ -292,6 +312,8 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Add a reason | add ", for …" or ", because …" to any request |
 | Pick a folder | "…to my Research folder" · "…to my Serve513 project" · "…to this project" |
 | Clip a link | "save https://…" |
+| Save a YouTube video | "save this video" · "save https://youtu.be/…" |
+| Save part of a video | "keep 3:10 to 5:40" · "grab the part about X" · "add this part" |
 | Force a destination | add `--to drive`, `--to notion`, `--to local`, or `--to ./path` |
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
@@ -341,6 +363,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
 - **Drive files can't be edited.** The Drive connector can create and read files but not change them, so updates are new copies and index sheets are snapshots.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
+- **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), the clip comes from the description only. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **Paywalls and sign-ins.** Only visible content is summarized, and the clip says so.
 
 ## Troubleshooting
@@ -357,7 +380,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 ## Customizing
 
-Gleaner's behavior lives in [`plugins/gleaner/skills/clip/SKILL.md`](plugins/gleaner/skills/clip/SKILL.md). Common edits:
+Gleaner's behavior lives in [`plugins/gleaner/skills/clip/SKILL.md`](plugins/gleaner/skills/clip/SKILL.md), with video-specific steps (transcript, Key moments format) in [`plugins/gleaner/skills/youtube/SKILL.md`](plugins/gleaner/skills/youtube/SKILL.md). Common edits:
 
 - **Default folder:** change `Browser Research` in step 2.
 - **Categories:** edit the list in step 4 (names double as folder names).
@@ -377,8 +400,10 @@ gleaner/
 │       ├── .claude-plugin/
 │       │   └── plugin.json     # plugin manifest (version lives here)
 │       └── skills/
-│           └── clip/
-│               └── SKILL.md    # the skill
+│           ├── clip/
+│           │   └── SKILL.md    # pages and parts
+│           └── youtube/
+│               └── SKILL.md    # YouTube videos (uses clip for saving)
 ├── LICENSE
 └── README.md
 ```
@@ -395,6 +420,9 @@ claude plugin validate ./plugins/gleaner
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.6.0** (2026-10-16)
+- New **youtube** skill (`/gleaner:youtube`): save a YouTube video, or moments from it, as a clip built from its transcript, with key moments that link to the exact second. Collect parts by time range, topic, or playback position. Falls back to a description-only clip when there are no captions.
 
 **1.5.1** (2026-10-16)
 - Notion: tested end to end. New tags are now added to the database's Tags options before a clip is saved (Notion rejects unknown tags), keeping every existing option.
