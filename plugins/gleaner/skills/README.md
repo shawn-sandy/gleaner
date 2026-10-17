@@ -105,7 +105,11 @@ done
 
 ### When there's no transcript
 
-Without captions (or during a live stream), Gleaner saves a clip from the title, description, and chapters, and says so. Parts can't be clipped without a transcript. For a full summary, paste the transcript (on YouTube: **…more** under the video, then **Show transcript**), and Gleaner saves it as an updated copy.
+Without captions (or during a live stream), Gleaner saves a clip of the whole video from its title, description, and chapters, and says so.
+
+A part can't be clipped without the transcript. If you ask for one anyway, Gleaner asks you to paste the transcript and offers a description-only clip of the whole video instead.
+
+To copy a transcript on YouTube, open **…more** under the video, then **Show transcript**. Paste it after a description-only save, and Gleaner saves a full summary as an updated copy.
 
 ### Things to know
 
