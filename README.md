@@ -454,6 +454,11 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**1.7.0** (2026-10-16)
+- Save Claude's answers about a page: ask about what you're reading, then say "save that" or "save those steps" to keep the answer as a clip. Answers keep their steps and code, are headed by your question, and mark anything that didn't come from the page "(not from the page)".
+- While you're collecting parts, an answer is added as the next part. The Scope line and the clip index count answers separately, such as `2 parts, 1 answer from 1 page`.
+- Answers about YouTube videos link their timestamps to the second, and saving an answer works without a browser open.
+
 **1.6.0** (2026-10-16)
 - New **youtube** skill (`/gleaner:youtube`): save a YouTube video, or moments from it, as a clip built from its transcript, with key moments that link to the exact second. Collect parts by time range, topic, or playback position. Falls back to a description-only clip when there are no captions.
 
