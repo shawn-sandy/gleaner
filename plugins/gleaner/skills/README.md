@@ -4,7 +4,7 @@ Gleaner ships two skills. You don't have to pick one: describe what you want, an
 
 | Skill | Command | Use it for |
 |---|---|---|
-| [clip](clip/SKILL.md) | `/gleaner:clip` | Web pages, parts of pages, and finding saved clips |
+| [clip](clip/SKILL.md) | `/gleaner:clip` | Web pages, parts of pages, Claude's answers about them, and finding saved clips |
 | [youtube](youtube/SKILL.md) | `/gleaner:youtube` | YouTube videos and moments from them |
 
 The youtube skill handles only what's different about video: reading the transcript and writing a summary with timestamped links. Everything else (notes, parts, destinations, categories, saving, and search) comes from clip. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
@@ -43,6 +43,18 @@ done
 ```
 
 Each part is confirmed with its first few words. Nothing is saved until you say "done" (or "save them", "wrap it up"); then all the parts go into one clip. Parts live only in the conversation, so save before you close it.
+
+### Save an answer
+
+Ask Claude about the page, such as a clarification or a list of steps, then save the answer:
+
+```text
+how do I rotate an API key in these docs?
+save that
+explain the auth flow and save it
+```
+
+"Save that" right after an answer saves the answer and says so; say "save the page" if you meant the whole page. While you're collecting parts, an answer is added as the next part instead. Answers are kept as given, headed by your question, with anything that didn't come from the page marked "(not from the page)". See [Saving answers](../../../README.md#saving-answers).
 
 ### Choose where it goes
 

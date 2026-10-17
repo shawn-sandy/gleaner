@@ -24,6 +24,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
   - [Saving parts of pages](#saving-parts-of-pages)
+  - [Saving answers](#saving-answers)
   - [Saving YouTube videos](#saving-youtube-videos)
   - [Adding notes](#adding-notes)
   - [Choosing where clips go](#choosing-where-clips-go)
@@ -49,6 +50,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 
 - **Plain-language requests.** "Keep this article," "grab the bit about easing," "done": no commands to memorize.
 - **Whole pages or just the good parts.** Highlight text, or describe a section and Gleaner finds it. Collect parts across tabs and sites, then save them as one clip.
+- **Answers too.** Ask Claude about what you're reading, then say "save that" to keep the answer, with its steps and code intact, on its own or alongside parts.
 - **YouTube videos too.** Save a video, or just the moments that matter, as a summary built from its transcript, with key moments that link to the exact second.
 - **Your reasons, kept.** Add a note to any request ("…for the motion post") and it's saved with the clip. Gleaner never invents notes.
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
@@ -152,6 +154,23 @@ All parts are saved as one clip, grouped under headings with a link to each sour
 > **Tip:** Parts can come from different tabs and sites. Collect from three articles, then save once.
 
 > **Heads up:** Collected parts live in the side panel conversation until you save. Close the session first and they're gone.
+
+### Saving answers
+
+Ask Claude about the page you're reading, such as a clarification, a list of steps, or more detail on one topic, then save the answer:
+
+> how do I rotate an API key in these docs?
+> save that
+> explain the auth flow and save it
+
+"Save that" right after an answer saves the answer and says so; say "save the page" if you meant the whole page. While you're collecting parts, an answer is added as another part instead, and "done" saves them together:
+
+> add that answer
+> save our back-and-forth about webhooks
+
+An answer is kept as given, not summarized, so numbered steps and code survive. It's headed by your question, links the page it was about, and marks anything that didn't come from the page "(not from the page)", so the clip never passes off Claude's background knowledge as the source's.
+
+Answers live in the conversation like parts do. Gleaner can't save an answer from an earlier session; ask the question again instead.
 
 ### Saving YouTube videos
 
@@ -275,7 +294,7 @@ Ask in plain language:
 > anything on view transitions?
 > show my clip index
 
-You get a table, newest first: date, title (linked), category, type, tags, note, and source. Multi-part clips are marked "(N parts)." Keyword searches match titles, tags, notes, and summary text.
+You get a table, newest first: date, title (linked), category, type, tags, note, and source. Multi-part clips are marked with their count, such as "(3 parts)" or "(2 parts, 1 answer)." Keyword searches match titles, tags, notes, and summary text.
 
 You can also search directly in Google Drive: type a tag like `#motion` or a note phrase into Drive's search bar.
 
@@ -311,6 +330,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Save a highlight now | highlight, then "save this" |
 | Collect a part | "add this" · "grab the part about X" · "this table too" |
 | Save collected parts | "done" · "save them" · "wrap it up" |
+| Save an answer | "save that" · "save those steps" · "add that answer" |
 | Review or fix parts | "what have I got?" · "drop part 2" · "start over" |
 | Add a reason | add ", for …" or ", because …" to any request |
 | Pick a folder | "…to my Research folder" · "…to my Serve513 project" · "…to this project" |
@@ -349,6 +369,8 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 
 **Part clip** adds a `**Scope:** 2 parts from 1 page` line, and its body is a **Parts** section with one heading per part (titled by your note or topic), a link to its source, its own note, and 2–4 bullets.
 
+**Answer** parts sit in the same Parts section, headed by your question, with the answer kept as given. The Scope line counts them separately, such as `2 parts, 1 answer from 1 page`. A clip of a single answer skips the TL;DR.
+
 **Video clip** adds a `**Video:**` line (channel, publish date, length, and transcript source) and swaps Key points for **Key moments**, each linking to its second in the video. A video part's heading links to where it starts, such as `3:10–5:40`.
 
 Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`, `-3`, and so on.
@@ -358,6 +380,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **"Page," "article," "doc"** → the whole page, even if text is highlighted.
 - **"Part," "bit," "section," "table," "the part about X"** → a part.
 - **A plain "save this"** → saves your highlight or collected parts if there are any, otherwise the whole page.
+- **"Save that" right after an answer** → takes the answer, even with text highlighted, and says so: it saves the answer, or adds it as the next part while you're collecting. "Save this page" still saves the page.
 - **Highlights under ~40 characters** (a stray word) are ignored.
 - **It acts instead of asking**, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
 - **Duplicate check:** saving a page you've clipped before shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check.
@@ -430,6 +453,11 @@ npx --yes markdownlint-cli2@0.18.1
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.7.0** (2026-10-16)
+- Save Claude's answers about a page: ask about what you're reading, then say "save that" or "save those steps" to keep the answer as a clip. Answers keep their steps and code, are headed by your question, and mark anything that didn't come from the page "(not from the page)".
+- While you're collecting parts, an answer is added as the next part. The Scope line and the clip index count answers separately, such as `2 parts, 1 answer from 1 page`.
+- Answers about YouTube videos link their timestamps to the second, and saving an answer works without a browser open.
 
 **1.6.0** (2026-10-16)
 - New **youtube** skill (`/gleaner:youtube`): save a YouTube video, or moments from it, as a clip built from its transcript, with key moments that link to the exact second. Collect parts by time range, topic, or playback position. Falls back to a description-only clip when there are no captions.
