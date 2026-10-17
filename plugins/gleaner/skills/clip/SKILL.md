@@ -210,7 +210,7 @@ To add a part:
    - **Answer parts** keep the answer as you gave it instead of summarizing it: numbered steps stay numbered, code stays code, and the 2–4 bullet and ~150-word limits don't apply. The quoting rule above still applies to anything the answer quoted from the page.
      - Head the part with the user's question, and replace its *From* line with `*Answer about [<page title>](<URL>)*`, or `*Answer, not tied to a page*` when there was none.
      - Mark anything in the answer that didn't come from the page, such as background knowledge or a step you added, with "(not from the page)", so a clip never passes your knowledge off as the source's. An answer not tied to a page needs no marks; its *Answer, not tied to a page* line already says so.
-     - On the **Scope:** line, count answers apart from other parts: `2 parts, 1 answer from 1 page`, or `1 answer from 1 page`, or `1 answer, no page` when no part has a page. Then also leave out the Source line and use `other` as the Type.
+     - On the **Scope:** line, count answers apart from other parts: `2 parts, 1 answer from 1 page`, or `1 answer from 1 page`, or `1 answer, no page` when no part has a page. Only when no part has a page, also leave out the Source line and use `other` as the Type; an answer about a page keeps that page as its Source and the page's Type.
      - A clip whose only part is one answer leaves out the TL;DR, since the question and answer already are the summary.
      - For an answer about a YouTube video, see the youtube skill's part clip rule for its heading, source link, and timestamps.
 

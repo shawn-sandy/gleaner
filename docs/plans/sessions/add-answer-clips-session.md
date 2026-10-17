@@ -9,22 +9,22 @@ team-artifact-url: https://claude.ai/artifact/FGUfFANH5kkZdR8nA3J8rR
 
 ## At a glance
 
-6 changes · 2 files · 10 decisions · 6 open items
+8 changes · 4 files · 10 decisions · 5 open items
 
-Gleaner can now keep the answers Claude gives about a page, not just the page itself. Ask a question while reading docs, get a clarification or a list of steps, then say "save that" and the answer becomes a clip. The work lives in the `clip` skill and the README on branch `claude/skill-page-questions-f17a91`. It passes every automated check, but it is not committed, not versioned, and not tested live.
+Gleaner can now keep the answers Claude gives about a page, not just the page itself. Ask a question while reading docs, get a clarification or a list of steps, then say "save that" and the answer becomes a clip. The work is open for review as PR #5 (`claude/skill-page-questions-f17a91` into `main`). It passes every automated check, but it is not versioned and not tested live.
 
 ## What changed
 
 ### Save an answer you just got
 
 - **Affects:** users.
-- **Now:** "save that", "save that answer", "save those steps", or "save what you just told me" saves Claude's most recent answer (or the one named) as its own clip. A bare "save that" right after an answer means the answer even if text is highlighted, and the confirmation says so: "Saved my answer — say 'save the page' if you meant the whole page." Asking "list the setup steps and save them" answers first, then saves.
+- **Now:** "save that", "save that answer", "save those steps", or "save what you just told me" saves Claude's most recent answer (or the one named) as its own clip. A bare "save that" right after an answer means the answer even if text is highlighted, and that highlight isn't added later at "done". The confirmation says so: "Saved my answer — say 'save the page' if you meant the whole page." "Explain the auth flow and save it" answers first, then saves, even if the request also says "this page" or "save them".
 - **Reach it:** plain language in the Chrome side panel or the Claude Code desktop browser; new **Save answer** row in the Intents table of `plugins/gleaner/skills/clip/SKILL.md`.
 
 ### Add an answer to a clip you're collecting
 
 - **Affects:** users.
-- **Now:** while parts are being collected, an answer is added as the next part instead of being saved alone, and "done" saves everything together. "Add that answer" or "add those steps too" starts or extends a collection. "Save our back-and-forth about X" adds one part per question and answer.
+- **Now:** while parts are being collected, an answer is added as the next part instead of being saved alone, and the confirmation is the "Added part" line naming it as Claude's answer. "Done" saves everything together. "Add that answer" starts or extends a collection. "Save our back-and-forth about X" adds one part per question and answer.
 - **Reach it:** new first source in "Collecting parts" in `SKILL.md`.
 
 ### Answers are kept as given, with the question as the heading
@@ -36,8 +36,8 @@ Gleaner can now keep the answers Claude gives about a page, not just the page it
 ### Answers are counted in a clip's scope and in the index
 
 - **Affects:** users.
-- **Now:** the **Scope** line counts answers apart from other parts, such as `2 parts, 1 answer from 1 page`, and the clip index marks titles the same way, such as "(2 parts, 1 answer)". A clip with no page behind it has no Source line and the Type `other`.
-- **Reach it:** step 3 rules and "Clip index" step 3 in `SKILL.md`.
+- **Now:** the **Scope** line counts answers apart from other parts, such as `2 parts, 1 answer from 1 page`, or `1 answer, no page`, and the clip index marks titles the same way. Only a clip with no page behind it drops the Source line and uses the Type `other`. In Notion, a clip without a TL;DR starts its page body at Parts.
+- **Reach it:** step 3 rules, the Notion steps, and "Clip index" step 3 in `SKILL.md`.
 
 ### Answers from an earlier session are refused, not rebuilt
 
@@ -45,11 +45,23 @@ Gleaner can now keep the answers Claude gives about a page, not just the page it
 - **Now:** if the answer is no longer in the conversation, Gleaner says it can't see it and offers to answer again, rather than recreating it from memory and saving that as the original.
 - **Reach it:** new item in "Edge cases" in `SKILL.md`.
 
-### README documents the feature
+### Answers save without a browser
+
+- **Affects:** users.
+- **Now:** saving an answer doesn't need a page open, so it works in Claude Code with no browser tools. Page saves still ask for a browser or a URL.
+- **Reach it:** "No browser at all" in "Where Gleaner runs" in `SKILL.md`.
+
+### Answers about YouTube videos follow the same rules
+
+- **Affects:** users.
+- **Now:** an answer about a video keeps the answer-part format: headed by the question with no time link, linking the video's canonical watch URL, with any timestamps in the answer linked to the second and taken from the transcript.
+- **Reach it:** the part clip rule in `plugins/gleaner/skills/youtube/SKILL.md`.
+
+### The README and the skills guide document the feature
 
 - **Affects:** users and teammates.
-- **Now:** a "Saving answers" section, a features bullet, a cheat-sheet row, a "How Gleaner decides" rule, a note under "What a clip looks like", and the updated index-count wording.
-- **Reach it:** `README.md`, under Usage guide.
+- **Now:** the README has a "Saving answers" section, a features bullet, a cheat-sheet row, a "How Gleaner decides" rule, a note under "What a clip looks like", and the updated index-count wording. The skills guide has a "Save an answer" section.
+- **Reach it:** `README.md` under Usage guide, and `plugins/gleaner/skills/README.md`.
 
 ## How it works now
 
@@ -73,12 +85,14 @@ How a request after an answer is routed. The only new branch is "points at the a
 | Gleaner could save a page, a highlight, a described section, or pasted text. | It can also save an answer Claude gave about the page. |
 | "Save that" after an answer fell through to the page rules and saved the page. | "Save that" right after an answer saves the answer, and the confirmation says so. |
 | "Save this" after an answer saved the page silently. | It still saves the page, but the confirmation mentions that "save that answer" saves the answer instead. |
+| "Done" added any highlight not yet added. | A highlight passed over for an answer isn't added at "done". |
 | Every part was squeezed into 2–4 bullets and about 150 words. | Answer parts are kept as given; those limits don't apply to them. |
 | A part's heading was the user's note or topic. | An answer part's heading is the user's question. |
 | Nothing marked content that didn't come from the source. | Anything in an answer not from the page is marked "(not from the page)". |
-| Scope read `3 parts from 2 pages`. | Answers are counted separately: `2 parts, 1 answer from 1 page`. |
+| Scope read `3 parts from 2 pages`. | Answers are counted separately: `2 parts, 1 answer from 1 page`, or `1 answer, no page`. |
 | A part clip always had a TL;DR. | A clip of a single answer skips it. |
 | A clip always had a Source line. | An answer to a general question with no page has none, and its Type is `other`. |
+| With no browser, Gleaner asked for a page. | Saving an answer works with no browser. |
 
 ## Decisions
 
@@ -127,41 +141,49 @@ How a request after an answer is routed. The only new branch is "points at the a
 - **Why:** the project's `CLAUDE.md` says to cut versions with `/release`, and that skill can only be run by the user. It also commits, so it finishes this work in one step.
 - **Rejected:** bumping `plugin.json` and writing the changelog entry by hand in this change, which was the original proposal.
 
-### Put the YouTube timestamp rule in the `clip` skill
+### Put the YouTube answer rules in the youtube skill
 
-- **Why:** the user scoped the change to the clip skill, and the youtube skill already reads the clip skill first.
-- **Rejected:** editing `plugins/gleaner/skills/youtube/SKILL.md`.
+- **Why:** the youtube skill's summary section replaces the clip skill's step 3 outright, so answer rules that lived only in the clip skill would never reach video pages. A pre-PR review caught this, and the clip skill now points to the youtube skill's rule.
+- **Rejected:** keeping the rule only in the clip skill, the first version, chosen because the change was scoped to the clip skill.
 
 ## Learnings
 
 - **The release skill is user-only.** `.claude/skills/release/SKILL.md` sets `disable-model-invocation: true`, so Claude cannot bump the version itself. The plan to bump in this change was dropped after reading it.
+- **The youtube skill replaces the clip skill's step 3.** A rule added only to the clip skill's step 3 silently doesn't apply on video pages; video-specific rules have to live in `youtube/SKILL.md`.
 - **CI lints every Markdown file.** `.markdownlint-cli2.jsonc` globs `**/*.md`, so new Markdown anywhere in the repo, including this recap record, must pass markdownlint.
 - **Plugin validation doesn't check frontmatter YAML.** The two `claude plugin validate` runs pass even with broken frontmatter, so a separate Ruby YAML parse was run. The new description measured 803 characters against the 1024 limit.
 - **A frontmatter `title:` counts as the page heading.** Markdownlint's single-heading rule (MD025) flagged this record for having both a `title:` and a top-level `#` heading, so the record carries the title only in frontmatter.
+- **Main moved during the work.** A skills usage guide landed on `main` mid-session; after syncing, it needed its own "Save an answer" section.
 - Nothing else was tried and abandoned.
 
 ## Open items
 
-1. **Version and commit.** Run `/release minor` to set 1.7.0, add the README changelog entry, validate, and commit everything on `claude/skill-page-questions-f17a91`. Nothing is committed or pushed, and there is no PR yet.
+1. **Version before merge.** Run `/release minor` on the PR #5 branch to set 1.7.0, add the README changelog entry, validate, and commit.
 2. **Live testing.** Not done; the maintainer tests against Chrome, Drive, Notion, and Cowork. Worth trying: "save that" after an answer with text highlighted; "save that answer" mid-collection; an answer mixing page content with background knowledge; a general question with no page saved to Notion (no Source); an answer about a YouTube video with timestamps.
-3. **YouTube heading rule overlap.** `youtube/SKILL.md` says each part's heading links to where it starts, which doesn't fit an answer part. How the model resolves this is unverified; a one-line note in the youtube skill would settle it.
-4. **Marketing descriptions don't mention answers.** The `plugin.json` description, the `marketplace.json` description, and the README intro still list pages, parts, and videos only. The four-place sync rule covers destinations and surfaces, so it doesn't require an update, but the feature is invisible there.
-5. **Pre-existing Notion schema wording.** The Notion property table in `SKILL.md` lists Scope values as `selection` or `N parts from M pages`, which no current template produces. It was not touched.
-6. **This recap record.** `docs/plans/sessions/add-answer-clips-session.md` is new and uncommitted; `/release` will include it in its commit unless it is removed first.
+3. **Marketing descriptions don't mention answers.** The `plugin.json` description, the `marketplace.json` description, and the README intro still list pages, parts, and videos only. The four-place sync rule covers destinations and surfaces, so it doesn't require an update, but the feature is invisible there.
+4. **Pre-existing Notion schema wording.** The Notion property table in `SKILL.md` lists Scope values as `selection` or `N parts from M pages`, which no current template produces. It was not touched.
+5. **Review items left as is.** "Save it" or "keep it" after an answer still follows the existing routing rules; the skills guide heading "clip: pages and parts" is unchanged; the generated gallery index at `docs/artifacts/index.html` links to sibling galleries that don't exist in this repo.
 
 ## Files touched
 
-### Skill
+### Skills
 
-- `plugins/gleaner/skills/clip/SKILL.md` — new Save answer intent and routing rules, answers as the first part source, the answer-part format, Scope and index counts, the earlier-session edge case, and new trigger phrases in the frontmatter description.
+- `plugins/gleaner/skills/clip/SKILL.md` — new Save answer intent and routing rules, answers as the first part source, the answer-part format, Scope and index counts, answers without a browser, the Notion body start, the earlier-session edge case, and new trigger phrases in the frontmatter description.
+- `plugins/gleaner/skills/youtube/SKILL.md` — how answer parts look on a video, since this skill replaces the clip skill's step 3.
 
 ### Docs
 
 - `README.md` — "Saving answers" section and contents link, features bullet, cheat-sheet row, "How Gleaner decides" rule, answer note under "What a clip looks like", and index-count wording.
+- `plugins/gleaner/skills/README.md` — answers in the clip row and a "Save an answer" section.
+
+### Repo
+
+- `.gitignore` — keeps the local `.claude/artifacts/` inbox out of git.
 
 ### This recap
 
 - `docs/plans/sessions/add-answer-clips-session.md` — this record, which holds the published link for later republishes.
+- `docs/artifacts/team-recap-2026-10-16.html` and `docs/artifacts/index.html` — the recap's gallery copy and the generated gallery index.
 
 ## Glossary
 
@@ -185,3 +207,4 @@ How a request after an answer is routed. The only new branch is "points at the a
 - **Claude Code desktop browser** — the built-in browser pane in the Claude Code desktop app.
 - **Notion** — a notes app; Gleaner can save each clip as a page in a Notion database.
 - **TL;DR** — the 2–3 sentence summary at the top of a clip.
+- **PR #5** — the pull request on GitHub that carries this work for review.

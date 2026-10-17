@@ -197,19 +197,19 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
   <p class="lede">Gleaner can now keep the answers Claude gives about a page, not just the page itself.</p>
   <div class="meta">
     <span>Branch <b>claude/skill-page-questions-f17a91</b></span>
-    <span>Status <b>uncommitted, not released, not live-tested</b></span>
+    <span>Status <b>PR #5 open, not released, not live-tested</b></span>
   </div>
 </header>
 
 <section id="at-a-glance" aria-labelledby="h-glance">
   <h2 id="h-glance">At a glance</h2>
   <div class="stats">
-    <div class="stat"><span class="n">6</span><span class="l">changes</span></div>
-    <div class="stat"><span class="n">2</span><span class="l">files</span></div>
+    <div class="stat"><span class="n">8</span><span class="l">changes</span></div>
+    <div class="stat"><span class="n">4</span><span class="l">files</span></div>
     <div class="stat"><span class="n">10</span><span class="l">decisions</span></div>
-    <div class="stat"><span class="n">6</span><span class="l">open items</span></div>
+    <div class="stat"><span class="n">5</span><span class="l">open items</span></div>
   </div>
-  <p>Ask a question while reading docs, get a clarification or a list of steps, then say "save that" and the answer becomes a clip. The work lives in the <code>clip</code> skill and the README on branch <code>claude/skill-page-questions-f17a91</code>. It passes every automated check, but it is not committed, not versioned, and not tested live.</p>
+  <p>Ask a question while reading docs, get a clarification or a list of steps, then say "save that" and the answer becomes a clip. The work is open for review as PR #5 (<code>claude/skill-page-questions-f17a91</code> into <code>main</code>). It passes every automated check, but it is not versioned and not tested live.</p>
 </section>
 
 <section id="what-changed" aria-labelledby="h-changed">
@@ -218,13 +218,13 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
     <article class="card">
       <h3>Save an answer you just got</h3>
       <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
-      <div class="field"><span>Now</span><p>"Save that", "save that answer", "save those steps", or "save what you just told me" saves Claude's most recent answer, or the one named, as its own clip. A bare "save that" right after an answer means the answer even if text is highlighted, and the confirmation says so. "List the setup steps and save them" answers first, then saves.</p></div>
+      <div class="field"><span>Now</span><p>"Save that", "save that answer", "save those steps", or "save what you just told me" saves Claude's most recent answer, or the one named, as its own clip. A bare "save that" right after an answer means the answer even if text is highlighted, and that highlight isn't added later at "done". The confirmation says so. "Explain the auth flow and save it" answers first, then saves, even if the request also says "this page" or "save them".</p></div>
       <div class="field"><span>Reach it</span><p>Plain language in the Chrome side panel or the Claude Code desktop browser. New <b>Save answer</b> row in the Intents table of <code>plugins/gleaner/skills/clip/SKILL.md</code>.</p></div>
     </article>
     <article class="card">
       <h3>Add an answer to a clip you're collecting</h3>
       <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
-      <div class="field"><span>Now</span><p>While parts are being collected, an answer is added as the next part instead of being saved alone, and "done" saves everything together. "Add that answer" starts or extends a collection. "Save our back-and-forth about X" adds one part per question and answer.</p></div>
+      <div class="field"><span>Now</span><p>While parts are being collected, an answer is added as the next part instead of being saved alone, and the confirmation is the "Added part" line naming it as Claude's answer. "Done" saves everything together. "Add that answer" starts or extends a collection. "Save our back-and-forth about X" adds one part per question and answer.</p></div>
       <div class="field"><span>Reach it</span><p>New first source in "Collecting parts" in <code>SKILL.md</code>.</p></div>
     </article>
     <article class="card">
@@ -236,8 +236,8 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
     <article class="card">
       <h3>Answers are counted in a clip's scope and in the index</h3>
       <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
-      <div class="field"><span>Now</span><p>The <b>Scope</b> line counts answers apart from other parts, such as <code>2 parts, 1 answer from 1 page</code>, and the clip index marks titles the same way. A clip with no page behind it has no Source line and the Type <code>other</code>.</p></div>
-      <div class="field"><span>Reach it</span><p>Step 3 rules and "Clip index" step 3 in <code>SKILL.md</code>.</p></div>
+      <div class="field"><span>Now</span><p>The <b>Scope</b> line counts answers apart from other parts, such as <code>2 parts, 1 answer from 1 page</code>, or <code>1 answer, no page</code>, and the clip index marks titles the same way. Only a clip with no page behind it drops the Source line and uses the Type <code>other</code>. In Notion, a clip without a TL;DR starts its page body at Parts.</p></div>
+      <div class="field"><span>Reach it</span><p>Step 3 rules, the Notion steps, and "Clip index" step 3 in <code>SKILL.md</code>.</p></div>
     </article>
     <article class="card">
       <h3>Answers from an earlier session are refused, not rebuilt</h3>
@@ -246,10 +246,22 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
       <div class="field"><span>Reach it</span><p>New item in "Edge cases" in <code>SKILL.md</code>.</p></div>
     </article>
     <article class="card">
-      <h3>README documents the feature</h3>
+      <h3>Answers save without a browser</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>Saving an answer doesn't need a page open, so it works in Claude Code with no browser tools. Page saves still ask for a browser or a URL.</p></div>
+      <div class="field"><span>Reach it</span><p>"No browser at all" in "Where Gleaner runs" in <code>SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>Answers about YouTube videos follow the same rules</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>An answer about a video keeps the answer-part format: headed by the question with no time link, linking the video's canonical watch URL, with any timestamps in the answer linked to the second and taken from the transcript.</p></div>
+      <div class="field"><span>Reach it</span><p>The part clip rule in <code>plugins/gleaner/skills/youtube/SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>The README and the skills guide document the feature</h3>
       <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span><span class="tag">teammates</span></div></div>
-      <div class="field"><span>Now</span><p>A "Saving answers" section, a features bullet, a cheat-sheet row, a "How Gleaner decides" rule, a note under "What a clip looks like", and the updated index-count wording.</p></div>
-      <div class="field"><span>Reach it</span><p><code>README.md</code>, under Usage guide.</p></div>
+      <div class="field"><span>Now</span><p>The README has a "Saving answers" section, a features bullet, a cheat-sheet row, a "How Gleaner decides" rule, a note under "What a clip looks like", and the updated index-count wording. The skills guide has a "Save an answer" section.</p></div>
+      <div class="field"><span>Reach it</span><p><code>README.md</code> under Usage guide, and <code>plugins/gleaner/skills/README.md</code>.</p></div>
     </article>
   </div>
 </section>
@@ -271,12 +283,14 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
         <tr><td>Gleaner could save a page, a highlight, a described section, or pasted text.</td><td>It can also save an answer Claude gave about the page.</td></tr>
         <tr><td>"Save that" after an answer fell through to the page rules and saved the page.</td><td>"Save that" right after an answer saves the answer, and the confirmation says so.</td></tr>
         <tr><td>"Save this" after an answer saved the page silently.</td><td>It still saves the page, but the confirmation mentions that "save that answer" saves the answer instead.</td></tr>
+        <tr><td>"Done" added any highlight not yet added.</td><td>A highlight passed over for an answer isn't added at "done".</td></tr>
         <tr><td>Every part was squeezed into 2–4 bullets and about 150 words.</td><td>Answer parts are kept as given; those limits don't apply to them.</td></tr>
         <tr><td>A part's heading was the user's note or topic.</td><td>An answer part's heading is the user's question.</td></tr>
         <tr><td>Nothing marked content that didn't come from the source.</td><td>Anything in an answer not from the page is marked "(not from the page)".</td></tr>
-        <tr><td>Scope read <code>3 parts from 2 pages</code>.</td><td>Answers are counted separately: <code>2 parts, 1 answer from 1 page</code>.</td></tr>
+        <tr><td>Scope read <code>3 parts from 2 pages</code>.</td><td>Answers are counted separately: <code>2 parts, 1 answer from 1 page</code>, or <code>1 answer, no page</code>.</td></tr>
         <tr><td>A part clip always had a TL;DR.</td><td>A clip of a single answer skips it.</td></tr>
         <tr><td>A clip always had a Source line.</td><td>An answer to a general question with no page has none, and its Type is <code>other</code>.</td></tr>
+        <tr><td>With no browser, Gleaner asked for a page.</td><td>Saving an answer works with no browser.</td></tr>
       </tbody>
     </table>
   </div>
@@ -331,9 +345,9 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
       <div class="no"><span class="label">Rejected</span><p>Bumping <code>plugin.json</code> and writing the changelog entry by hand in this change, which was the original proposal.</p></div>
     </div>
     <div class="decision">
-      <h3>Put the YouTube timestamp rule in the <code>clip</code> skill</h3>
-      <div class="why"><span class="label">Why</span><p>The user scoped the change to the clip skill, and the youtube skill already reads the clip skill first.</p></div>
-      <div class="no"><span class="label">Rejected</span><p>Editing <code>plugins/gleaner/skills/youtube/SKILL.md</code>.</p></div>
+      <h3>Put the YouTube answer rules in the <code>youtube</code> skill</h3>
+      <div class="why"><span class="label">Why</span><p>The youtube skill's summary section replaces the clip skill's step 3 outright, so answer rules that lived only in the clip skill would never reach video pages. A pre-PR review caught this, and the clip skill now points to the youtube skill's rule.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Keeping the rule only in the clip skill, the first version, chosen because the change was scoped to the clip skill.</p></div>
     </div>
   </div>
 </section>
@@ -342,9 +356,11 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
   <h2 id="h-learn">Learnings</h2>
   <ul class="plain">
     <li><b>The release skill is user-only.</b> <code>.claude/skills/release/SKILL.md</code> sets <code>disable-model-invocation: true</code>, so Claude cannot bump the version itself. The plan to bump in this change was dropped after reading it.</li>
+    <li><b>The youtube skill replaces the clip skill's step 3.</b> A rule added only to the clip skill's step 3 silently doesn't apply on video pages; video-specific rules have to live in <code>youtube/SKILL.md</code>.</li>
     <li><b>CI lints every Markdown file.</b> <code>.markdownlint-cli2.jsonc</code> globs <code>**/*.md</code>, so new Markdown anywhere in the repo, including this recap's record, must pass markdownlint.</li>
     <li><b>Plugin validation doesn't check frontmatter YAML.</b> The two <code>claude plugin validate</code> runs pass even with broken frontmatter, so a separate Ruby YAML parse was run. The new description measured 803 characters against the 1024 limit.</li>
     <li><b>A frontmatter <code>title:</code> counts as the page heading.</b> Markdownlint's single-heading rule (MD025) flagged the recap record for having both a <code>title:</code> and a top-level heading, so the record carries the title only in frontmatter.</li>
+    <li><b>Main moved during the work.</b> A skills usage guide landed on <code>main</code> mid-session; after syncing, it needed its own "Save an answer" section.</li>
     <li>Nothing else was tried and abandoned.</li>
   </ul>
 </section>
@@ -353,16 +369,12 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
   <h2 id="h-open">Open items</h2>
   <ol class="items">
     <li class="item">
-      <div class="item-head"><span class="pill">Next step</span><strong>Version and commit</strong></div>
-      <p>Run <code>/release minor</code> to set 1.7.0, add the README changelog entry, validate, and commit everything on <code>claude/skill-page-questions-f17a91</code>. Nothing is committed or pushed, and there is no PR yet.</p>
+      <div class="item-head"><span class="pill">Next step</span><strong>Version before merge</strong></div>
+      <p>Run <code>/release minor</code> on the PR #5 branch to set 1.7.0, add the README changelog entry, validate, and commit.</p>
     </li>
     <li class="item">
       <div class="item-head"><span class="pill warn">Unverified</span><strong>Live testing</strong></div>
       <p>Not done; the maintainer tests against Chrome, Drive, Notion, and Cowork. Worth trying: "save that" after an answer with text highlighted; "save that answer" mid-collection; an answer mixing page content with background knowledge; a general question with no page saved to Notion, which has no Source; an answer about a YouTube video with timestamps.</p>
-    </li>
-    <li class="item">
-      <div class="item-head"><span class="pill warn">Unverified</span><strong>YouTube heading rule overlap</strong></div>
-      <p><code>youtube/SKILL.md</code> says each part's heading links to where it starts, which doesn't fit an answer part. How the model resolves this is unverified; a one-line note in the youtube skill would settle it.</p>
     </li>
     <li class="item">
       <div class="item-head"><span class="pill quiet">Follow-up</span><strong>Marketing descriptions don't mention answers</strong></div>
@@ -373,8 +385,8 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
       <p>The Notion property table in <code>SKILL.md</code> lists Scope values as <code>selection</code> or <code>N parts from M pages</code>, which no current template produces. It was not touched.</p>
     </li>
     <li class="item">
-      <div class="item-head"><span class="pill quiet">Follow-up</span><strong>This recap's record</strong></div>
-      <p><code>docs/plans/sessions/add-answer-clips-session.md</code> is new and uncommitted; <code>/release</code> will include it in its commit unless it is removed first.</p>
+      <div class="item-head"><span class="pill quiet">Follow-up</span><strong>Review items left as is</strong></div>
+      <p>"Save it" or "keep it" after an answer still follows the existing routing rules; the skills guide heading "clip: pages and parts" is unchanged; the generated gallery index at <code>docs/artifacts/index.html</code> links to sibling galleries that don't exist in this repo.</p>
     </li>
   </ol>
 </section>
@@ -383,16 +395,23 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
   <h2 id="h-files">Files touched</h2>
   <div class="files">
     <div class="file-group">
-      <h3>Skill</h3>
-      <div class="file"><code>plugins/gleaner/skills/clip/SKILL.md</code><span>New Save answer intent and routing rules, answers as the first part source, the answer-part format, Scope and index counts, the earlier-session edge case, and new trigger phrases in the frontmatter description.</span></div>
+      <h3>Skills</h3>
+      <div class="file"><code>plugins/gleaner/skills/clip/SKILL.md</code><span>New Save answer intent and routing rules, answers as the first part source, the answer-part format, Scope and index counts, answers without a browser, the Notion body start, the earlier-session edge case, and new trigger phrases in the frontmatter description.</span></div>
+      <div class="file"><code>plugins/gleaner/skills/youtube/SKILL.md</code><span>How answer parts look on a video, since this skill replaces the clip skill's step 3.</span></div>
     </div>
     <div class="file-group">
       <h3>Docs</h3>
       <div class="file"><code>README.md</code><span>"Saving answers" section and contents link, features bullet, cheat-sheet row, "How Gleaner decides" rule, answer note under "What a clip looks like", and index-count wording.</span></div>
+      <div class="file"><code>plugins/gleaner/skills/README.md</code><span>Answers in the clip row and a "Save an answer" section.</span></div>
+    </div>
+    <div class="file-group">
+      <h3>Repo</h3>
+      <div class="file"><code>.gitignore</code><span>Keeps the local <code>.claude/artifacts/</code> inbox out of git.</span></div>
     </div>
     <div class="file-group">
       <h3>This recap</h3>
       <div class="file"><code>docs/plans/sessions/add-answer-clips-session.md</code><span>The recap's record, which holds the published link for later republishes.</span></div>
+      <div class="file"><code>docs/artifacts/team-recap-2026-10-16.html</code><span>The recap's gallery copy, with the diagram inlined as SVG; <code>docs/artifacts/index.html</code> is the generated gallery index.</span></div>
     </div>
   </div>
 </section>
@@ -420,6 +439,7 @@ ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: colum
     <div><dt>Claude Code desktop browser</dt><dd>The built-in browser pane in the Claude Code desktop app.</dd></div>
     <div><dt>Notion</dt><dd>A notes app; Gleaner can save each clip as a page in a Notion database.</dd></div>
     <div><dt>TL;DR</dt><dd>The 2–3 sentence summary at the top of a clip.</dd></div>
+    <div><dt>PR #5</dt><dd>The pull request on GitHub that carries this work for review.</dd></div>
   </dl>
 </section>
 
