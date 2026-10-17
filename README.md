@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its clip skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -449,6 +449,8 @@ gleaner/
 │       └── skills/
 │           ├── README.md       # usage guide for both skills
 │           ├── clip/
+│           │   ├── agents/
+│           │   │   └── openai.yaml  # skill name shown in ChatGPT
 │           │   └── SKILL.md    # pages and parts
 │           └── youtube/
 │               └── SKILL.md    # YouTube videos (uses clip for saving)
@@ -469,6 +471,11 @@ npx --yes markdownlint-cli2@0.18.1
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.9.0** (2026-10-17)
+- ChatGPT: the clip skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. These browsers can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
+- Page text is treated as content to summarize, never as instructions to follow.
+- When it isn't clear which tab you mean, Gleaner asks instead of guessing, and it never makes up a URL, tab, or clip link.
 
 **1.8.0** (2026-10-17)
 - Artifact destination: "save it as an artifact" or `--to artifact` publishes each clip as its own private claude.ai artifact, a web page with the clip's details at the top. Needs a session that can publish artifacts, such as Claude Code.
