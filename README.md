@@ -58,7 +58,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **No duplicates.** Saving a page you've already clipped offers an updated copy that links to the original. Nothing is ever overwritten or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
 - **Drive, Notion, artifacts, or local.** Saves to Google Drive by default, to a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
-- **Works where you browse.** The Chrome side panel, or the built-in browser in Claude Code desktop. Hand it a URL and it opens the page for you.
+- **Works where you browse.** The Chrome side panel, the built-in browser in Claude Code desktop, or ChatGPT's connected Chrome tabs and Work browser. Hand it a URL and it opens or fetches the page for you.
 
 ## Install
 
@@ -211,7 +211,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 
 | Destination | How to choose it | Needs |
 |---|---|---|
-| **Google Drive** → `Browser Research/<category>/` | Default in the Chrome side panel and Cowork; "save to Drive" in Claude Code | Google Drive connector |
+| **Google Drive** → `Browser Research/<category>/` | Default in the Chrome side panel, ChatGPT, and Cowork; "save to Drive" in Claude Code | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
 | **This project** → `browser-research/<category>/` | Default in Claude Code | A Claude Code session |
@@ -473,7 +473,7 @@ MIT © Shawn Sandy
 ## Changelog
 
 **1.9.0** (2026-10-17)
-- ChatGPT: the clip skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. These browsers can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
+- ChatGPT: the clip skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. Connected tabs can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
 - ChatGPT: the youtube skill reads the video's tab instead of running its transcript script. It uses a transcript only when the tab shows one, otherwise saves a description-only clip, and asks for a time range or topic for "this part", since it can't read the playback position.
 - Page text is treated as content to summarize, never as instructions to follow.
 - When it isn't clear which tab you mean, Gleaner asks instead of guessing, and it never makes up a URL, tab, or clip link.

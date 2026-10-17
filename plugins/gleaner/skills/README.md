@@ -13,8 +13,8 @@ For installation and the full feature guide, see the [main README](../../../READ
 
 ## Before you start
 
-- **A page Claude can see.** Use the Claude side panel in Chrome, or the Browser pane in Claude Code desktop (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows). Or skip browsing and put a URL in the request.
-- **A destination.** The default is Google Drive in the Chrome side panel, and the project folder in Claude Code. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
+- **A page Claude can see.** Use the Claude side panel in Chrome, or the Browser pane in Claude Code desktop (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows). In ChatGPT, use connected Chrome tabs or the Work browser. Or skip browsing and put a URL in the request.
+- **A destination.** The default is Google Drive in the Chrome side panel and ChatGPT, and the project folder in Claude Code. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
 
 ## clip: pages and parts
 
