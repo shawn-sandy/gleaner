@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, or your Claude Code project. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -29,6 +29,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
   - [Adding notes](#adding-notes)
   - [Choosing where clips go](#choosing-where-clips-go)
     - [Saving to Notion](#saving-to-notion)
+    - [Saving as an artifact](#saving-as-an-artifact)
     - [The `--to` flag](#the---to-flag)
   - [Categories and tags](#categories-and-tags)
   - [Finding your clips](#finding-your-clips)
@@ -56,7 +57,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
 - **No duplicates.** Saving a page you've already clipped offers an updated copy that links to the original. Nothing is ever overwritten or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
-- **Drive, Notion, or local.** Saves to Google Drive by default, to a Notion database, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
+- **Drive, Notion, artifacts, or local.** Saves to Google Drive by default, to a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
 - **Works where you browse.** The Chrome side panel, or the built-in browser in Claude Code desktop. Hand it a URL and it opens the page for you.
 
 ## Install
@@ -66,6 +67,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - The **Google Drive** connector, for the default destination.
 - *Optional:* the Claude desktop app, open and connected, for saving to Cowork projects.
 - *Optional:* the **Notion** connector, for saving to Notion.
+- *Optional:* a session that can publish artifacts, such as Claude Code, for saving clips as artifacts.
 
 ### Claude app and Cowork
 
@@ -214,6 +216,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 | **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
 | **This project** → `browser-research/<category>/` | Default in Claude Code | A Claude Code session |
 | **Notion** → `Browser Research` database | "save to Notion", or `--to notion` | Notion connector |
+| **Artifact** → a private page on claude.ai | "save it as an artifact", or `--to artifact` | A session that can publish artifacts, such as Claude Code |
 
 Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead.
 
@@ -237,6 +240,14 @@ Connect the **Notion** connector, then say "save to Notion" or add `--to notion`
 
 The first time, Gleaner asks which Notion page should hold the database and creates it there. After that, the database *is* your clip index: filter by tag, group by category, or sort by date right in Notion, and it's always up to date. Use `--to notion:"Other Database"` to save somewhere else.
 
+#### Saving as an artifact
+
+Say "save it as an artifact" or add `--to artifact`. Each clip becomes its own artifact: a private web page on claude.ai with the clip's details (source, date, category, type, tags, note) at the top and the summary below, readable in light or dark mode and on a phone. It stays private until you share it. Every save, updated copies included, is a new artifact; Gleaner never republishes over an old one.
+
+This needs a session that can publish artifacts, such as Claude Code. Where it can't, Gleaner says so and gives you the clip as a file.
+
+Artifacts have no folders, so the category is listed on the page. To find artifact clips, name them in the request ("what did I save to artifacts about motion?"). Gleaner opens your artifacts one by one to pick out its clips, so it checks about 50 per request and tells you if there are more.
+
 #### The `--to` flag
 
 For a quick, explicit override, add `--to` (or `-t`) to any request or to the slash command. It applies to that save only.
@@ -246,6 +257,7 @@ save this page --to drive
 grab the part about easing -t local
 /gleaner:clip --to ./notes
 save https://example.com/article --to drive:"Design Inspiration"
+keep this article --to artifact
 done --to cowork:Serve513
 ```
 
@@ -255,6 +267,7 @@ done --to cowork:Serve513
 | `--to drive:"Folder Name"` | Drive → `<Folder Name>/<Category>/` |
 | `--to notion` | Notion → `Browser Research` database |
 | `--to notion:"Database Name"` | Notion → that database |
+| `--to artifact` | A new private artifact on claude.ai |
 | `--to local` | Your working folder → `browser-research/<category>/` |
 | `--to cowork:"Project Name"` | That Cowork project → `browser-research/<category>/` |
 | `--to <path>` | Any local folder, like `./notes` or `~/Documents/research` → `<path>/<category>/` |
@@ -298,6 +311,8 @@ You get a table, newest first: date, title (linked), category, type, tags, note,
 
 You can also search directly in Google Drive: type a tag like `#motion` or a note phrase into Drive's search bar.
 
+Clips saved as artifacts are searched only when you ask for them ("what did I save to artifacts about Cowork?"); see [Saving as an artifact](#saving-as-an-artifact).
+
 ### Index spreadsheet
 
 > make me an index sheet
@@ -337,7 +352,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Clip a link | "save https://…" |
 | Save a YouTube video | "save this video" · "save https://youtu.be/…" |
 | Save part of a video | "keep 3:10 to 5:40" · "grab the part about X" · "add this part" |
-| Force a destination | add `--to drive`, `--to notion`, `--to local`, or `--to ./path` |
+| Force a destination | add `--to drive`, `--to notion`, `--to artifact`, `--to local`, or `--to ./path` |
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
 | Find clips | "what did I save about X?" · "clips from this week" |
@@ -391,6 +406,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
 - **Drive files can't be edited.** The Drive connector can create and read files but not change them, so updates are new copies and index sheets are snapshots.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
+- **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
 - **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), the clip comes from the title, description, and chapters only, and parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **Paywalls and sign-ins.** Only visible content is summarized, and the clip says so.
 
@@ -453,6 +469,9 @@ npx --yes markdownlint-cli2@0.18.1
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.8.0** (2026-10-17)
+- Artifact destination: "save it as an artifact" or `--to artifact` publishes each clip as its own private claude.ai artifact, a web page with the clip's details at the top. Needs a session that can publish artifacts, such as Claude Code.
 
 **1.7.0** (2026-10-16)
 - Save Claude's answers about a page: ask about what you're reading, then say "save that" or "save those steps" to keep the answer as a clip. Answers keep their steps and code, are headed by your question, and mark anything that didn't come from the page "(not from the page)".

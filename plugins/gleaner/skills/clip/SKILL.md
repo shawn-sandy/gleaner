@@ -1,19 +1,20 @@
 ---
 name: clip
-description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged clips in Google Drive, Notion, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the clip", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
-argument-hint: '[--to drive | notion | local | cowork:"Project" | <path>]'
+description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged clips in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the clip", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+argument-hint: '[--to drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
 # Gleaner
 
 Gather the best of what you read into tagged, searchable clips.
 
-Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of four places:
+Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of five places:
 
 - **Google Drive** (default in the Chrome side panel and Cowork): uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
 - **This project** (default in Claude Code): the folder the Claude Code session is working in.
 - **Notion** (on request): a page per clip in a Notion database, using the Notion connector.
+- **Artifact** (on request): a private claude.ai web page per clip, published with the Artifact tool.
 
 This skill does not write to claude.ai Projects; those can only be read from Cowork, not written to.
 
@@ -75,7 +76,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 |---|---|---|
 | **Topic** of a part | "about", "on", "covering", "the bit where" | "the part about animation lengths" → `animation lengths` |
 | **Note** (why they're saving it) | "for", "because", "so I can", "good example of", or any comment after the request | "keep this, great example of scroll-driven animation" → `great example of scroll-driven animation` |
-| **Destination** | "to/in my … folder", "in Drive", "to my … project" | "save to my Serve513 project" → Cowork project `Serve513`; "save it to this project/repo" → This project |
+| **Destination** | "to/in my … folder", "in Drive", "to my … project", "as an artifact" | "save to my Serve513 project" → Cowork project `Serve513`; "save it to this project/repo" → This project; "save it as an artifact" → Artifact |
 | **Category** | "file under", "put in", "as" plus a category name | "file this under design" → `Design Engineering` |
 | **Tags** | "tag it", hashtags, "label it" | "tag it motion and css" → `#motion #css` |
 
@@ -93,6 +94,7 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 | `--to drive` | Google Drive → `Browser Research/<Category>/` |
 | `--to notion` | Notion → the `Browser Research` database |
 | `--to notion:"Database Name"` | Notion → that database |
+| `--to artifact` | A new private claude.ai artifact, one per clip |
 | `--to drive:"Folder Name"` | Google Drive → `<Folder Name>/<Category>/` (quotes needed only if the name has spaces) |
 | `--to local` | The working folder → `browser-research/<category-folder>/` (Claude Code), or the current Cowork project |
 | `--to cowork:"Project Name"` | That Cowork project's folder → `browser-research/<category-folder>/` |
@@ -101,7 +103,7 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 Rules:
 - **Precedence:** a `--to` flag beats a destination described in words, which beats the surface's default. If the flag and the words disagree in the same request, follow the flag and mention it.
 - **Paths:** a value starting with `./`, `../`, `/`, or `~` is a local path. Relative paths resolve from the session's working directory. Create the folder if it's missing, but only inside the working directory or the user's home folder; for anything else, ask first.
-- **Unavailable destinations:** local paths need local file access (Claude Code, or a desktop session with the folder connected), and `drive` needs the Google Drive connector. If the flagged destination can't be reached, don't silently switch: say so in one line and use the fallback in step 6.
+- **Unavailable destinations:** local paths need local file access (Claude Code, or a desktop session with the folder connected), `drive` needs the Google Drive connector, and `artifact` needs the Artifact tool. If the flagged destination can't be reached, don't silently switch: say so in one line and use the fallback in step 6.
 - **Scope:** the flag applies to the clip being saved now. When collecting parts, a flag on any part request or on the final save applies to the whole clip; if different parts carry conflicting flags, use the one on the final save, or the most recent one.
 - **Unknown values:** if the value isn't recognized (`--to dropbox`), say which values work and don't save.
 - `notion` needs the Notion connector. If it isn't connected, say so in one line and suggest connecting it.
@@ -136,6 +138,7 @@ To add a part:
 2. **Pick the destination.**
    - A `--to` flag decides the destination (see Destination flag).
    - "Save to Notion" or "put it in Notion" in words means the Notion destination, the same as `--to notion`.
+   - "Save it as an artifact", "make it an artifact", or "save to my artifacts" means the Artifact destination, the same as `--to artifact`.
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
    - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
    - **In Claude Code, the default is This project** (the folder the session is working in). Use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research").
@@ -144,6 +147,7 @@ To add a part:
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
      - Cowork project or This project: search `browser-research/` for the URL.
      - Notion: query the destination database for pages whose **Source** property equals the URL. Use a structured rows query with a property filter rather than SQL, which is rate-limited on some Notion plans.
+     - Artifact: list the user's artifacts and read the ones titled like this page (clips are named after it). A match is a Gleaner clip (its page has the `Gleaner clip` generator line) whose Source row is the URL.
      - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. If they don't answer, save the updated copy.
      - An updated copy keeps the same category and tags unless the content clearly changed, and adds a `**Supersedes:** <link or path to the old clip>` line under **Tags**. Never edit or delete the old clip.
 
@@ -272,9 +276,70 @@ To add a part:
    - **Duplicates:** never edit or delete an existing page. An updated copy is a new page with **Supersedes** set.
    - Confirm with the page link and the database name.
 
+   **Artifact**
+   - **Needs the Artifact tool**, which publishes HTML pages to claude.ai. If this session doesn't have it, say so in one line and use the fallback below.
+   - **One artifact per clip.** Every save, updated copies included, is a new artifact. Never publish with an existing artifact's `url`, since that replaces the page.
+   - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so never reuse a path.
+   - **Fill the template below** from the summary in step 3, replacing each `[[…]]` placeholder, so every clip looks like one set:
+     - Each of the clip's bold header lines, from Source down (Supersedes and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
+     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as Key points in a part clip or the TL;DR of a single-answer clip. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. Keep every link, timestamped video links included.
+     - The page title is the clip title, shortened to a short name if it runs long: keep the specific words, drop site names and taglines. The h1 keeps the full title.
+     - Escape page text: write an ampersand as `&amp;`, angle brackets as `&lt;` and `&gt;`, and a double quote inside an attribute (such as a link address) as `&quot;`.
+     - The page is the user's summary, not a copy of the source: link the source, but don't reproduce its logo, styling, or byline.
+
+     ```html
+     <title>[[short name]]</title>
+     <meta name="claude:viewport-fit-sides" content="cover">
+     <meta name="generator" content="Gleaner clip">
+     <style>
+       /* One reading column: the header facts as a label list, then the summary */
+       :root { --bg: #f6f7f4; --fg: #1f2523; --muted: #5d6863; --line: #d8ded9; --accent: #2d6a5d; --code: #eaeeeb; --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace }
+       @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #151a18; --fg: #e3e8e5; --muted: #9ba6a1; --line: #2d3633; --accent: #80c4b3; --code: #1e2522; color-scheme: dark } }
+       :root[data-theme="dark"] { --bg: #151a18; --fg: #e3e8e5; --muted: #9ba6a1; --line: #2d3633; --accent: #80c4b3; --code: #1e2522; color-scheme: dark }
+       body { background: var(--bg); color: var(--fg); font: 1rem/1.6 var(--sans) }
+       main { max-width: 42rem; margin: 0 auto; padding-block: 2rem 3rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+       h1 { font-size: 1.75rem; line-height: 1.25; text-wrap: balance; margin: 0 0 1rem }
+       h2 { font-size: 1.125rem; margin: 2rem 0 0.5rem }
+       h3 { font-size: 1rem; margin: 1.5rem 0 0.25rem }
+       a { color: var(--accent); overflow-wrap: anywhere }
+       a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+       dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.25rem 1rem; margin: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--line); font-size: 0.875rem }
+       dt { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; padding-top: 0.125rem }
+       dd { margin: 0; min-width: 0 }
+       ul { padding-left: 1.25rem }
+       li + li { margin-top: 0.375rem }
+       code { font-family: var(--mono); font-size: 0.875em; background: var(--code); border-radius: 4px; padding: 0.1em 0.3em }
+       pre { overflow-x: auto; background: var(--code); border-radius: 6px; padding: 0.75rem 1rem }
+       pre code { background: none; padding: 0 }
+     </style>
+     <main>
+       <h1>[[clip title]]</h1>
+       <dl>
+         <dt>Source</dt><dd><a href="[[URL]]">[[URL]]</a></dd>
+         <dt>Saved</dt><dd>[[YYYY-MM-DD]]</dd>
+         <dt>Category</dt><dd>[[category]]</dd>
+         <dt>Type</dt><dd>[[type]]</dd>
+         <dt>Tags</dt><dd>[[#tag #tag #tag]]</dd>
+         <dt>Note</dt><dd>[[the user's note]]</dd>
+       </dl>
+       <h2>TL;DR</h2>
+       <p>[[2–3 sentences]]</p>
+       <h2>Key points</h2>
+       <ul>
+         <li>[[one point]]</li>
+       </ul>
+       [[the clip's remaining sections, in order]]
+     </main>
+     ```
+
+   - **Publish** with the Artifact tool, following its own rules for a new page (such as design guidance it asks you to load first). This is a plain HTML page, not a document, deck, or other Artifact type, and the template is its design: keep it rather than restyling each clip. Pass `bookmark` as the `icon` and, as the `description`, the TL;DR's first sentence, or the user's question when the clip has no TL;DR.
+   - **If the publish is refused,** say why in one line and use the fallback below. Don't retry it or host the page anywhere else.
+   - Artifacts have no folders; the Category row does that job. They stay private until the user shares them.
+   - Confirm with the artifact's link.
+
    **Fallback:** give the user the Markdown file and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
-7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link, or project and path), the tags, and a one-line TL;DR. Don't repeat the full summary. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
+7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; or the artifact's link), the tags, and a one-line TL;DR. Don't repeat the full summary. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
 
 ## Clip index (on demand)
 
@@ -286,7 +351,8 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
    - Cowork project or This project: search `browser-research/` recursively.
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
-   - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other location when the user asks for it or names it.
+   - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date, but clips are never republished, so an artifact's last-updated time is when it was saved: for a date range, skip artifacts updated outside it without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
+   - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other locations when the user asks for them or names one.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)" or "(2 parts, 1 answer)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
