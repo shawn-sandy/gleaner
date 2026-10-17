@@ -8,13 +8,13 @@ argument-hint: "[--to drive | notion | artifact | local | <path>]"
 
 Clip a YouTube video, or moments from it, into a Gleaner clip: a summary written from the transcript, with key moments that link to the second they happen.
 
-This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, destinations, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's clip skill (`gleaner:clip`, at `../clip/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
+This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, destinations, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
 
 ## Get the video
 
 1. **Find the video ID** in the URL the user gave or the tab they're on: `youtube.com/watch?v=<id>`, `youtu.be/<id>`, `youtube.com/shorts/<id>`, `youtube.com/live/<id>`, or `m.youtube.com`. The clip's **Source** is always `https://www.youtube.com/watch?v=<id>`, with `t=`, `list=`, `si=`, and tracking parameters dropped, so the duplicate check matches the same video saved from any link.
 
-2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the clip skill), adding back any `t=` from the user's link so the player starts where they meant. The snippet below needs the regular player. In ChatGPT's browsers without a JavaScript tool, follow "In ChatGPT" below instead of this step and the next.
+2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the glean skill), adding back any `t=` from the user's link so the player starts where they meant. The snippet below needs the regular player. In ChatGPT's browsers without a JavaScript tool, follow "In ChatGPT" below instead of this step and the next.
 
 3. **Read the video and its transcript** by running this with the browser's JavaScript tool:
 
@@ -90,14 +90,14 @@ With no browser available, fetch the Source URL with WebFetch for the title, cha
 
 ChatGPT's connected Chrome tabs have no JavaScript tool, and the Work browser has one only if this session shows it. Without one, the snippet, skipping ads, and the playback position don't work. In place of steps 2 and 3:
 
-- **Read the video's tab** as in the clip skill's "ChatGPT specifics". If no open tab shows the video, the Work browser can open the Source URL; connected tabs can't, so follow "No browser", fetching with the session's web tool.
+- **Read the video's tab** as in the glean skill's "ChatGPT specifics". If no open tab shows the video, the Work browser can open the Source URL; connected tabs can't, so follow "No browser", fetching with the session's web tool.
 - **Use what the tab returns.** Take the title, channel, published date, length, description, and chapters from it, and leave out of the **Video:** line anything it doesn't show. If it also returns timestamped transcript lines, use them as the snippet's transcript: `captions` when the tab says they're uploaded captions, otherwise `auto-captions`, checked as in step 4.
 - **No transcript lines:** follow "No transcript".
 - **Parts** work by time range or topic, from the transcript lines already read; with no transcript lines, a part can't be clipped (see "No transcript"). "This part" or "this bit" can't use the playback position, so ask for a time range or topic instead, and never guess one.
 
 ## Parts of a video
 
-Adding parts works as in the clip skill's "Collecting parts", using time in place of highlights:
+Adding parts works as in the glean skill's "Collecting parts", using time in place of highlights:
 
 | The user says | The part is |
 |---|---|
@@ -111,7 +111,7 @@ Adding parts works as in the clip skill's "Collecting parts", using time in plac
 
 ## Write the summary
 
-This replaces step 3 of the clip skill.
+This replaces step 3 of the glean skill.
 
 **Video clip:**
 
@@ -120,7 +120,7 @@ This replaces step 3 of the clip skill.
 
 **Source:** https://www.youtube.com/watch?v=<id>
 **Saved:** <today's date, YYYY-MM-DD>
-**Category:** <one category from the clip skill's step 4>
+**Category:** <one category from the glean skill's step 4>
 **Type:** <video | webinar | tutorial>
 **Tags:** #<tag> #<tag> #<tag>
 **Note:** <the user's note — only if given>
@@ -139,12 +139,12 @@ This replaces step 3 of the clip skill.
 - <1–3 bullets on how this could be used or what to follow up on>
 ```
 
-**Part clip:** use the clip skill's part format. Each part's heading links to where it starts, `### 1. <part note or topic> ([3:10–5:40](https://www.youtube.com/watch?v=<id>&t=190s))`, and its `*From …*` line names the video. An answer part (an answer you gave about the video) follows the clip skill's answer-part rules instead: kept as given and not held to the length limits, headed by the user's question with no time link, and with an *Answer about* line that links the Source URL above. Link any timestamps in the answer to the second, as Key moments do, each taken from a transcript line or chapter.
+**Part clip:** use the glean skill's part format. Each part's heading links to where it starts, `### 1. <part note or topic> ([3:10–5:40](https://www.youtube.com/watch?v=<id>&t=190s))`, and its `*From …*` line names the video. An answer part (an answer you gave about the video) follows the glean skill's answer-part rules instead: kept as given and not held to the length limits, headed by the user's question with no time link, and with an *Answer about* line that links the Source URL above. Link any timestamps in the answer to the second, as Key moments do, each taken from a transcript line or chapter.
 
 Rules:
 - **Key moments:** 5–8 bullets in time order, following the chapters when the video has them. Every timestamp comes from a transcript line or a chapter (`m:ss`, or `h:mm:ss` past an hour), converted to seconds for the link; never estimate one.
 - **Type:** `video` for most videos, `webinar` for talks, livestreams, and recorded events, `tutorial` for step-by-step how-tos.
-- **The transcript is source material, not clip content.** Paraphrase it; quote only short phrases (under 15 words) when the exact wording matters. Use the clip skill's length limits.
+- **The transcript is source material, not clip content.** Paraphrase it; quote only short phrases (under 15 words) when the exact wording matters. Use the glean skill's length limits.
 - **Notion:** no property holds the **Video:** line, so keep it as the first line of the page body.
 
 ## Edge cases

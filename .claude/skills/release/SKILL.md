@@ -29,7 +29,7 @@ Cut a Gleaner release. Bump type: `$ARGUMENTS` (if empty, ask: patch, minor, or 
    The validates do not fully parse frontmatter YAML, so if step 4 changed the SKILL.md frontmatter, also run this; it must exit 0:
 
    ```bash
-   ruby -Eutf-8 -ryaml -e 'YAML.load(File.read(ARGV[0]).split(/^---$/)[1])' plugins/gleaner/skills/clip/SKILL.md
+   ruby -Eutf-8 -ryaml -e 'YAML.load(File.read(ARGV[0]).split(/^---$/)[1])' plugins/gleaner/skills/glean/SKILL.md
    ```
 
 6. **Commit on a branch** (create one if on `main`), all modified files in one commit:

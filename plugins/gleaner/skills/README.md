@@ -2,21 +2,27 @@
 
 Gleaner ships two skills. You don't have to pick one: describe what you want, and Claude loads the right skill from your words and the page you're on. In Claude Code you can also call either one directly.
 
-| Skill | Command | Use it for |
+| Skill | Claude Code command | Use it for |
 |---|---|---|
-| [clip](clip/SKILL.md) | `/gleaner:clip` | Web pages, parts of pages, Claude's answers about them, and finding saved clips |
+| [glean](glean/SKILL.md) | `/gleaner:glean` | Web pages, parts of pages, Claude's answers about them, and finding saved clips |
 | [youtube](youtube/SKILL.md) | `/gleaner:youtube` | YouTube videos and moments from them |
 
-The youtube skill handles only what's different about video: reading the transcript and writing a summary with timestamped links. Everything else (notes, parts, destinations, categories, saving, and search) comes from clip. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
+The youtube skill handles only what's different about video: reading the transcript and writing a summary with timestamped links. Everything else (notes, parts, destinations, categories, saving, and search) comes from glean. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
 
 For installation and the full feature guide, see the [main README](../../../README.md).
+
+## Upgrading to 2.0.0
+
+The `clip` skill is now named `glean`. Use `/gleaner:glean` wherever you previously used `/gleaner:clip`, including saved prompts and shortcuts. The old command is no longer available; `/gleaner:youtube` is unchanged.
+
+The rename does not change existing clips or plain-language requests such as "save this page" and "done." If you customize the skill, edit [glean/SKILL.md](glean/SKILL.md). See the [upgrade instructions](../../../README.md#upgrading-from-clip-to-glean) if the new command is not available after updating.
 
 ## Before you start
 
 - **A page Claude can see.** Use the Claude side panel in Chrome, or the Browser pane in Claude Code desktop (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows). In ChatGPT, use connected Chrome tabs or the Work browser. Or skip browsing and put a URL in the request.
 - **A destination.** The default is Google Drive in the Chrome side panel and ChatGPT, and the project folder in Claude Code. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
 
-## clip: pages and parts
+## glean: pages, parts, answers, and search
 
 ### Save a whole page
 
@@ -64,7 +70,7 @@ Name the destination in words, or add `--to` (short form `-t`) for that one save
 save this page to Notion
 save this page as an artifact
 done --to ./notes
-/gleaner:clip --to drive:"Design Inspiration"
+/gleaner:glean --to drive:"Design Inspiration"
 ```
 
 A flag beats words, and words beat the default. Every flag value is listed under [The `--to` flag](../../../README.md#the---to-flag).

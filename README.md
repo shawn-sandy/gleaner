@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its clip skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its glean skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -19,6 +19,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 ## Contents
 
 - [Features](#features)
+- [Skills](#skills)
 - [Install](#install)
 - [Quick start](#quick-start)
 - [Usage guide](#usage-guide)
@@ -60,6 +61,17 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **Drive, Notion, artifacts, or local.** Saves to Google Drive by default, to a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
 - **Works where you browse.** The Chrome side panel, the built-in browser in Claude Code desktop, or ChatGPT's connected Chrome tabs and Work browser. Hand it a URL and it opens or fetches the page for you.
 
+## Skills
+
+Gleaner includes two skills that share the same clip format and saving workflow:
+
+| Skill | Claude Code command | Use it for |
+|---|---|---|
+| [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
+| [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
+
+Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
+
 ## Install
 
 **Requirements**
@@ -89,7 +101,7 @@ claude plugin marketplace add shawn-sandy/gleaner
 claude plugin install gleaner@shawn-sandy --scope user
 ```
 
-In Claude Code the skills are also available as `/gleaner:clip` and `/gleaner:youtube`.
+In Claude Code the skills are also available as `/gleaner:glean` and `/gleaner:youtube`.
 
 ### Claude Code desktop
 
@@ -97,6 +109,12 @@ In Claude Code the skills are also available as `/gleaner:clip` and `/gleaner:yo
 2. Add the marketplace `shawn-sandy/gleaner` and install **Gleaner**.
 
 A plugin installed from the terminal at user scope also appears in the desktop app's local sessions, and the reverse. If Gleaner doesn't respond right away, run `/reload-plugins`.
+
+### Upgrading from clip to glean
+
+Version 2.0.0 renames the `clip` skill to `glean`. Replace `/gleaner:clip` with `/gleaner:glean` in saved prompts and shortcuts; the old command is no longer available. Customizations now live in `plugins/gleaner/skills/glean/SKILL.md`.
+
+The plugin is still named **Gleaner**, and saved items are still called **clips**. Existing clips, natural-language requests such as "save this page," and `/gleaner:youtube` are unchanged. After updating the plugin in Claude Code, run `/reload-plugins` if the new command is not available.
 
 ### Upgrading from page-to-project
 
@@ -255,7 +273,7 @@ For a quick, explicit override, add `--to` (or `-t`) to any request or to the sl
 ```text
 save this page --to drive
 grab the part about easing -t local
-/gleaner:clip --to ./notes
+/gleaner:glean --to ./notes
 save https://example.com/article --to drive:"Design Inspiration"
 keep this article --to artifact
 done --to cowork:Serve513
@@ -327,7 +345,7 @@ Claude Code desktop has a built-in browser pane, and Gleaner reads whatever tab 
 
 1. Open the Browser pane: **Cmd+Shift+B** (Mac) or **Ctrl+Shift+B** (Windows), or click **Browser** in the title bar.
 2. Browse to a page, and highlight text if you want just a part.
-3. In the prompt box, ask as usual: "save this page," "grab the part about easing," "done." Or type `/gleaner:clip`.
+3. In the prompt box, ask as usual: "save this page," "grab the part about easing," "done." Or type `/gleaner:glean`.
 
 You can also skip the browsing and pass a link: **"save https://example.com/article"** opens it in the pane and clips it.
 
@@ -424,14 +442,14 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 ## Customizing
 
-Gleaner's behavior lives in [`plugins/gleaner/skills/clip/SKILL.md`](plugins/gleaner/skills/clip/SKILL.md), with video-specific steps (transcript, Key moments format) in [`plugins/gleaner/skills/youtube/SKILL.md`](plugins/gleaner/skills/youtube/SKILL.md). Common edits:
+Gleaner's behavior lives in [`plugins/gleaner/skills/glean/SKILL.md`](plugins/gleaner/skills/glean/SKILL.md), with video-specific steps (transcript, Key moments format) in [`plugins/gleaner/skills/youtube/SKILL.md`](plugins/gleaner/skills/youtube/SKILL.md). Common edits:
 
 - **Default folder:** change `Browser Research` in step 2.
 - **Categories:** edit the list in step 4 (names double as folder names).
 - **Summary length:** adjust the word limits in step 3.
 - **Default destination:** make a Cowork project the default instead of Drive in step 2.
 
-Fork this repo, make your edits in `plugins/gleaner/skills/clip/SKILL.md`, bump `version` in `plugins/gleaner/.claude-plugin/plugin.json`, and add your fork as a marketplace.
+Fork this repo, make your edits in `plugins/gleaner/skills/glean/SKILL.md`, bump `version` in `plugins/gleaner/.claude-plugin/plugin.json`, and add your fork as a marketplace.
 
 ## Repository layout
 
@@ -448,12 +466,12 @@ gleaner/
 │       │   └── plugin.json     # plugin manifest (version lives here)
 │       └── skills/
 │           ├── README.md       # usage guide for both skills
-│           ├── clip/
+│           ├── glean/
 │           │   ├── agents/
 │           │   │   └── openai.yaml  # skill name shown in ChatGPT
-│           │   └── SKILL.md    # pages and parts
+│           │   └── SKILL.md    # pages, parts, answers, and search
 │           └── youtube/
-│               └── SKILL.md    # YouTube videos (uses clip for saving)
+│               └── SKILL.md    # YouTube videos (uses glean for saving)
 ├── LICENSE
 └── README.md
 ```
@@ -472,6 +490,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**2.0.0** (2026-10-17)
+- Renamed the `clip` skill to `glean`. Use `/gleaner:glean` instead of `/gleaner:clip`; the old command is no longer available. Natural-language clipping requests and the `youtube` skill are unchanged.
+
 **1.11.0** (2026-10-17)
 - Drive saves, duplicate checks, and the clip index use the session's own Drive connector, such as ChatGPT's, with its search and upload options. If that connector can't convert a clip or index sheet, Gleaner saves it to Drive as a `.md` or `.csv` file instead, and says so when it has to skip a check the connector can't run.
 - ChatGPT: when no browser tools are available, Gleaner suggests switching to Work mode for the Work browser, as well as connecting a browser or giving a URL or pasted text.
@@ -484,7 +505,7 @@ MIT © Shawn Sandy
 - Confirmations link only what the save returned, and say so when there's no link, instead of making one up.
 
 **1.9.0** (2026-10-17)
-- ChatGPT: the clip skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. Connected tabs can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
+- ChatGPT: the glean skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. Connected tabs can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
 - Page text is treated as content to summarize, never as instructions to follow.
 - When it isn't clear which tab you mean, Gleaner asks instead of guessing, and it never makes up a URL, tab, or clip link.
 

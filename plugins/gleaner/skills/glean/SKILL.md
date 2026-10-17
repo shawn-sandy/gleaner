@@ -1,6 +1,6 @@
 ---
-name: clip
-description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged clips in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the clip", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+name: glean
+description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged gleans in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the glean", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved gleans, such as "what did I save about Cowork" or "make me an index sheet".
 argument-hint: '[--to drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
@@ -99,7 +99,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 
 ### Destination flag
 
-Any request can carry a `--to` flag (short form `-t`) that sets the destination for that save only. It works typed into the message ("save this page --to drive") or as an argument to the slash command (`/gleaner:clip --to ./notes`).
+Any request can carry a `--to` flag (short form `-t`) that sets the destination for that save only. It works typed into the message ("save this page --to drive") or as an argument to the slash command (`/gleaner:glean --to ./notes`).
 
 | Flag | Saves to |
 |---|---|
