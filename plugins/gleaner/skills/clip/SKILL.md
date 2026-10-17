@@ -1,6 +1,6 @@
 ---
 name: clip
-description: Save web pages or parts of them as summarized, tagged clips in Google Drive, Notion, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading or a URL, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged clips in Google Drive, Notion, a Cowork project, or the current Claude Code project, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the clip", "done, save them", "file this under design", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
 argument-hint: '[--to drive | notion | local | cowork:"Project" | <path>]'
 ---
 
@@ -8,7 +8,7 @@ argument-hint: '[--to drive | notion | local | cowork:"Project" | <path>]'
 
 Gather the best of what you read into tagged, searchable clips.
 
-Save what the user is reading as a summarized, tagged clip in one of four places:
+Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of four places:
 
 - **Google Drive** (default in the Chrome side panel and Cowork): uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
@@ -54,6 +54,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 |---|---|---|
 | **Save page** | Saves a summary of the whole page now | "save this page", "keep this article", "bookmark this for later", "file this under design", "I want to remember this one", "stash this doc" |
 | **Add part** | Adds a part to the clip being collected; nothing saved yet | "save this part about animation lengths", "add this", "grab this bit", "keep this section too", "and this paragraph on easing", "this table matters" |
+| **Save answer** | Saves an answer you gave in this conversation as a clip now; while parts are being collected, adds it as a part instead | "save that answer", "keep that explanation", "save those steps", "save what you just told me", "explain the auth flow and save it" |
 | **Save clip** | Saves all collected parts (plus a current highlight not yet added) as one clip | "save this clip", "that's it, save them", "done", "wrap it up", "save what I've got" |
 | **Manage parts** | Lists, removes, edits, or discards parts | "what have I got so far?", "drop the second one", "change part 1's note to …", "start over" |
 | **Find clips** | Searches saved clips (see Clip index) | "what did I save about Cowork?", "show my clips from this week", "anything on view transitions?" |
@@ -61,7 +62,9 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 **Deciding between them:**
 - A request naming the whole thing ("this page", "this article", "the whole doc") is **Save page**, even with text highlighted.
 - A request naming a piece ("this part", "this bit", "this section", "this paragraph", "this quote", "this table", "the part about X") is **Add part**.
-- A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**.
+- A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**. If you had just answered a question, mention in the confirmation that "save that answer" saves the answer instead.
+- A request pointing at something you said ("that answer", "that explanation", "those steps", "what you just told me") is **Save answer**, and "add that answer" or "add those steps too" is **Add part** with the answer as the part. A bare "save that", "keep that", or "add that" right after you answered a question means the answer, even with text highlighted; say so in the confirmation ("Saved my answer — say 'save the page' if you meant the whole page").
+- A request to explain or answer something and save it ("list the setup steps and save them") is **Save answer**: answer first, then save that answer.
 - "Done", "that's all", or "save them" with parts collected is **Save clip**. With nothing collected, say there's nothing to save and offer to save the page.
 - A follow-up like "and this one" or "this too" right after adding a part is another **Add part**.
 - If parts are collected and the user asks to save the page, ask once: save the page on its own (keeping the parts), or include the parts?
@@ -110,20 +113,25 @@ Ask one short question only when acting would likely do the wrong thing, such as
 
 ### Collecting parts
 
-A part is a piece of text plus its page title, URL, topic, and note. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.
+A part is a piece of text plus its page title, URL, topic, and note. It can also be an answer you gave about a page. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.
 
 To add a part:
-1. **Read the highlight.** Run `window.getSelection()?.toString().trim() ?? ''` in the current browser (see Where Gleaner runs). Text of at least ~40 characters is the part.
-2. **No highlight but a topic given:** find the passage on the page that best matches the topic (a section, paragraph, table, or code block) and use that. Quote its first few words when confirming so the user can check it.
-3. **Pasted text** in the request is the part.
-4. **Nothing usable** (no highlight, no topic, or the highlight couldn't be read, as in embedded frames, Chrome's PDF viewer, or Google Docs): say so in one line and suggest highlighting again, describing the part, or pasting it. Don't add anything.
-5. **Confirm briefly:** `Added part 2: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.`
+1. **An answer you gave** is the part when the request points at one (see Deciding between them); skip the highlight.
+   - Use the answer the request names ("your steps for deploying"), otherwise your most recent one. If it was corrected or extended later in the conversation, use the final version.
+   - Its topic is the user's question, in their words, lightly trimmed. Its page is the one the question was about; a general question with no page behind it has none.
+   - "Save that whole back-and-forth" or "our thread about X" adds one part per question and answer.
+2. **Read the highlight.** Run `window.getSelection()?.toString().trim() ?? ''` in the current browser (see Where Gleaner runs). Text of at least ~40 characters is the part.
+3. **No highlight but a topic given:** find the passage on the page that best matches the topic (a section, paragraph, table, or code block) and use that. Quote its first few words when confirming so the user can check it.
+4. **Pasted text** in the request is the part.
+5. **Nothing usable** (no highlight, no topic, or the highlight couldn't be read, as in embedded frames, Chrome's PDF viewer, or Google Docs): say so in one line and suggest highlighting again, describing the part, or pasting it. Don't add anything.
+6. **Confirm briefly:** `Added part 2: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.` For an answer: `Added part 3: how to rotate API keys (my answer, "1. Open Settings…").`
 
 ## Steps
 
 1. **Gather the content.**
    - **Page clip:** read the full text of the page in the current browser (title, URL, and main content). Ignore navigation, ads, cookie banners, footers, and comment sections. If the page is long or paginated, read all of it.
    - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
+   - **Answer clip:** a **Save answer** with no parts collected is a part clip whose only part is that answer (see Collecting parts).
 
 2. **Pick the destination.**
    - A `--to` flag decides the destination (see Destination flag).
@@ -199,6 +207,12 @@ To add a part:
    - Paraphrase in your own words. Quote only short phrases (under 15 words) when exact wording matters.
    - Keep page clips under ~400 words and part clips under ~150 words per part, unless the user asks for more depth.
    - For technical content (docs, release notes, tutorials), keep code examples short. Write any JavaScript as type-safe TypeScript.
+   - **Answer parts** keep the answer as you gave it instead of summarizing it: numbered steps stay numbered, code stays code, and the 2–4 bullet and ~150-word limits don't apply. The quoting rule above still applies to anything the answer quoted from the page.
+     - Head the part with the user's question, and replace its *From* line with `*Answer about [<page title>](<URL>)*`, or `*Answer, not tied to a page*` when there was none.
+     - Mark anything in the answer that didn't come from the page, such as background knowledge or a step you added, with "(not from the page)", so a clip never passes your knowledge off as the source's.
+     - On the **Scope:** line, count answers apart from other parts: `2 parts, 1 answer from 1 page`, or `1 answer from 1 page`. Leave out the Source line and use `other` as the Type when no part has a page.
+     - A clip whose only part is one answer leaves out the TL;DR, since the question and answer already are the summary.
+     - For an answer about a YouTube video, link any timestamps in it to the second, as the youtube skill's Key moments do.
 
 4. **Categorize it** so clips are easy to find later.
    - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.
@@ -274,7 +288,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other location when the user asks for it or names it.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
-3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with "(N parts)" after the title. Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
+3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)" or "(2 parts, 1 answer)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
 
 ### Snapshot sheet
@@ -288,3 +302,4 @@ Notion users already have a live index in the database; offer its link first. If
 - **PDFs or other videos in the tab:** summarize the text or transcript if readable; otherwise tell the user what couldn't be read.
 - **Several tabs at once:** if the user groups tabs and says "save these pages", write one page clip per tab, or one combined clip if they ask for it.
 - **Session ended mid-collection:** collected parts exist only in the conversation. If the user comes back in a new session asking about unsaved parts, say they weren't saved and offer to start again.
+- **An answer you can't see:** if the user asks to save an answer from an earlier session, or one no longer in this conversation, say you can't see it and offer to answer the question again. Never rebuild an answer from memory and save it as the original.
