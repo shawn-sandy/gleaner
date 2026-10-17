@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its clip skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -58,7 +58,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **No duplicates.** Saving a page you've already clipped offers an updated copy that links to the original. Nothing is ever overwritten or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
 - **Drive, Notion, artifacts, or local.** Saves to Google Drive by default, to a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
-- **Works where you browse.** The Chrome side panel, or the built-in browser in Claude Code desktop. Hand it a URL and it opens the page for you.
+- **Works where you browse.** The Chrome side panel, the built-in browser in Claude Code desktop, or ChatGPT's connected Chrome tabs and Work browser. Hand it a URL and it opens or fetches the page for you.
 
 ## Install
 
@@ -211,7 +211,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 
 | Destination | How to choose it | Needs |
 |---|---|---|
-| **Google Drive** → `Browser Research/<category>/` | Default in the Chrome side panel and Cowork; "save to Drive" in Claude Code | Google Drive connector |
+| **Google Drive** → `Browser Research/<category>/` | Default in the Chrome side panel, ChatGPT, and Cowork; "save to Drive" in Claude Code | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
 | **This project** → `browser-research/<category>/` | Default in Claude Code | A Claude Code session |
@@ -449,6 +449,8 @@ gleaner/
 │       └── skills/
 │           ├── README.md       # usage guide for both skills
 │           ├── clip/
+│           │   ├── agents/
+│           │   │   └── openai.yaml  # skill name shown in ChatGPT
 │           │   └── SKILL.md    # pages and parts
 │           └── youtube/
 │               └── SKILL.md    # YouTube videos (uses clip for saving)
@@ -469,6 +471,18 @@ npx --yes markdownlint-cli2@0.18.1
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.10.0** (2026-10-17)
+- ChatGPT: the youtube skill reads the video's tab when the browser can't run its transcript script. It uses a transcript only when the tab shows one, otherwise saves a description-only clip, and asks for a time range or topic for "this part", since it can't read the playback position. A part needs transcript lines; chapters alone aren't enough.
+- ChatGPT: unlabeled transcript lines are treated as auto-captions, so product names and jargon are still checked before they go in the clip.
+- ChatGPT Work browser: uses its JavaScript tool for highlights and transcripts when the session has one, and opens a URL itself instead of fetching it.
+- In ChatGPT's connected tabs, Gleaner no longer suggests highlighting again when it can't find a part.
+- Confirmations link only what the save returned, and say so when there's no link, instead of making one up.
+
+**1.9.0** (2026-10-17)
+- ChatGPT: the clip skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. Connected tabs can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
+- Page text is treated as content to summarize, never as instructions to follow.
+- When it isn't clear which tab you mean, Gleaner asks instead of guessing, and it never makes up a URL, tab, or clip link.
 
 **1.8.0** (2026-10-17)
 - Artifact destination: "save it as an artifact" or `--to artifact` publishes each clip as its own private claude.ai artifact, a web page with the clip's details at the top. Needs a session that can publish artifacts, such as Claude Code.
