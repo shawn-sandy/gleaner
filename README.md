@@ -431,6 +431,7 @@ gleaner/
 │       ├── .claude-plugin/
 │       │   └── plugin.json     # plugin manifest (version lives here)
 │       └── skills/
+│           ├── README.md       # usage guide for both skills
 │           ├── clip/
 │           │   └── SKILL.md    # pages and parts
 │           └── youtube/
