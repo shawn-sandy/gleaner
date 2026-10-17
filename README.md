@@ -218,7 +218,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 | **Notion** → `Browser Research` database | "save to Notion", or `--to notion` | Notion connector |
 | **Artifact** → a private page on claude.ai | "save it as an artifact", or `--to artifact` | A session that can publish artifacts, such as Claude Code |
 
-Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead.
+Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead. Where the session's Drive connector can't convert (some ChatGPT sessions), clips are saved as `.md` files.
 
 If a destination can't be reached, Gleaner gives you the clip as a file and says plainly that it wasn't saved. It never claims a save that didn't happen.
 
@@ -471,6 +471,10 @@ npx --yes markdownlint-cli2@0.18.1
 MIT © Shawn Sandy
 
 ## Changelog
+
+**1.11.0** (2026-10-17)
+- Drive saves, duplicate checks, and the clip index use the session's own Drive connector, such as ChatGPT's, with its search and upload options. If that connector can't convert a clip or index sheet, Gleaner saves it to Drive as a `.md` or `.csv` file instead, and says so when it has to skip a check the connector can't run.
+- ChatGPT: when no browser tools are available, Gleaner suggests switching to Work mode for the Work browser, as well as connecting a browser or giving a URL or pasted text.
 
 **1.10.0** (2026-10-17)
 - ChatGPT: the youtube skill reads the video's tab when the browser can't run its transcript script. It uses a transcript only when the tab shows one, otherwise saves a description-only clip, and asks for a time range or topic for "this part", since it can't read the playback position. A part needs transcript lines; chapters alone aren't enough.

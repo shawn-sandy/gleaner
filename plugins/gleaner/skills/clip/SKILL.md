@@ -51,7 +51,7 @@ If it isn't clear which tab "the page" is, such as several open tabs with none m
 - **No highlights** (connected tabs, or a Work browser with no JavaScript tool): for a part, use the topic the user named or ask them to paste the text. Don't suggest highlighting.
 - **URLs:** the Work browser can open the URL. Connected tabs can't open pages: if a tab with that URL is open, read it; otherwise fetch the URL with the session's web tool and say it was read without a browser.
 - **Work browser:** use only the tools this session actually shows, and only to read or open pages. Never submit forms, sign in, or change account settings to clip a page.
-- **No browser tools:** a Chrome extension or side panel doesn't give ChatGPT tab access by itself. If no browser tools appear, ask the user to connect their browser, or to give a URL or pasted text.
+- **No browser tools:** a Chrome extension or side panel doesn't give ChatGPT tab access by itself. If no browser tools appear, ask the user to connect their browser or switch to Work mode (which gives the Work browser), or to give a URL or pasted text.
 
 **A URL in the request** ("save https://…", "clip this: https://…"): open it in the current browser (`preview_start` in the built-in browser, a new tab in Claude in Chrome; for ChatGPT, see above) and clip that page. If no browser is available, fetch the page with WebFetch and say it was read without a browser, so highlights don't apply.
 
@@ -249,6 +249,7 @@ To add a part:
 6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`).
 
    **Google Drive**
+   - **Other Drive connectors** (such as ChatGPT's): the Drive queries and parameters in this skill, here and in step 2 and the Clip index, are the Claude connector's. Use your connector's equivalents by the names this session shows. If it has no equivalent for a check, such as the duplicate search, say so in one line and skip that check. If it can't convert an upload to a Google Doc or Sheet, or the conversion fails, upload the raw file with `.md` (or `.csv` for a snapshot sheet) added to the title; use the fallback below only if that upload also fails.
    - Find the destination folder: search Drive for a folder with that exact title (`mimeType = 'application/vnd.google-apps.folder'`, owned by the user, not trashed). If several match, ask which one. If none exist, create it in My Drive.
    - Inside it, find or create the category subfolder the same way (search with `parentId` set to the destination folder).
    - Check for a file with the same title in the category subfolder. If one exists, add `-2`, `-3`, and so on. Never overwrite.
