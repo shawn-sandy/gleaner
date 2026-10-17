@@ -14,7 +14,7 @@ This skill covers only what's different about video. Everything else (understand
 
 1. **Find the video ID** in the URL the user gave or the tab they're on: `youtube.com/watch?v=<id>`, `youtu.be/<id>`, `youtube.com/shorts/<id>`, `youtube.com/live/<id>`, or `m.youtube.com`. The clip's **Source** is always `https://www.youtube.com/watch?v=<id>`, with `t=`, `list=`, `si=`, and tracking parameters dropped, so the duplicate check matches the same video saved from any link.
 
-2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the clip skill), adding back any `t=` from the user's link so the player starts where they meant. The snippet below needs the regular player.
+2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the clip skill), adding back any `t=` from the user's link so the player starts where they meant. The snippet below needs the regular player. In ChatGPT's browsers, follow "In ChatGPT" below instead of this step and the next.
 
 3. **Read the video and its transcript** by running this with the browser's JavaScript tool:
 
@@ -86,6 +86,15 @@ Never summarize what you didn't read: with no transcript, there's no **Key momen
 
 With no browser available, fetch the Source URL with WebFetch for the title, channel, and description, and follow "No transcript". Say the video was read without a browser.
 
+### In ChatGPT
+
+ChatGPT's connected Chrome tabs and Work browser have no JavaScript tool, so the snippet, skipping ads, and the playback position don't work there. In place of steps 2 and 3:
+
+- **Read the video's tab** as in the clip skill's "ChatGPT specifics". If no open tab shows the video, the Work browser can open the Source URL; connected tabs can't, so follow "No browser", fetching with the session's web tool.
+- **Use what the tab returns.** Take the title, channel, published date, length, description, and chapters from it, and leave out of the **Video:** line anything it doesn't show. If it also returns timestamped transcript lines, use them as the snippet's transcript: `auto-captions` when the tab says they're auto-generated, otherwise `captions`, checked as in step 4.
+- **No transcript lines:** follow "No transcript".
+- **Parts** work by time range or topic, from the transcript lines or chapters already read. "This part" or "this bit" can't use the playback position, so ask for a time range or topic instead, and never guess one.
+
 ## Parts of a video
 
 Adding parts works as in the clip skill's "Collecting parts", using time in place of highlights:
@@ -97,7 +106,7 @@ Adding parts works as in the clip skill's "Collecting parts", using time in plac
 | "add this part", "this bit" while watching | the chapter that contains the current playback position; with no chapters, the ~60 seconds before it |
 
 - **Chapters** are the description lines that start with a timestamp (`0:00 Intro`, `3:10 Generics`).
-- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. For more parts of the same video, reuse `window.gleanerTranscript` and just read the position; run the snippet again after moving to another video.
+- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. For more parts of the same video, reuse `window.gleanerTranscript` and just read the position; run the snippet again after moving to another video. ChatGPT's browsers can't read it; see "In ChatGPT".
 - **Confirm** with the range and first few words: `Added part 2: generics (3:10–5:40, "So now let's look at…"). Add more, or say "done" to save.`
 
 ## Write the summary

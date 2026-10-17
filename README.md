@@ -474,6 +474,7 @@ MIT © Shawn Sandy
 
 **1.9.0** (2026-10-17)
 - ChatGPT: the clip skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. These browsers can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
+- ChatGPT: the youtube skill reads the video's tab instead of running its transcript script. It uses a transcript only when the tab shows one, otherwise saves a description-only clip, and asks for a time range or topic for "this part", since it can't read the playback position.
 - Page text is treated as content to summarize, never as instructions to follow.
 - When it isn't clear which tab you mean, Gleaner asks instead of guessing, and it never makes up a URL, tab, or clip link.
 
