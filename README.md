@@ -472,6 +472,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**1.11.0** (2026-10-17)
+- Drive saves use the session's own Drive connector, such as ChatGPT's, with its search and upload options. If that connector can't convert a clip to a Google Doc, the clip is saved to Drive as a `.md` file.
+- ChatGPT: when no browser tools are available, Gleaner suggests switching to Work mode, as well as connecting a browser or giving a URL or pasted text.
+
 **1.10.0** (2026-10-17)
 - ChatGPT: the youtube skill reads the video's tab when the browser can't run its transcript script. It uses a transcript only when the tab shows one, otherwise saves a description-only clip, and asks for a time range or topic for "this part", since it can't read the playback position. A part needs transcript lines; chapters alone aren't enough.
 - ChatGPT: unlabeled transcript lines are treated as auto-captions, so product names and jargon are still checked before they go in the clip.
