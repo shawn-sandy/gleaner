@@ -1,6 +1,6 @@
 ---
 session-id: "3e3c4ed6-4ab3-4f90-9d37-78d5c3bfb810"
-date: 2026-10-17
+date: 2026-10-16
 source: "3e3c4ed6-4ab3-4f90-9d37-78d5c3bfb810.jsonl"
 type: session-export
 title: "Saving answers as Gleaner clips"

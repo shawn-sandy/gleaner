@@ -161,7 +161,7 @@ Ask Claude about the page you're reading, such as a clarification, a list of ste
 
 > how do I rotate an API key in these docs?
 > save that
-> list the setup steps on this page and save them
+> explain the auth flow and save it
 
 "Save that" right after an answer saves the answer and says so; say "save the page" if you meant the whole page. While you're collecting parts, an answer is added as another part instead, and "done" saves them together:
 
@@ -380,7 +380,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **"Page," "article," "doc"** → the whole page, even if text is highlighted.
 - **"Part," "bit," "section," "table," "the part about X"** → a part.
 - **A plain "save this"** → saves your highlight or collected parts if there are any, otherwise the whole page.
-- **"Save that" right after an answer** → saves the answer, even with text highlighted, and says so. "Save this page" still saves the page.
+- **"Save that" right after an answer** → takes the answer, even with text highlighted, and says so: it saves the answer, or adds it as the next part while you're collecting. "Save this page" still saves the page.
 - **Highlights under ~40 characters** (a stray word) are ignored.
 - **It acts instead of asking**, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
 - **Duplicate check:** saving a page you've clipped before shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check.

@@ -42,7 +42,7 @@ If more than one is available, prefer the one the user names, then the side pane
 
 **A URL in the request** ("save https://…", "clip this: https://…"): open it in the current browser (`preview_start` in the built-in browser, a new tab in Claude in Chrome) and clip that page. If no browser is available, fetch the page with WebFetch and say it was read without a browser, so highlights don't apply.
 
-**No browser at all:** if the user didn't give a URL or pasted text, explain in one line that Gleaner needs a page open in a browser it can reach, and name the options for this surface.
+**No browser at all:** saving an answer you gave needs no browser. Otherwise, if the user didn't give a URL or pasted text, explain in one line that Gleaner needs a page open in a browser it can reach, and name the options for this surface.
 
 ## Understanding requests
 
@@ -63,8 +63,8 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 - A request naming the whole thing ("this page", "this article", "the whole doc") is **Save page**, even with text highlighted.
 - A request naming a piece ("this part", "this bit", "this section", "this paragraph", "this quote", "this table", "the part about X") is **Add part**.
 - A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**. If you had just answered a question, mention in the confirmation that "save that answer" saves the answer instead.
-- A request pointing at something you said ("that answer", "that explanation", "those steps", "what you just told me") is **Save answer**, and "add that answer" or "add those steps too" is **Add part** with the answer as the part. A bare "save that", "keep that", or "add that" right after you answered a question means the answer, even with text highlighted; say so in the confirmation ("Saved my answer — say 'save the page' if you meant the whole page").
-- A request to explain or answer something and save it ("list the setup steps and save them") is **Save answer**: answer first, then save that answer.
+- A request pointing at something you said ("that answer", "that explanation", "those steps", "what you just told me") is **Save answer**, and "add that answer" or "add those steps too" is **Add part** with the answer as the part. A bare "save that", "keep that", or "add that" right after you answered a question means the answer, even with text highlighted. That highlight is passed over: don't add it at "done" unless the user adds it. Say in the confirmation that you took the answer: "Saved my answer — say 'save the page' if you meant the whole page" when it saved, or the Added part line (which names it as your answer) while collecting.
+- A request to explain or answer something and save it ("explain the auth flow and save it") is **Save answer**: answer first, then save that answer. This holds even when it also says "this page" or "save them".
 - "Done", "that's all", or "save them" with parts collected is **Save clip**. With nothing collected, say there's nothing to save and offer to save the page.
 - A follow-up like "and this one" or "this too" right after adding a part is another **Add part**.
 - If parts are collected and the user asks to save the page, ask once: save the page on its own (keeping the parts), or include the parts?
@@ -131,7 +131,7 @@ To add a part:
 1. **Gather the content.**
    - **Page clip:** read the full text of the page in the current browser (title, URL, and main content). Ignore navigation, ads, cookie banners, footers, and comment sections. If the page is long or paginated, read all of it.
    - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
-   - **Answer clip:** a **Save answer** with no parts collected is a part clip whose only part is that answer (see Collecting parts).
+   - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
 2. **Pick the destination.**
    - A `--to` flag decides the destination (see Destination flag).
@@ -209,10 +209,10 @@ To add a part:
    - For technical content (docs, release notes, tutorials), keep code examples short. Write any JavaScript as type-safe TypeScript.
    - **Answer parts** keep the answer as you gave it instead of summarizing it: numbered steps stay numbered, code stays code, and the 2–4 bullet and ~150-word limits don't apply. The quoting rule above still applies to anything the answer quoted from the page.
      - Head the part with the user's question, and replace its *From* line with `*Answer about [<page title>](<URL>)*`, or `*Answer, not tied to a page*` when there was none.
-     - Mark anything in the answer that didn't come from the page, such as background knowledge or a step you added, with "(not from the page)", so a clip never passes your knowledge off as the source's.
-     - On the **Scope:** line, count answers apart from other parts: `2 parts, 1 answer from 1 page`, or `1 answer from 1 page`. Leave out the Source line and use `other` as the Type when no part has a page.
+     - Mark anything in the answer that didn't come from the page, such as background knowledge or a step you added, with "(not from the page)", so a clip never passes your knowledge off as the source's. An answer not tied to a page needs no marks; its *Answer, not tied to a page* line already says so.
+     - On the **Scope:** line, count answers apart from other parts: `2 parts, 1 answer from 1 page`, or `1 answer from 1 page`, or `1 answer, no page` when no part has a page. Then also leave out the Source line and use `other` as the Type.
      - A clip whose only part is one answer leaves out the TL;DR, since the question and answer already are the summary.
-     - For an answer about a YouTube video, link any timestamps in it to the second, as the youtube skill's Key moments do.
+     - For an answer about a YouTube video, see the youtube skill's part clip rule for its heading, source link, and timestamps.
 
 4. **Categorize it** so clips are easy to find later.
    - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.
@@ -268,7 +268,7 @@ To add a part:
    - **Fetch the database first** to get its data source URL (`collection://…`), then create pages with that data source as the parent.
    - **Add new tags before saving.** Notion rejects a multi-select value that isn't already an option. If any of the clip's tags are new, update the Tags property with `ALTER COLUMN "Tags" SET MULTI_SELECT(…)` listing **every existing option plus the new ones**, since options left out of the list are deleted. Then create the page.
    - **Property values:** Tags without the `#`; Saved as `date:Saved:start` (YYYY-MM-DD) with `date:Saved:is_datetime` 0; leave empty properties out rather than sending blank strings.
-   - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down) in the page content using Notion-flavored Markdown: outside code, put a backslash before any of these characters: \\ * ~ $ [ ] < > { } | ^ and the backtick, and keep code (such as TypeScript generics) in code spans or blocks. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
+   - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down, or from `## Parts` when there is no TL;DR) in the page content using Notion-flavored Markdown: outside code, put a backslash before any of these characters: \\ * ~ $ [ ] < > { } | ^ and the backtick, and keep code (such as TypeScript generics) in code spans or blocks. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
    - **Duplicates:** never edit or delete an existing page. An updated copy is a new page with **Supersedes** set.
    - Confirm with the page link and the database name.
 
