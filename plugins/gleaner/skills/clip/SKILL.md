@@ -51,7 +51,7 @@ If it isn't clear which tab "the page" is, such as several open tabs with none m
 - **No highlights** (connected tabs, or a Work browser with no JavaScript tool): for a part, use the topic the user named or ask them to paste the text. Don't suggest highlighting.
 - **URLs:** the Work browser can open the URL. Connected tabs can't open pages: if a tab with that URL is open, read it; otherwise fetch the URL with the session's web tool and say it was read without a browser.
 - **Work browser:** use only the tools this session actually shows, and only to read or open pages. Never submit forms, sign in, or change account settings to clip a page.
-- **No browser tools:** a Chrome extension or side panel doesn't give ChatGPT tab access by itself. If no browser tools appear, ask the user to connect their browser, or to give a URL or pasted text.
+- **No browser tools:** a Chrome extension or side panel doesn't give ChatGPT tab access by itself. If no browser tools appear, ask the user to connect their browser or switch to Work mode, or to give a URL or pasted text.
 
 **A URL in the request** ("save https://…", "clip this: https://…"): open it in the current browser (`preview_start` in the built-in browser, a new tab in Claude in Chrome; for ChatGPT, see above) and clip that page. If no browser is available, fetch the page with WebFetch and say it was read without a browser, so highlights don't apply.
 
@@ -253,6 +253,7 @@ To add a part:
    - Inside it, find or create the category subfolder the same way (search with `parentId` set to the destination folder).
    - Check for a file with the same title in the category subfolder. If one exists, add `-2`, `-3`, and so on. Never overwrite.
    - Upload the summary into the category subfolder with `contentMimeType: text/markdown`, letting Drive convert it to a Google Doc so headings and lists render. If the user asked to keep raw Markdown, set `disableConversionToGoogleType: true` and add `.md` to the title.
+   - **Other Drive connectors** (such as ChatGPT's): the search queries and parameters in this skill are the Claude connector's. Use your connector's equivalents by the names this session shows; if it can't convert Markdown to a Google Doc, save the Markdown as a `.md` file.
    - If the Drive connector isn't available or the upload fails, say so and use the fallback below.
 
    **Cowork project**
