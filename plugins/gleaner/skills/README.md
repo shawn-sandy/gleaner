@@ -50,6 +50,7 @@ Name the destination in words, or add `--to` (short form `-t`) for that one save
 
 ```text
 save this page to Notion
+save this page as an artifact
 done --to ./notes
 /gleaner:clip --to drive:"Design Inspiration"
 ```
