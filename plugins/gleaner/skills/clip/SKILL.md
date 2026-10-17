@@ -1,6 +1,6 @@
 ---
 name: clip
-description: Save web pages or parts of them as summarized, tagged clips in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading or a URL, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
+description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged clips in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel or the Claude Code desktop browser. Use when the user wants to keep, save, clip, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the clip", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved clips, such as "what did I save about Cowork" or "make me an index sheet".
 argument-hint: '[--to drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
@@ -8,7 +8,7 @@ argument-hint: '[--to drive | notion | artifact | local | cowork:"Project" | <pa
 
 Gather the best of what you read into tagged, searchable clips.
 
-Save what the user is reading as a summarized, tagged clip in one of five places:
+Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of five places:
 
 - **Google Drive** (default in the Chrome side panel and Cowork): uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
@@ -43,7 +43,7 @@ If more than one is available, prefer the one the user names, then the side pane
 
 **A URL in the request** ("save https://…", "clip this: https://…"): open it in the current browser (`preview_start` in the built-in browser, a new tab in Claude in Chrome) and clip that page. If no browser is available, fetch the page with WebFetch and say it was read without a browser, so highlights don't apply.
 
-**No browser at all:** if the user didn't give a URL or pasted text, explain in one line that Gleaner needs a page open in a browser it can reach, and name the options for this surface.
+**No browser at all:** saving an answer you gave needs no browser. Otherwise, if the user didn't give a URL or pasted text, explain in one line that Gleaner needs a page open in a browser it can reach, and name the options for this surface.
 
 ## Understanding requests
 
@@ -55,6 +55,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 |---|---|---|
 | **Save page** | Saves a summary of the whole page now | "save this page", "keep this article", "bookmark this for later", "file this under design", "I want to remember this one", "stash this doc" |
 | **Add part** | Adds a part to the clip being collected; nothing saved yet | "save this part about animation lengths", "add this", "grab this bit", "keep this section too", "and this paragraph on easing", "this table matters" |
+| **Save answer** | Saves an answer you gave in this conversation as a clip now; while parts are being collected, adds it as a part instead | "save that answer", "keep that explanation", "save those steps", "save what you just told me", "explain the auth flow and save it" |
 | **Save clip** | Saves all collected parts (plus a current highlight not yet added) as one clip | "save this clip", "that's it, save them", "done", "wrap it up", "save what I've got" |
 | **Manage parts** | Lists, removes, edits, or discards parts | "what have I got so far?", "drop the second one", "change part 1's note to …", "start over" |
 | **Find clips** | Searches saved clips (see Clip index) | "what did I save about Cowork?", "show my clips from this week", "anything on view transitions?" |
@@ -62,7 +63,9 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 **Deciding between them:**
 - A request naming the whole thing ("this page", "this article", "the whole doc") is **Save page**, even with text highlighted.
 - A request naming a piece ("this part", "this bit", "this section", "this paragraph", "this quote", "this table", "the part about X") is **Add part**.
-- A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**.
+- A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**. If you had just answered a question, mention in the confirmation that "save that answer" saves the answer instead.
+- A request pointing at something you said ("that answer", "that explanation", "those steps", "what you just told me") is **Save answer**, and "add that answer" or "add those steps too" is **Add part** with the answer as the part. A bare "save that", "keep that", or "add that" right after you answered a question means the answer, even with text highlighted. That highlight is passed over: don't add it at "done" unless the user adds it. Say in the confirmation that you took the answer: "Saved my answer — say 'save the page' if you meant the whole page" when it saved, or the Added part line (which names it as your answer) while collecting.
+- A request to explain or answer something and save it ("explain the auth flow and save it") is **Save answer**: answer first, then save that answer. This holds even when it also says "this page" or "save them".
 - "Done", "that's all", or "save them" with parts collected is **Save clip**. With nothing collected, say there's nothing to save and offer to save the page.
 - A follow-up like "and this one" or "this too" right after adding a part is another **Add part**.
 - If parts are collected and the user asks to save the page, ask once: save the page on its own (keeping the parts), or include the parts?
@@ -112,20 +115,25 @@ Ask one short question only when acting would likely do the wrong thing, such as
 
 ### Collecting parts
 
-A part is a piece of text plus its page title, URL, topic, and note. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.
+A part is a piece of text plus its page title, URL, topic, and note. It can also be an answer you gave about a page. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.
 
 To add a part:
-1. **Read the highlight.** Run `window.getSelection()?.toString().trim() ?? ''` in the current browser (see Where Gleaner runs). Text of at least ~40 characters is the part.
-2. **No highlight but a topic given:** find the passage on the page that best matches the topic (a section, paragraph, table, or code block) and use that. Quote its first few words when confirming so the user can check it.
-3. **Pasted text** in the request is the part.
-4. **Nothing usable** (no highlight, no topic, or the highlight couldn't be read, as in embedded frames, Chrome's PDF viewer, or Google Docs): say so in one line and suggest highlighting again, describing the part, or pasting it. Don't add anything.
-5. **Confirm briefly:** `Added part 2: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.`
+1. **An answer you gave** is the part when the request points at one (see Deciding between them); skip the highlight.
+   - Use the answer the request names ("your steps for deploying"), otherwise your most recent one. If it was corrected or extended later in the conversation, use the final version.
+   - Its topic is the user's question, in their words, lightly trimmed. Its page is the one the question was about; a general question with no page behind it has none.
+   - "Save that whole back-and-forth" or "our thread about X" adds one part per question and answer.
+2. **Read the highlight.** Run `window.getSelection()?.toString().trim() ?? ''` in the current browser (see Where Gleaner runs). Text of at least ~40 characters is the part.
+3. **No highlight but a topic given:** find the passage on the page that best matches the topic (a section, paragraph, table, or code block) and use that. Quote its first few words when confirming so the user can check it.
+4. **Pasted text** in the request is the part.
+5. **Nothing usable** (no highlight, no topic, or the highlight couldn't be read, as in embedded frames, Chrome's PDF viewer, or Google Docs): say so in one line and suggest highlighting again, describing the part, or pasting it. Don't add anything.
+6. **Confirm briefly:** `Added part 2: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.` For an answer: `Added part 3: how to rotate API keys (my answer, "1. Open Settings…").`
 
 ## Steps
 
 1. **Gather the content.**
    - **Page clip:** read the full text of the page in the current browser (title, URL, and main content). Ignore navigation, ads, cookie banners, footers, and comment sections. If the page is long or paginated, read all of it.
    - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
+   - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
 2. **Pick the destination.**
    - A `--to` flag decides the destination (see Destination flag).
@@ -203,6 +211,12 @@ To add a part:
    - Paraphrase in your own words. Quote only short phrases (under 15 words) when exact wording matters.
    - Keep page clips under ~400 words and part clips under ~150 words per part, unless the user asks for more depth.
    - For technical content (docs, release notes, tutorials), keep code examples short. Write any JavaScript as type-safe TypeScript.
+   - **Answer parts** keep the answer as you gave it instead of summarizing it: numbered steps stay numbered, code stays code, and the 2–4 bullet and ~150-word limits don't apply. The quoting rule above still applies to anything the answer quoted from the page.
+     - Head the part with the user's question, and replace its *From* line with `*Answer about [<page title>](<URL>)*`, or `*Answer, not tied to a page*` when there was none.
+     - Mark anything in the answer that didn't come from the page, such as background knowledge or a step you added, with "(not from the page)", so a clip never passes your knowledge off as the source's. An answer not tied to a page needs no marks; its *Answer, not tied to a page* line already says so.
+     - On the **Scope:** line, count answers apart from other parts: `2 parts, 1 answer from 1 page`, or `1 answer from 1 page`, or `1 answer, no page` when no part has a page. Only when no part has a page, also leave out the Source line and use `other` as the Type; an answer about a page keeps that page as its Source and the page's Type.
+     - A clip whose only part is one answer leaves out the TL;DR, since the question and answer already are the summary.
+     - For an answer about a YouTube video, see the youtube skill's part clip rule for its heading, source link, and timestamps.
 
 4. **Categorize it** so clips are easy to find later.
    - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.
@@ -258,7 +272,7 @@ To add a part:
    - **Fetch the database first** to get its data source URL (`collection://…`), then create pages with that data source as the parent.
    - **Add new tags before saving.** Notion rejects a multi-select value that isn't already an option. If any of the clip's tags are new, update the Tags property with `ALTER COLUMN "Tags" SET MULTI_SELECT(…)` listing **every existing option plus the new ones**, since options left out of the list are deleted. Then create the page.
    - **Property values:** Tags without the `#`; Saved as `date:Saved:start` (YYYY-MM-DD) with `date:Saved:is_datetime` 0; leave empty properties out rather than sending blank strings.
-   - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down) in the page content using Notion-flavored Markdown: outside code, put a backslash before any of these characters: \\ * ~ $ [ ] < > { } | ^ and the backtick, and keep code (such as TypeScript generics) in code spans or blocks. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
+   - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down, or from `## Parts` when there is no TL;DR) in the page content using Notion-flavored Markdown: outside code, put a backslash before any of these characters: \\ * ~ $ [ ] < > { } | ^ and the backtick, and keep code (such as TypeScript generics) in code spans or blocks. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
    - **Duplicates:** never edit or delete an existing page. An updated copy is a new page with **Supersedes** set.
    - Confirm with the page link and the database name.
 
@@ -268,7 +282,7 @@ To add a part:
    - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so never reuse a path.
    - **Fill the template below** from the summary in step 3, replacing each `[[…]]` placeholder, so every clip looks like one set:
      - Each of the clip's bold header lines, from Source down (Supersedes and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
-     - Each section heading becomes an h2 and each part heading an h3. Bullets become a list, a part's *From* line a paragraph with its link, and code a pre block. Keep every link, timestamped video links included.
+     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as Key points in a part clip or the TL;DR of a single-answer clip. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. Keep every link, timestamped video links included.
      - The page title is the clip title, shortened to a short name if it runs long: keep the specific words, drop site names and taglines. The h1 keeps the full title.
      - Escape page text: write an ampersand as `&amp;`, angle brackets as `&lt;` and `&gt;`, and a double quote inside an attribute (such as a link address) as `&quot;`.
      - The page is the user's summary, not a copy of the source: link the source, but don't reproduce its logo, styling, or byline.
@@ -318,7 +332,7 @@ To add a part:
      </main>
      ```
 
-   - **Publish** with the Artifact tool, following its own rules for a new page (such as design guidance it asks you to load first). This is a plain HTML page, not a document, deck, or other Artifact type, and the template is its design: keep it rather than restyling each clip. Pass `bookmark` as the `icon` and the TL;DR's first sentence as the `description`.
+   - **Publish** with the Artifact tool, following its own rules for a new page (such as design guidance it asks you to load first). This is a plain HTML page, not a document, deck, or other Artifact type, and the template is its design: keep it rather than restyling each clip. Pass `bookmark` as the `icon` and, as the `description`, the TL;DR's first sentence, or the user's question when the clip has no TL;DR.
    - **If the publish is refused,** say why in one line and use the fallback below. Don't retry it or host the page anywhere else.
    - Artifacts have no folders; the Category row does that job. They stay private until the user shares them.
    - Confirm with the artifact's link.
@@ -340,7 +354,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date, but clips are never republished, so an artifact's last-updated time is when it was saved: for a date range, skip artifacts updated outside it without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
    - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other locations when the user asks for them or names one.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
-3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with "(N parts)" after the title. Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
+3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)" or "(2 parts, 1 answer)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
 
 ### Snapshot sheet
@@ -354,3 +368,4 @@ Notion users already have a live index in the database; offer its link first. If
 - **PDFs or other videos in the tab:** summarize the text or transcript if readable; otherwise tell the user what couldn't be read.
 - **Several tabs at once:** if the user groups tabs and says "save these pages", write one page clip per tab, or one combined clip if they ask for it.
 - **Session ended mid-collection:** collected parts exist only in the conversation. If the user comes back in a new session asking about unsaved parts, say they weren't saved and offer to start again.
+- **An answer you can't see:** if the user asks to save an answer from an earlier session, or one no longer in this conversation, say you can't see it and offer to answer the question again. Never rebuild an answer from memory and save it as the original.

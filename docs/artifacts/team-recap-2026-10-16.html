@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Saving answers as Gleaner clips</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of index-card sections; clip-header labels in mono, tags in wheat. */
+:root {
+  --bg: #f6f7fa;
+  --surface: #ffffff;
+  --fg: #1c2030;
+  --muted: #5b6177;
+  --line: #dde1ea;
+  --accent: #3a49c4;
+  --accent-soft: #e9ebfa;
+  --tag-bg: #f2e9cf;
+  --tag-fg: #6a5212;
+  --warn-bg: #fbe9e3;
+  --warn-fg: #8a2f17;
+  --diagram-bg: #ffffff;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: 1.5rem;
+  --step-3: 2.25rem;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11131b;
+    --surface: #191c27;
+    --fg: #e5e7ef;
+    --muted: #9ba1b6;
+    --line: #2b3042;
+    --accent: #9aa6ff;
+    --accent-soft: #232a4d;
+    --tag-bg: #352d1b;
+    --tag-fg: #e6d29b;
+    --warn-bg: #3a2119;
+    --warn-fg: #f2b8a5;
+    --diagram-bg: #191c27;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11131b;
+  --surface: #191c27;
+  --fg: #e5e7ef;
+  --muted: #9ba1b6;
+  --line: #2b3042;
+  --accent: #9aa6ff;
+  --accent-soft: #232a4d;
+  --tag-bg: #352d1b;
+  --tag-fg: #e6d29b;
+  --warn-bg: #3a2119;
+  --warn-fg: #f2b8a5;
+  --diagram-bg: #191c27;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+.page {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 2.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: var(--step-3); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: var(--step-2); font-weight: 700; }
+h3 { font-size: var(--step-1); font-weight: 600; }
+p { margin: 0; max-width: 65ch; }
+code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
+code { background: var(--accent-soft); padding: 0.05em 0.35em; border-radius: 4px; overflow-wrap: anywhere; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+section { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.lede { color: var(--muted); font-size: var(--step-1); line-height: 1.5; }
+
+header { display: flex; flex-direction: column; gap: 0.75rem; }
+.meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); }
+.meta b { color: var(--fg); font-weight: 500; }
+
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.stat { padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.15rem; }
+.stat + .stat { border-left: 1px solid var(--line); }
+.stat .n { font-family: var(--font-display); font-size: var(--step-3); font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: var(--step--1); color: var(--muted); }
+@media (max-width: 34rem) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat + .stat { border-left: 0; }
+  .stat:nth-child(even) { border-left: 1px solid var(--line); }
+  .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 40rem) { .cards { grid-template-columns: minmax(0, 1fr); } }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.card h3 { font-size: var(--step-0); font-family: var(--font-body); font-weight: 600; }
+.field { display: grid; grid-template-columns: 4.75rem minmax(0, 1fr); gap: 0.75rem; font-size: 0.9375rem; }
+.field > span:first-child { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); padding-top: 0.15rem; }
+.tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.tag { background: var(--tag-bg); color: var(--tag-fg); font-family: var(--font-mono); font-size: 0.75rem; padding: 0.1rem 0.5rem; border-radius: 999px; }
+
+.diagram { background: var(--diagram-bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; overflow-x: auto; }
+.diagram pre { margin: 0; }
+.caption { font-size: var(--step--1); color: var(--muted); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: 0.9375rem; }
+th, td { text-align: left; vertical-align: top; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+td + td, th + th { border-left: 1px solid var(--line); }
+
+.decisions { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.decision { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.5rem 1.5rem; padding-block: 1.1rem; border-bottom: 1px solid var(--line); }
+.decision h3 { grid-column: 1 / -1; font-size: var(--step-0); font-family: var(--font-body); font-weight: 600; }
+.decision .why, .decision .no { font-size: 0.9375rem; display: flex; flex-direction: column; gap: 0.2rem; }
+.decision .no { color: var(--muted); }
+.label { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+@media (max-width: 40rem) { .decision { grid-template-columns: minmax(0, 1fr); } }
+
+ul.plain { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; max-width: 65ch; }
+
+.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0.9rem 1.1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.item-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
+.item-head strong { font-weight: 600; }
+.pill { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.15rem 0.5rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.pill.warn { background: var(--warn-bg); color: var(--warn-fg); }
+.pill.quiet { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+.item p { font-size: 0.9375rem; }
+
+.files { display: flex; flex-direction: column; gap: 1rem; }
+.file-group h3 { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.4rem; }
+.file { display: grid; grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); gap: 0.25rem 1rem; padding-block: 0.5rem; border-top: 1px solid var(--line); font-size: 0.9375rem; }
+.file code { background: none; padding: 0; color: var(--accent); }
+@media (max-width: 40rem) { .file { grid-template-columns: minmax(0, 1fr); } }
+
+.glossary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 2rem; margin: 0; }
+.glossary div { min-width: 0; }
+.glossary dt { font-weight: 600; font-size: 0.9375rem; }
+.glossary dd { margin: 0.1rem 0 0; font-size: 0.9375rem; color: var(--muted); }
+@media (max-width: 40rem) { .glossary { grid-template-columns: minmax(0, 1fr); } }
+</style>
+
+
+<style>
+.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+/* Mermaid bakes its light palette in at render time, so the diagram card stays light in both themes. */
+.diagram{background:#f6f7fa}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <span class="eyebrow">Gleaner · team recap · 2026-10-16</span>
+  <h1>Saving answers as Gleaner clips</h1>
+  <p class="lede">Gleaner can now keep the answers Claude gives about a page, not just the page itself.</p>
+  <div class="meta">
+    <span>Branch <b>claude/skill-page-questions-f17a91</b></span>
+    <span>Status <b>PR #5 open, not released, not live-tested</b></span>
+  </div>
+</header>
+
+<section id="at-a-glance" aria-labelledby="h-glance">
+  <h2 id="h-glance">At a glance</h2>
+  <div class="stats">
+    <div class="stat"><span class="n">8</span><span class="l">changes</span></div>
+    <div class="stat"><span class="n">4</span><span class="l">files</span></div>
+    <div class="stat"><span class="n">10</span><span class="l">decisions</span></div>
+    <div class="stat"><span class="n">5</span><span class="l">open items</span></div>
+  </div>
+  <p>Ask a question while reading docs, get a clarification or a list of steps, then say "save that" and the answer becomes a clip. The work is open for review as PR #5 (<code>claude/skill-page-questions-f17a91</code> into <code>main</code>). It passes every automated check, but it is not versioned and not tested live.</p>
+</section>
+
+<section id="what-changed" aria-labelledby="h-changed">
+  <h2 id="h-changed">What changed</h2>
+  <div class="cards">
+    <article class="card">
+      <h3>Save an answer you just got</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>"Save that", "save that answer", "save those steps", or "save what you just told me" saves Claude's most recent answer, or the one named, as its own clip. A bare "save that" right after an answer means the answer even if text is highlighted, and that highlight isn't added later at "done". The confirmation says so. "Explain the auth flow and save it" answers first, then saves, even if the request also says "this page" or "save them".</p></div>
+      <div class="field"><span>Reach it</span><p>Plain language in the Chrome side panel or the Claude Code desktop browser. New <b>Save answer</b> row in the Intents table of <code>plugins/gleaner/skills/clip/SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>Add an answer to a clip you're collecting</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>While parts are being collected, an answer is added as the next part instead of being saved alone, and the confirmation is the "Added part" line naming it as Claude's answer. "Done" saves everything together. "Add that answer" starts or extends a collection. "Save our back-and-forth about X" adds one part per question and answer.</p></div>
+      <div class="field"><span>Reach it</span><p>New first source in "Collecting parts" in <code>SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>Answers are kept as given, with the question as the heading</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span><span class="tag">clip readers</span></div></div>
+      <div class="field"><span>Now</span><p>An answer part is headed by the user's question and keeps the answer word for word, so numbered steps and code survive. Its source line reads "Answer about" plus the page link, or "Answer, not tied to a page". Anything not from the page is marked "(not from the page)". A clip holding a single answer skips the TL;DR.</p></div>
+      <div class="field"><span>Reach it</span><p>New "Answer parts" rule in step 3 of <code>SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>Answers are counted in a clip's scope and in the index</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>The <b>Scope</b> line counts answers apart from other parts, such as <code>2 parts, 1 answer from 1 page</code>, or <code>1 answer, no page</code>, and the clip index marks titles the same way. Only a clip with no page behind it drops the Source line and uses the Type <code>other</code>. In Notion, a clip without a TL;DR starts its page body at Parts.</p></div>
+      <div class="field"><span>Reach it</span><p>Step 3 rules, the Notion steps, and "Clip index" step 3 in <code>SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>Answers from an earlier session are refused, not rebuilt</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>If the answer is no longer in the conversation, Gleaner says it can't see it and offers to answer again, rather than recreating it from memory and saving that as the original.</p></div>
+      <div class="field"><span>Reach it</span><p>New item in "Edge cases" in <code>SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>Answers save without a browser</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>Saving an answer doesn't need a page open, so it works in Claude Code with no browser tools. Page saves still ask for a browser or a URL.</p></div>
+      <div class="field"><span>Reach it</span><p>"No browser at all" in "Where Gleaner runs" in <code>SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>Answers about YouTube videos follow the same rules</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span></div></div>
+      <div class="field"><span>Now</span><p>An answer about a video keeps the answer-part format: headed by the question with no time link, linking the video's canonical watch URL, with any timestamps in the answer linked to the second and taken from the transcript.</p></div>
+      <div class="field"><span>Reach it</span><p>The part clip rule in <code>plugins/gleaner/skills/youtube/SKILL.md</code>.</p></div>
+    </article>
+    <article class="card">
+      <h3>The README and the skills guide document the feature</h3>
+      <div class="field"><span>Affects</span><div class="tags"><span class="tag">users</span><span class="tag">teammates</span></div></div>
+      <div class="field"><span>Now</span><p>The README has a "Saving answers" section, a features bullet, a cheat-sheet row, a "How Gleaner decides" rule, a note under "What a clip looks like", and the updated index-count wording. The skills guide has a "Save an answer" section.</p></div>
+      <div class="field"><span>Reach it</span><p><code>README.md</code> under Usage guide, and <code>plugins/gleaner/skills/README.md</code>.</p></div>
+    </article>
+  </div>
+</section>
+
+<section id="how-it-works" aria-labelledby="h-works">
+  <h2 id="h-works">How it works now</h2>
+  <div class="diagram">
+<div class="mermaid-diagram"><svg aria-roledescription="flowchart-v2" role="graphics-document document" viewBox="0 0 744 1036" height="1036" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="744" id="claude-mermaid-0"><style>#claude-mermaid-0{font-family:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;font-size:16px;fill:#42392e;}#claude-mermaid-0 .error-icon{fill:hsl(221.25, 42.1052631579%, 97.5490196078%);}#claude-mermaid-0 .error-text{fill:rgb(8.8815789475, 7.2368421054, 3.6184210527);stroke:rgb(8.8815789475, 7.2368421054, 3.6184210527);}#claude-mermaid-0 .edge-thickness-normal{stroke-width:1px;}#claude-mermaid-0 .edge-thickness-thick{stroke-width:3.5px;}#claude-mermaid-0 .edge-pattern-solid{stroke-dasharray:0;}#claude-mermaid-0 .edge-thickness-invisible{stroke-width:0;fill:none;}#claude-mermaid-0 .edge-pattern-dashed{stroke-dasharray:3;}#claude-mermaid-0 .edge-pattern-dotted{stroke-dasharray:2;}#claude-mermaid-0 .marker{fill:#8a7f6d;stroke:#8a7f6d;}#claude-mermaid-0 .marker.cross{stroke:#8a7f6d;}#claude-mermaid-0 svg{font-family:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;font-size:16px;}#claude-mermaid-0 p{margin:0;}#claude-mermaid-0 .label{font-family:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;color:#42392e;}#claude-mermaid-0 .cluster-label text{fill:#42392e;}#claude-mermaid-0 .cluster-label span{color:#42392e;}#claude-mermaid-0 .cluster-label span p{background-color:transparent;}#claude-mermaid-0 .label text,#claude-mermaid-0 span{fill:#42392e;color:#42392e;}#claude-mermaid-0 .node rect,#claude-mermaid-0 .node circle,#claude-mermaid-0 .node ellipse,#claude-mermaid-0 .node polygon,#claude-mermaid-0 .node path{fill:#f4efe4;stroke:#7a6c52;stroke-width:1px;}#claude-mermaid-0 .rough-node .label text,#claude-mermaid-0 .node .label text,#claude-mermaid-0 .image-shape .label,#claude-mermaid-0 .icon-shape .label{text-anchor:middle;}#claude-mermaid-0 .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#claude-mermaid-0 .rough-node .label,#claude-mermaid-0 .node .label,#claude-mermaid-0 .image-shape .label,#claude-mermaid-0 .icon-shape .label{text-align:center;}#claude-mermaid-0 .node.clickable{cursor:pointer;}#claude-mermaid-0 .root .anchor path{fill:#8a7f6d!important;stroke-width:0;stroke:#8a7f6d;}#claude-mermaid-0 .arrowheadPath{fill:#090805;}#claude-mermaid-0 .edgePath .path{stroke:#8a7f6d;stroke-width:2.0px;}#claude-mermaid-0 .flowchart-link{stroke:#8a7f6d;fill:none;}#claude-mermaid-0 .edgeLabel{background-color:rgb(246, 247, 250);text-align:center;}#claude-mermaid-0 .edgeLabel p{background-color:rgb(246, 247, 250);}#claude-mermaid-0 .edgeLabel rect{opacity:0.5;background-color:rgb(246, 247, 250);fill:rgb(246, 247, 250);}#claude-mermaid-0 .labelBkg{background-color:rgba(246, 247, 250, 0.5);}#claude-mermaid-0 .cluster rect{fill:hsl(221.25, 42.1052631579%, 97.5490196078%);stroke:#7a6c52;stroke-width:1px;}#claude-mermaid-0 .cluster text{fill:#42392e;}#claude-mermaid-0 .cluster span{color:#42392e;}#claude-mermaid-0 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;font-size:12px;background:hsl(221.25, 42.1052631579%, 97.5490196078%);border:1px solid hsl(221.25, 2.1052631579%, 87.5490196078%);border-radius:2px;pointer-events:none;z-index:100;}#claude-mermaid-0 .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#42392e;}#claude-mermaid-0 rect.text{fill:none;stroke-width:0;}#claude-mermaid-0 .icon-shape,#claude-mermaid-0 .image-shape{background-color:rgb(246, 247, 250);text-align:center;}#claude-mermaid-0 .icon-shape p,#claude-mermaid-0 .image-shape p{background-color:rgb(246, 247, 250);padding:2px;}#claude-mermaid-0 .icon-shape rect,#claude-mermaid-0 .image-shape rect{opacity:0.5;background-color:rgb(246, 247, 250);fill:rgb(246, 247, 250);}#claude-mermaid-0 .node rect,#claude-mermaid-0 .node circle,#claude-mermaid-0 .node polygon,#claude-mermaid-0 .node path,#claude-mermaid-0 .cluster rect{stroke-width:2px;}#claude-mermaid-0 :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="claude-mermaid-0_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="claude-mermaid-0_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="claude-mermaid-0_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="claude-mermaid-0_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="claude-mermaid-0_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="claude-mermaid-0_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#claude-mermaid-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_A_B_0" d="M294.5,74L294.5,78.167C294.5,82.333,294.5,90.667,294.57,98.417C294.641,106.167,294.781,113.334,294.851,116.917L294.922,120.501"></path><path marker-end="url(#claude-mermaid-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_B_C_1" d="M228.164,341.664L213.137,358.387C198.109,375.109,168.055,408.555,153.027,445.444C138,482.333,138,522.667,138,542.833L138,563"></path><path marker-end="url(#claude-mermaid-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_B_D_2" d="M361.836,341.664L376.697,358.387C391.557,375.109,421.279,408.555,436.213,430.361C451.147,452.167,451.295,462.334,451.368,467.417L451.442,472.5"></path><path marker-end="url(#claude-mermaid-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_E_3" d="M387.478,678.478L372.232,694.732C356.986,710.986,326.493,743.493,311.246,764.746C296,786,296,796,296,801L296,806"></path><path marker-end="url(#claude-mermaid-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_F_4" d="M515.522,678.478L530.601,694.732C545.681,710.986,575.841,743.493,590.92,767.746C606,792,606,808,606,816L606,824"></path><path marker-end="url(#claude-mermaid-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_E_G_5" d="M296,912L296,916.167C296,920.333,296,928.667,296,936.333C296,944,296,951,296,954.5L296,958"></path><path marker-end="url(#claude-mermaid-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_F_H_6" d="M606,894L606,901.167C606,908.333,606,922.667,606,933.333C606,944,606,951,606,954.5L606,958"></path></g><g class="edgeLabels"><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g transform="translate(138, 442)" class="edgeLabel"><g transform="translate(-10.046875, -9)" class="label"><foreignObject height="18" width="20.09375"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>no</p></span></div></foreignObject></g></g><g transform="translate(451, 442)" class="edgeLabel"><g transform="translate(-12.7734375, -9)" class="label"><foreignObject height="18" width="25.546875"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>yes</p></span></div></foreignObject></g></g><g transform="translate(296, 776)" class="edgeLabel"><g transform="translate(-12.7734375, -9)" class="label"><foreignObject height="18" width="25.546875"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>yes</p></span></div></foreignObject></g></g><g transform="translate(606, 776)" class="edgeLabel"><g transform="translate(-10.046875, -9)" class="label"><foreignObject height="18" width="20.09375"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>no</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g transform="translate(294.5, 41)" id="flowchart-A-0" class="node default"><rect height="66" width="260" y="-33" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -18)" style="" class="label"><rect></rect><foreignObject height="36" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>User request right after Claude answered</p></span></div></foreignObject></g></g><g transform="translate(294.5, 266)" id="flowchart-B-1" class="node default"><polygon transform="translate(-142,142)" class="label-container" points="142,0 284,-142 142,-284 0,-142"></polygon><g transform="translate(-100, -27)" style="" class="label"><rect></rect><foreignObject height="54" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Points at the answer?<br>'save that', 'that answer', 'those steps'</p></span></div></foreignObject></g></g><g transform="translate(138, 609)" id="flowchart-C-3" class="node default"><rect height="84" width="260" y="-42" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -27)" style="" class="label"><rect></rect><foreignObject height="54" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Existing rules: Save page, Add part, or Save clip</p></span></div></foreignObject></g></g><g transform="translate(451, 609)" id="flowchart-D-5" class="node default"><polygon transform="translate(-133,133)" class="label-container" points="133,0 266,-133 133,-266 0,-133"></polygon><g transform="translate(-100, -18)" style="" class="label"><rect></rect><foreignObject height="36" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Says 'add', or parts already collected?</p></span></div></foreignObject></g></g><g transform="translate(296, 861)" id="flowchart-E-7" class="node default"><rect height="102" width="260" y="-51" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -36)" style="" class="label"><rect></rect><foreignObject height="72" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Add the answer as the next part<br>'Added part 3 ... my answer'</p></span></div></foreignObject></g></g><g transform="translate(606, 861)" id="flowchart-F-9" class="node default"><rect height="66" width="260" y="-33" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -18)" style="" class="label"><rect></rect><foreignObject height="36" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Save now as a one-answer clip</p></span></div></foreignObject></g></g><g transform="translate(296, 995)" id="flowchart-G-11" class="node default"><rect height="66" width="260" y="-33" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -18)" style="" class="label"><rect></rect><foreignObject height="36" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>User says 'done': all parts saved together</p></span></div></foreignObject></g></g><g transform="translate(606, 995)" id="flowchart-H-13" class="node default"><rect height="66" width="260" y="-33" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -18)" style="" class="label"><rect></rect><foreignObject height="36" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Confirm, noting it saved the answer, not the page</p></span></div></foreignObject></g></g></g></g></g></svg></div>
+  </div>
+  <p class="caption">How a request after an answer is routed. The only new branch is "points at the answer"; everything on the "no" side behaves exactly as before.</p>
+</section>
+
+<section id="before-after" aria-labelledby="h-ba">
+  <h2 id="h-ba">Before and after</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">Before</th><th scope="col">After</th></tr></thead>
+      <tbody>
+        <tr><td>Gleaner could save a page, a highlight, a described section, or pasted text.</td><td>It can also save an answer Claude gave about the page.</td></tr>
+        <tr><td>"Save that" after an answer fell through to the page rules and saved the page.</td><td>"Save that" right after an answer saves the answer, and the confirmation says so.</td></tr>
+        <tr><td>"Save this" after an answer saved the page silently.</td><td>It still saves the page, but the confirmation mentions that "save that answer" saves the answer instead.</td></tr>
+        <tr><td>"Done" added any highlight not yet added.</td><td>A highlight passed over for an answer isn't added at "done".</td></tr>
+        <tr><td>Every part was squeezed into 2–4 bullets and about 150 words.</td><td>Answer parts are kept as given; those limits don't apply to them.</td></tr>
+        <tr><td>A part's heading was the user's note or topic.</td><td>An answer part's heading is the user's question.</td></tr>
+        <tr><td>Nothing marked content that didn't come from the source.</td><td>Anything in an answer not from the page is marked "(not from the page)".</td></tr>
+        <tr><td>Scope read <code>3 parts from 2 pages</code>.</td><td>Answers are counted separately: <code>2 parts, 1 answer from 1 page</code>, or <code>1 answer, no page</code>.</td></tr>
+        <tr><td>A part clip always had a TL;DR.</td><td>A clip of a single answer skips it.</td></tr>
+        <tr><td>A clip always had a Source line.</td><td>An answer to a general question with no page has none, and its Type is <code>other</code>.</td></tr>
+        <tr><td>With no browser, Gleaner asked for a page.</td><td>Saving an answer works with no browser.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="decisions" aria-labelledby="h-dec">
+  <h2 id="h-dec">Decisions</h2>
+  <div class="decisions">
+    <div class="decision">
+      <h3>Extend the <code>clip</code> skill instead of adding a new skill</h3>
+      <div class="why"><span class="label">Why</span><p>Claude already answers questions about a page without any skill; the only new behavior is saving the answer. The text is already in the conversation, so nothing new has to be extracted.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>A separate "ask" or "Q&amp;A" skill. It would compete with <code>clip</code> for "save that" and duplicate all of its destination and save logic. The <code>youtube</code> skill earned its own file only because it needs transcript extraction.</p></div>
+    </div>
+    <div class="decision">
+      <h3>Treat an answer as a kind of part, not a new clip format</h3>
+      <div class="why"><span class="label">Why</span><p>One format means the destinations, duplicate check, categories, Notion fields, and index all work unchanged. A single saved answer is a part clip with one part.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>A separate "answer clip" template, which would need its own rules in every one of those places.</p></div>
+    </div>
+    <div class="decision">
+      <h3>A bare "save that" right after an answer saves the answer</h3>
+      <div class="why"><span class="label">Why</span><p>The user's decision. It matches the skill's existing "act, then say what you assumed" rule, and the confirmation offers "save the page" as the correction.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Asking every time, which adds a round trip to the most common case.</p></div>
+    </div>
+    <div class="decision">
+      <h3>Leave "save this" behavior alone</h3>
+      <div class="why"><span class="label">Why</span><p>"Save this" is the skill's core page-and-highlight intent, and changing it would affect far more requests. The confirmation now points at "save that answer" instead.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Making "save this" also mean the answer.</p></div>
+    </div>
+    <div class="decision">
+      <h3>Mid-collection, "save that answer" adds a part rather than saving everything</h3>
+      <div class="why"><span class="label">Why</span><p>Saving early would clear the collection while the user may still be adding to it; one extra "done" is the cheaper mistake.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Mirroring Save clip, which saves all parts at once.</p></div>
+    </div>
+    <div class="decision">
+      <h3>Keep answers as given instead of summarizing them</h3>
+      <div class="why"><span class="label">Why</span><p>The 2–4 bullet, 150-word part limit would wreck a numbered step list, which is one of the main things users asked to keep.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Summarizing answers like any other part.</p></div>
+    </div>
+    <div class="decision">
+      <h3>Mark anything not from the page</h3>
+      <div class="why"><span class="label">Why</span><p>Clips are used later as research notes. Mixing Claude's background knowledge in with what the source said, unlabeled, is the main way this feature could mislead.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Saving answers unlabeled, as if they were page content.</p></div>
+    </div>
+    <div class="decision">
+      <h3>No new Type value and no auto-save</h3>
+      <div class="why"><span class="label">Why</span><p>The Scope line already tells answers apart, so a new Type adds nothing to search. Clips are never overwritten, so saving every answer automatically would flood the folder.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>A "Q&amp;A" Type, which would need a change to the Notion database's select options; auto-capturing every answer.</p></div>
+    </div>
+    <div class="decision">
+      <h3>Leave the version bump and changelog to the <code>release</code> skill</h3>
+      <div class="why"><span class="label">Why</span><p>The project's <code>CLAUDE.md</code> says to cut versions with <code>/release</code>, and only the user can run that skill. It also commits, so it finishes this work in one step.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Bumping <code>plugin.json</code> and writing the changelog entry by hand in this change, which was the original proposal.</p></div>
+    </div>
+    <div class="decision">
+      <h3>Put the YouTube answer rules in the <code>youtube</code> skill</h3>
+      <div class="why"><span class="label">Why</span><p>The youtube skill's summary section replaces the clip skill's step 3 outright, so answer rules that lived only in the clip skill would never reach video pages. A pre-PR review caught this, and the clip skill now points to the youtube skill's rule.</p></div>
+      <div class="no"><span class="label">Rejected</span><p>Keeping the rule only in the clip skill, the first version, chosen because the change was scoped to the clip skill.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="learnings" aria-labelledby="h-learn">
+  <h2 id="h-learn">Learnings</h2>
+  <ul class="plain">
+    <li><b>The release skill is user-only.</b> <code>.claude/skills/release/SKILL.md</code> sets <code>disable-model-invocation: true</code>, so Claude cannot bump the version itself. The plan to bump in this change was dropped after reading it.</li>
+    <li><b>The youtube skill replaces the clip skill's step 3.</b> A rule added only to the clip skill's step 3 silently doesn't apply on video pages; video-specific rules have to live in <code>youtube/SKILL.md</code>.</li>
+    <li><b>CI lints every Markdown file.</b> <code>.markdownlint-cli2.jsonc</code> globs <code>**/*.md</code>, so new Markdown anywhere in the repo, including this recap's record, must pass markdownlint.</li>
+    <li><b>Plugin validation doesn't check frontmatter YAML.</b> The two <code>claude plugin validate</code> runs pass even with broken frontmatter, so a separate Ruby YAML parse was run. The new description measured 803 characters against the 1024 limit.</li>
+    <li><b>A frontmatter <code>title:</code> counts as the page heading.</b> Markdownlint's single-heading rule (MD025) flagged the recap record for having both a <code>title:</code> and a top-level heading, so the record carries the title only in frontmatter.</li>
+    <li><b>Main moved during the work.</b> A skills usage guide landed on <code>main</code> mid-session; after syncing, it needed its own "Save an answer" section.</li>
+    <li>Nothing else was tried and abandoned.</li>
+  </ul>
+</section>
+
+<section id="open-items" aria-labelledby="h-open">
+  <h2 id="h-open">Open items</h2>
+  <ol class="items">
+    <li class="item">
+      <div class="item-head"><span class="pill">Next step</span><strong>Version before merge</strong></div>
+      <p>Run <code>/release minor</code> on the PR #5 branch to set 1.7.0, add the README changelog entry, validate, and commit.</p>
+    </li>
+    <li class="item">
+      <div class="item-head"><span class="pill warn">Unverified</span><strong>Live testing</strong></div>
+      <p>Not done; the maintainer tests against Chrome, Drive, Notion, and Cowork. Worth trying: "save that" after an answer with text highlighted; "save that answer" mid-collection; an answer mixing page content with background knowledge; a general question with no page saved to Notion, which has no Source; an answer about a YouTube video with timestamps.</p>
+    </li>
+    <li class="item">
+      <div class="item-head"><span class="pill quiet">Follow-up</span><strong>Marketing descriptions don't mention answers</strong></div>
+      <p>The <code>plugin.json</code> description, the <code>marketplace.json</code> description, and the README intro still list pages, parts, and videos only. The four-place sync rule covers destinations and surfaces, so it doesn't require an update, but the feature is invisible there.</p>
+    </li>
+    <li class="item">
+      <div class="item-head"><span class="pill quiet">Pre-existing</span><strong>Notion schema wording</strong></div>
+      <p>The Notion property table in <code>SKILL.md</code> lists Scope values as <code>selection</code> or <code>N parts from M pages</code>, which no current template produces. It was not touched.</p>
+    </li>
+    <li class="item">
+      <div class="item-head"><span class="pill quiet">Follow-up</span><strong>Review items left as is</strong></div>
+      <p>"Save it" or "keep it" after an answer still follows the existing routing rules; the skills guide heading "clip: pages and parts" is unchanged; the generated gallery index at <code>docs/artifacts/index.html</code> links to sibling galleries that don't exist in this repo.</p>
+    </li>
+  </ol>
+</section>
+
+<section id="files" aria-labelledby="h-files">
+  <h2 id="h-files">Files touched</h2>
+  <div class="files">
+    <div class="file-group">
+      <h3>Skills</h3>
+      <div class="file"><code>plugins/gleaner/skills/clip/SKILL.md</code><span>New Save answer intent and routing rules, answers as the first part source, the answer-part format, Scope and index counts, answers without a browser, the Notion body start, the earlier-session edge case, and new trigger phrases in the frontmatter description.</span></div>
+      <div class="file"><code>plugins/gleaner/skills/youtube/SKILL.md</code><span>How answer parts look on a video, since this skill replaces the clip skill's step 3.</span></div>
+    </div>
+    <div class="file-group">
+      <h3>Docs</h3>
+      <div class="file"><code>README.md</code><span>"Saving answers" section and contents link, features bullet, cheat-sheet row, "How Gleaner decides" rule, answer note under "What a clip looks like", and index-count wording.</span></div>
+      <div class="file"><code>plugins/gleaner/skills/README.md</code><span>Answers in the clip row and a "Save an answer" section.</span></div>
+    </div>
+    <div class="file-group">
+      <h3>Repo</h3>
+      <div class="file"><code>.gitignore</code><span>Keeps the local <code>.claude/artifacts/</code> inbox out of git.</span></div>
+    </div>
+    <div class="file-group">
+      <h3>This recap</h3>
+      <div class="file"><code>docs/plans/sessions/add-answer-clips-session.md</code><span>The recap's record, which holds the published link for later republishes.</span></div>
+      <div class="file"><code>docs/artifacts/team-recap-2026-10-16.html</code><span>The recap's gallery copy, with the diagram inlined as SVG; <code>docs/artifacts/index.html</code> is the generated gallery index.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="glossary" aria-labelledby="h-gloss">
+  <h2 id="h-gloss">Glossary</h2>
+  <dl class="glossary">
+    <div><dt>Gleaner</dt><dd>A Claude plugin that saves what you read as summarized, tagged clips.</dd></div>
+    <div><dt>Clip</dt><dd>One saved note: a summary with source, date, category, type, and tags.</dd></div>
+    <div><dt>Skill</dt><dd>A Markdown instruction file Claude reads at runtime; Gleaner's are <code>clip</code> and <code>youtube</code>.</dd></div>
+    <div><dt><code>clip</code> skill</dt><dd><code>plugins/gleaner/skills/clip/SKILL.md</code>, which holds all of Gleaner's saving behavior.</dd></div>
+    <div><dt><code>youtube</code> skill</dt><dd>The video-specific skill, which reads the clip skill first and changes only what differs for video.</dd></div>
+    <div><dt>Intent</dt><dd>What a request is asking for, such as Save page, Add part, or the new Save answer.</dd></div>
+    <div><dt>Part</dt><dd>One piece of a clip being collected: a highlight, a described section, pasted text, or now an answer.</dd></div>
+    <div><dt>Part clip</dt><dd>A clip built from collected parts, each under its own heading.</dd></div>
+    <div><dt>Answer part</dt><dd>A part whose text is Claude's answer and whose heading is the user's question.</dd></div>
+    <div><dt>Scope</dt><dd>The clip header line that counts its parts, answers, and pages.</dd></div>
+    <div><dt>Type</dt><dd>The kind of source page, such as docs, article, or video.</dd></div>
+    <div><dt>Clip index</dt><dd>The table Gleaner returns when asked what was saved.</dd></div>
+    <div><dt>Frontmatter</dt><dd>The YAML block at the top of a skill file; its <code>description</code> decides when the skill triggers.</dd></div>
+    <div><dt>Four-place sync rule</dt><dd>The repo rule that the destination and surface list must match in four descriptions.</dd></div>
+    <div><dt><code>/release</code></dt><dd>The project command that bumps the version, writes the changelog, validates, and commits.</dd></div>
+    <div><dt>Markdownlint</dt><dd>The Markdown style checker CI runs on every <code>.md</code> file.</dd></div>
+    <div><dt>Chrome side panel</dt><dd>Claude's panel inside Chrome, where Gleaner reads the open tab.</dd></div>
+    <div><dt>Claude Code desktop browser</dt><dd>The built-in browser pane in the Claude Code desktop app.</dd></div>
+    <div><dt>Notion</dt><dd>A notes app; Gleaner can save each clip as a page in a Notion database.</dd></div>
+    <div><dt>TL;DR</dt><dd>The 2–3 sentence summary at the top of a clip.</dd></div>
+    <div><dt>PR #5</dt><dd>The pull request on GitHub that carries this work for review.</dd></div>
+  </dl>
+</section>
+
+</div>
+</body>
+</html>
