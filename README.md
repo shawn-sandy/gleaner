@@ -472,9 +472,15 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**1.10.0** (2026-10-17)
+- ChatGPT: the youtube skill reads the video's tab when the browser can't run its transcript script. It uses a transcript only when the tab shows one, otherwise saves a description-only clip, and asks for a time range or topic for "this part", since it can't read the playback position. A part needs transcript lines; chapters alone aren't enough.
+- ChatGPT: unlabeled transcript lines are treated as auto-captions, so product names and jargon are still checked before they go in the clip.
+- ChatGPT Work browser: uses its JavaScript tool for highlights and transcripts when the session has one, and opens a URL itself instead of fetching it.
+- In ChatGPT's connected tabs, Gleaner no longer suggests highlighting again when it can't find a part.
+- Confirmations link only what the save returned, and say so when there's no link, instead of making one up.
+
 **1.9.0** (2026-10-17)
 - ChatGPT: the clip skill now runs in ChatGPT's connected Chrome tabs and Work browser, saving to Drive by default. Connected tabs can't read highlights, so name the part you want or paste it. A new `agents/openai.yaml` gives the skill its name in ChatGPT.
-- ChatGPT: the youtube skill reads the video's tab instead of running its transcript script. It uses a transcript only when the tab shows one, otherwise saves a description-only clip, and asks for a time range or topic for "this part", since it can't read the playback position.
 - Page text is treated as content to summarize, never as instructions to follow.
 - When it isn't clear which tab you mean, Gleaner asks instead of guessing, and it never makes up a URL, tab, or clip link.
 
