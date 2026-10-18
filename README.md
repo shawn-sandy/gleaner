@@ -23,6 +23,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [ChatGPT marketplace](#chatgpt-marketplace)
 - [Install](#install)
 - [Local development and validation](#local-development-and-validation)
+  - [Releasing](#releasing)
 - [Quick start](#quick-start)
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
@@ -470,9 +471,15 @@ Fork this repo, make your edits in `plugins/gleaner/skills/glean/SKILL.md`, bump
 gleaner/
 ├── .claude-plugin/
 │   └── marketplace.json        # marketplace "shawn-sandy"
-├── package.json              # local validation commands and dev dependencies
+├── .github/
+│   └── workflows/
+│       └── release.yml         # tags and publishes a GitHub Release when the version changes on main
+├── package.json              # local validation and release commands, dev dependencies
 ├── package-lock.json         # reproducible dependency versions
 ├── scripts/
+│   ├── changelog.mjs          # changelog parsing shared by the release scripts
+│   ├── release.mjs            # npm run release: bump, date the changelog, validate, commit
+│   ├── release-notes.mjs      # prints one version's changelog entry for the GitHub Release
 │   └── validate-skills.mjs    # Skill, metadata, manifest, and reference checks
 ├── plugins/
 │   └── gleaner/
@@ -515,6 +522,18 @@ claude plugin validate ./plugins/gleaner --strict
 Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests.
 
 Validation runs locally without GitHub Actions or a build step. After dependencies are installed, the static checks need no network access. These checks do not establish live ChatGPT marketplace, browser, or connector compatibility; use the [manual checklist](docs/chatgpt-marketplace.md#validation-checklist) for that.
+
+### Releasing
+
+Only changes to what the skills do get a new version. In Claude Code, `/release minor` (or `patch` or `major`) walks through the steps below. By hand, add the user-facing changes as bullets under a `**Unreleased**` line at the top of the [changelog](#changelog), write the commit body bullets to a file outside the repository, and run:
+
+```bash
+npm run release -- minor --summary "add a notion destination" --body ../release-body.txt
+```
+
+The script bumps `version` in `plugins/gleaner/.claude-plugin/plugin.json`, replaces `**Unreleased**` with the new version and today's date, runs `npm run validate` and `npm test`, and commits every tracked change as `Gleaner X.Y.Z: <summary>`, on a new `release/X.Y.Z` branch when run on `main`. It needs the Claude CLI on `PATH` so both strict checks run, refuses untracked files, and restores both files if validation or the commit fails.
+
+When a merge to `main` changes the version, the [release workflow](.github/workflows/release.yml) tags `vX.Y.Z` and publishes a GitHub Release whose notes are that version's changelog entry. To publish a version that is on `main` but not released yet, run the workflow from the repository's Actions tab.
 
 ## License
 

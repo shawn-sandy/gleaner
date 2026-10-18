@@ -1,0 +1,31 @@
+# Tag and publish a GitHub Release when a merge to main changes the plugin.json version.
+# Run it by hand from the Actions tab to publish a version that is not released yet.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths: [plugins/gleaner/.claude-plugin/plugin.json]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# No concurrency group: a group keeps only one pending run, which would skip a version merged mid-run.
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Publish the plugin.json version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./plugins/gleaner/.claude-plugin/plugin.json').version")
+          if gh release view "v$version" > /dev/null 2>&1; then
+            echo "v$version is already released."
+            exit 0
+          fi
+          node scripts/release-notes.mjs "$version" > "$RUNNER_TEMP/notes.md"
+          gh release create "v$version" --target "$GITHUB_SHA" --title "Gleaner $version" --notes-file "$RUNNER_TEMP/notes.md"
