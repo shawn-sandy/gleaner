@@ -31,7 +31,7 @@ reset my project format override
 sync my preferences
 ```
 
-“Always” persists at user scope unless project/session scope is explicit; “save this here” stays temporary. Precedence is explicit request (`--to` before words), session, project, user, then environment defaults. `auto` preserves native output; raw `markdown` supports local/Cowork and capable Drive connectors, with a prompt for incompatible Notion/artifact saves.
+“Always” persists at user scope unless project/session scope is explicit; “save this here” stays temporary. Precedence is explicit request (`--to` before words), session, project, user, then environment defaults. With no format set, Gleaner saves raw `markdown` wherever the destination supports it. `auto` preserves native output, such as Google Docs in Drive; raw `markdown` supports local/Cowork and capable Drive connectors, with a prompt for incompatible Notion/artifact saves.
 
 Preferences use local user storage and optional project overrides. Drive sync runs only during invocations, keeps project overrides and metadata local, and asks about conflicts. Disconnected writes stay pending; cloud-only hosts can persist in Drive, otherwise settings are session-only. See [storage and sync details](../../../README.md#shared-preferences) and the [shared contract](preferences/references/contract.md).
 

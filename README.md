@@ -275,7 +275,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 | **Notion** → `Browser Research` database | "save to Notion", or `--to notion` | Notion connector |
 | **Artifact** → a private page on claude.ai | "save it as an artifact", or `--to artifact` | A session that can publish artifacts, such as Claude Code |
 
-Folders are created the first time they're needed. In Drive, clips are saved as Google Docs; say "keep it as markdown" for a `.md` file instead. Where the session's Drive connector can't convert (some ChatGPT sessions), clips are saved as `.md` files.
+Folders are created the first time they're needed. Clips are saved as Markdown (`.md`) files, in Drive too. Say "save it as a Google Doc" for a Doc instead, or set your default format to `auto` to always get Docs in Drive. Notion and artifact clips keep their own formats, and a Drive connector that can't upload raw files saves Google Docs.
 
 If a destination can't be reached, Gleaner gives you the clip as a file and says plainly that it wasn't saved. It never claims a save that didn't happen.
 
@@ -571,6 +571,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to keep getting Docs. Notion and artifact clips keep their own formats without asking. First-save setup now suggests `markdown`.
 
 **2.2.0** (2026-10-18)
 - Added `/gleaner:preferences` for shared, versioned save destinations and formats, local-first storage, project/session overrides, and optional invocation-time Google Drive sync.

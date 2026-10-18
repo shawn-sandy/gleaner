@@ -281,7 +281,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - Find the destination folder: search Drive for a folder with that exact title (`mimeType = 'application/vnd.google-apps.folder'`, owned by the user, not trashed). If several match, ask which one. If none exist, create it in My Drive.
    - Inside it, find or create the category subfolder the same way (search with `parentId` set to the destination folder).
    - Determine the final upload title before checking for a collision: raw Markdown uses `<name>.md`; converted Docs keep `<name>`. Check that exact title in the category subfolder. If it exists, try `<name>-2.md`, `<name>-3.md`, and so on for Markdown, or `<name>-2`, `<name>-3` for converted Docs, checking each candidate. If conversion falls back to raw Markdown, repeat this check with the `.md` filename before uploading. Never overwrite.
-   - Upload the summary into the category subfolder with `contentMimeType: text/markdown`, letting Drive convert it to a Google Doc so headings and lists render. If the resolved format is `markdown`, set `disableConversionToGoogleType: true`. Use the final collision-checked title without adding another extension.
+   - Upload the summary into the category subfolder with `contentMimeType: text/markdown`. If the resolved format is `markdown` (Gleaner's default), set `disableConversionToGoogleType: true` so it stays a `.md` file; if it is `auto`, let Drive convert it to a Google Doc so headings and lists render. Use the final collision-checked title without adding another extension.
    - If the Drive connector isn't available or the upload fails, say so and use the fallback below.
 
    **Cowork project**
