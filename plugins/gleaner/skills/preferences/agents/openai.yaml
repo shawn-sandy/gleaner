@@ -1,0 +1,4 @@
+interface:
+  display_name: Gleaner Preferences
+  short_description: Manage shared save defaults and optional Drive sync
+  default_prompt: Show my effective save preferences and sync status.

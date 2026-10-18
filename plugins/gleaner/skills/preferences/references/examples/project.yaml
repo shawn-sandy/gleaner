@@ -1,0 +1,5 @@
+schema_version: 1
+default_destination: notes
+default_format: markdown
+skills:
+  gleaner: {}

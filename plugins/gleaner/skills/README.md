@@ -1,10 +1,11 @@
 # Gleaner skills
 
-Gleaner ships two skills. You don't have to pick one: describe what you want, and Claude loads the right skill from your words and the page you're on. In Claude Code you can also call either one directly.
+Gleaner ships three skills. You don't have to pick one: describe what you want, and Claude loads the right skill from your words and the page you're on. In Claude Code you can also call each one directly.
 
 | Skill | Claude Code command | Use it for |
 | --- | --- | --- |
 | [glean](glean/SKILL.md) | `/gleaner:glean` | Web pages, parts of pages, Claude's answers about them, and finding saved clips |
+| [preferences](preferences/SKILL.md) | `/gleaner:preferences` | Shared destinations, formats, setup, show, update, reset, and sync |
 | [youtube](youtube/SKILL.md) | `/gleaner:youtube` | YouTube videos and moments from them |
 
 The youtube skill handles only what's different about video: reading the transcript and writing a summary with timestamped links. Everything else (notes, parts, destinations, categories, saving, and search) comes from glean. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
@@ -16,6 +17,23 @@ For installation and the full feature guide, see the [main README](../../../READ
 The `clip` skill is now named `glean`. Use `/gleaner:glean` wherever you previously used `/gleaner:clip`, including saved prompts and shortcuts. The old command is no longer available; `/gleaner:youtube` is unchanged.
 
 The rename does not change existing clips or plain-language requests such as "save this page" and "done." If you customize the skill, edit [glean/SKILL.md](glean/SKILL.md). See the [upgrade instructions](../../../README.md#upgrading-from-clip-to-glean) if the new command is not available after updating.
+
+## preferences: shared save settings
+
+On the first unconfigured save, choose a verified default destination, `auto` or `markdown`, and optional Drive sync, or choose “just this save” to keep session settings. Existing environment defaults remain when setup is skipped. Both page and video saves use the same preferences.
+
+```text
+/gleaner:preferences setup
+always save here
+use markdown for this project
+show my preferences
+reset my project format override
+sync my preferences
+```
+
+“Always” persists at user scope unless project/session scope is explicit; “save this here” stays temporary. Precedence is explicit request (`--to` before words), session, project, user, then environment defaults. `auto` preserves native output; raw `markdown` supports local/Cowork and capable Drive connectors, with a prompt for incompatible Notion/artifact saves.
+
+Preferences use local user storage and optional project overrides. Drive sync runs only during invocations, keeps project overrides and metadata local, and asks about conflicts. Disconnected writes stay pending; cloud-only hosts can persist in Drive, otherwise settings are session-only. See [storage and sync details](../../../README.md#shared-preferences) and the [shared contract](preferences/references/contract.md).
 
 ## Before you start
 

@@ -5,6 +5,7 @@
 Gleaner is a Claude plugin marketplace whose runtime behavior is defined primarily in Markdown skills.
 
 - `plugins/gleaner/skills/glean/SKILL.md` defines clipping, destinations, duplicate checks, and search.
+- `plugins/gleaner/skills/preferences/SKILL.md` manages shared settings; `references/contract.md` under that skill defines storage, schema, and sync.
 - `plugins/gleaner/skills/youtube/SKILL.md` adds transcript handling and timestamped summaries; reuse `glean` for shared behavior.
 - `plugins/gleaner/skills/glean/agents/openai.yaml` supplies ChatGPT display metadata.
 - `.claude-plugin/marketplace.json` registers the plugin; `plugins/gleaner/.claude-plugin/plugin.json` holds its manifest and version.
@@ -21,7 +22,7 @@ npm run validate
 npm test
 ```
 
-Local validation checks both Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow; `.github/workflows/release.yml` only publishes releases.
+Local validation checks all three Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow; `.github/workflows/release.yml` only publishes releases.
 
 ## Coding Style & Naming Conventions
 
