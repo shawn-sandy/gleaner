@@ -1,3 +1,5 @@
 interface:
   display_name: Gleaner Glean
   short_description: Save and find summarized web research across connected browsers
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.png"
