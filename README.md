@@ -577,6 +577,7 @@ MIT © Shawn Sandy
 - Page and YouTube saves share first-save setup, explicit-request precedence, verified destinations, and format checks. Temporary saves never change permanent defaults.
 - Added three-way sync instructions with conflict reconciliation, readback verification, pending retries, and cloud-only/session fallbacks. Project overrides and sync metadata never upload.
 - Extended static validation for preferences metadata, contract references, and YAML examples; added maintainer-run acceptance scenarios. Live connector sync remains separately tested.
+- Check final Markdown filenames before Drive uploads and serialize local preference writers with a shared lock to prevent overlapping invocations from discarding updates.
 
 **2.1.0** (2026-10-18)
 - One clip per page per session: saving, adding a part, or saving an answer from a page you already clipped this session updates that clip instead of creating a new doc, file, Notion page, or artifact. Say "as a new clip" to keep one separate.
