@@ -79,7 +79,7 @@ Use plain-language requests or invoke a command directly in Claude Code. The `yo
 
 ## ChatGPT marketplace
 
-Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers both `glean` and `youtube` skills through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
+Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers all three skills (`glean`, `youtube`, and `preferences`) through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
 
 See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) for installation, supported browser surfaces, limitations, and a manual test checklist. ChatGPT marketplace import requires verification in an eligible workspace.
 
@@ -112,7 +112,7 @@ claude plugin marketplace add shawn-sandy/gleaner
 claude plugin install gleaner@shawn-sandy --scope user
 ```
 
-In Claude Code the skills are also available as `/gleaner:glean` and `/gleaner:youtube`.
+In Claude Code the skills are also available as `/gleaner:glean`, `/gleaner:youtube`, and `/gleaner:preferences`.
 
 ### Claude Code desktop
 
