@@ -72,6 +72,12 @@ Gleaner includes two skills that share the same clip format and saving workflow:
 
 Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
 
+## ChatGPT marketplace
+
+Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers both `glean` and `youtube` skills through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
+
+See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) for installation, supported browser surfaces, limitations, and a manual test checklist. ChatGPT marketplace import requires verification in an eligible workspace.
+
 ## Install
 
 **Requirements**
