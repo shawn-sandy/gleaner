@@ -1,6 +1,6 @@
 ---
 name: glean
-description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged gleans in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the glean", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved gleans, such as "what did I save about Cowork" or "make me an index sheet".
+description: Saves web pages, parts of them, or Claude's answers about them as tagged clips. Writes them to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, or file a page, part, URL, or answer, or to find or index saved gleans.
 argument-hint: '[--to drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 

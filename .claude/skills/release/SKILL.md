@@ -1,6 +1,6 @@
 ---
 name: release
-description: Cut a new Gleaner version. Writes the README changelog entry, checks the four destination descriptions match, then runs npm run release to bump plugin.json, date the entry, validate, and commit on a branch. Use when the user asks to release or bump the version.
+description: Cuts a new Gleaner release. Writes the changelog entry, checks the four destination lists match, and runs npm run release. Use when the user asks to release or bump the version.
 argument-hint: "patch | minor | major"
 disable-model-invocation: true
 ---
