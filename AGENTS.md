@@ -22,7 +22,7 @@ npm run validate
 npm test
 ```
 
-Local validation checks all three Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow.
+Local validation checks all three Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow; `.github/workflows/release.yml` only publishes releases.
 
 ## Coding Style & Naming Conventions
 
@@ -36,4 +36,4 @@ Run `npm run validate` and `npm test` before pushing. The fixture tests exercise
 
 History uses imperative subjects and release titles such as `Gleaner 1.11.0: cover other drive connectors and work mode`. Work on a branch and open a PR to `main`. Describe behavior changes, related issues, and validation results.
 
-For behavior changes, update the plugin version and README changelog; documentation-only edits need no bump. Never add a marketplace version. Keep destination and browser descriptions synchronized across manifests, skill frontmatter, and the README introduction. Update README step references whenever skill steps move.
+For behavior changes, add user-facing bullets under `**Unreleased**` at the top of the README changelog, then run `npm run release -- <patch|minor|major> --summary "<lowercase summary>" --body <file>` to bump the version, date the entry, validate, and commit; documentation-only edits need no bump. Merging a version change to `main` tags it and publishes a GitHub Release. Never add a marketplace version. Keep destination and browser descriptions synchronized across manifests, skill frontmatter, and the README introduction. Update README step references whenever skill steps move.

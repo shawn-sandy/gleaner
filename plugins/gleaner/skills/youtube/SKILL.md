@@ -8,7 +8,7 @@ argument-hint: "[--to drive | notion | artifact | local | <path>]"
 
 Clip a YouTube video, or moments from it, into a Gleaner clip: a summary written from the transcript, with key moments that link to the second they happen.
 
-This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, shared preference setup and synchronization, destinations and formats, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
+This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, adding to a clip saved this session, shared preference setup and synchronization, destinations and formats, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
 
 Before any video save, run glean step 2 including its shared preferences contract before duplicate detection. Reuse the resolved destination and format through saving; transcript handling never overrides preferences.
 
@@ -141,7 +141,7 @@ This replaces step 3 of the glean skill.
 - <1–3 bullets on how this could be used or what to follow up on>
 ```
 
-**Part clip:** use the glean skill's part format. Each part's heading links to where it starts, `### 1. <part note or topic> ([3:10–5:40](https://www.youtube.com/watch?v=<id>&t=190s))`, and its `*From …*` line names the video. An answer part (an answer you gave about the video) follows the glean skill's answer-part rules instead: kept as given and not held to the length limits, headed by the user's question with no time link, and with an *Answer about* line that links the Source URL above. Link any timestamps in the answer to the second, as Key moments do, each taken from a transcript line or chapter.
+**Part clip:** use the glean skill's part format. Each part's heading links to where it starts, `### 1. <part note or topic> ([3:10–5:40](https://www.youtube.com/watch?v=<id>&t=190s))`, and its `*From …*` line names the video. Parts added to a video clip saved this session get the same headings, in a Parts section just before its Takeaways. An answer part (an answer you gave about the video) follows the glean skill's answer-part rules instead: kept as given and not held to the length limits, headed by the user's question with no time link, and with an *Answer about* line that links the Source URL above. Link any timestamps in the answer to the second, as Key moments do, each taken from a transcript line or chapter.
 
 Rules:
 - **Key moments:** 5–8 bullets in time order, following the chapters when the video has them. Every timestamp comes from a transcript line or a chapter (`m:ss`, or `h:mm:ss` past an hour), converted to seconds for the link; never estimate one.

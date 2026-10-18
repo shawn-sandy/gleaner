@@ -68,6 +68,8 @@ done
 
 Each part is confirmed with its first few words. Nothing is saved until you say "done" (or "save them", "wrap it up"); then all the parts go into one clip. Parts live only in the conversation, so save before you close it.
 
+Once a page has a clip from this session, more saves and parts from that page go into that clip, which is saved again right away, instead of starting a new doc. Say "as a new clip" to keep one separate.
+
 ### Save an answer
 
 Ask Claude about the page, such as a clarification or a list of steps, then save the answer:
