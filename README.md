@@ -247,7 +247,7 @@ Collect moments as parts by time or topic:
 > grab the part about generics
 > add this part *(the chapter you're watching, or the last minute or so)*
 
-If a video has no captions, Gleaner asks you for a short description, then saves a clip from it and the title, description, and chapters. Paste the transcript (**…more → Show transcript** on YouTube) to get a full summary as an updated copy. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
+If a video has no captions, Gleaner asks whether to save it anyway. Say yes, and it asks for a short description, adds it to the video's own, and saves a clip from the title, description, and chapters. Paste the transcript (**…more → Show transcript** on YouTube) to get a full summary as an updated copy. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
 
 Any link to a video (`youtu.be`, Shorts, a share link) is saved with the same **Source**, `youtube.com/watch?v=…`, so the duplicate check catches a video you've already clipped. A link with a timestamp opens the player at that time, so "add this part" uses that position.
 
@@ -573,7 +573,7 @@ MIT © Shawn Sandy
 ## Changelog
 
 **Unreleased**
-- When a YouTube video has no transcript, the youtube skill asks you for a short description before saving and uses it as the clip's TL;DR. Say "just save it" to skip it, or paste the transcript for a full summary.
+- When a YouTube video has no transcript, the youtube skill asks whether to save it anyway. If you say yes, it asks for a short description and adds it to the video's own description. Say "just save it" to skip the description, or paste the transcript for a full summary.
 
 **2.3.0** (2026-10-18)
 - Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Notion and artifact clips keep their own formats without asking.
