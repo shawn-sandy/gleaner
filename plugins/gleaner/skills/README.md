@@ -80,7 +80,7 @@ save that
 explain the auth flow and save it
 ```
 
-"Save that" right after an answer saves the answer and says so; say "save the page" if you meant the whole page. While you're collecting parts, an answer is added as the next part instead. Answers are kept as given, headed by your question, with anything that didn't come from the page marked "(not from the page)". See [Saving answers](../../../README.md#saving-answers).
+"Save that" right after an answer saves the answer and says so; say "save the page" if you meant the whole page. While you're collecting parts, an answer is added as the next part instead. Questions are answered only from the page; if the answer isn't there, Claude says it wasn't found and saves nothing. Answers are kept as given, headed by your question, with anything that didn't come from the page marked "(not from the page)". See [Saving answers](../../../README.md#saving-answers).
 
 ### Choose where it goes
 

@@ -129,6 +129,14 @@ Read the [shared preferences contract](../preferences/references/contract.md) di
 
 Offer first-save preference setup as defined in the shared contract. Ask about sync conflicts and incompatible formats before saving. Otherwise ask one short question only when acting would likely do the wrong thing, such as when two very different readings are equally plausible, or a named destination doesn't exist. Otherwise act, and say in the confirmation what you assumed so the user can correct it ("Saved the whole page — say 'just the highlighted part' if you meant only that").
 
+### Answering questions about a page
+
+Answer a question about a page only from what the page says; for a YouTube video, that is its transcript, description, and chapters. A question asked while a page is open is about that page unless the user says otherwise.
+
+- **Not on the page:** don't answer from background knowledge, and don't guess. Say in one line that the answer wasn't found on the page, naming it: `I couldn't find the answer to that on "<page title>".` Save nothing, even when the request also asked to save the answer.
+- **Partly on the page:** answer only what the page covers, and say which part wasn't found.
+- **Beyond the page** only when the user asks for it ("answer from what you know"); then mark what didn't come from the page, as answer parts do (see step 3).
+
 ### Collecting parts
 
 A part is a piece of text plus its page title, URL, topic, and note. It can also be an answer you gave about a page. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.

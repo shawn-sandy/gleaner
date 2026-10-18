@@ -227,6 +227,8 @@ Ask Claude about the page you're reading, such as a clarification, a list of ste
 > add that answer
 > save our back-and-forth about webhooks
 
+Claude answers questions about a page only from that page. If the page doesn't have the answer, Claude says it wasn't found instead of answering from background knowledge, and nothing is saved. Ask it to "answer from what you know" if you want more than the page says.
+
 An answer is kept as given, not summarized, so numbered steps and code survive. It's headed by your question, links the page it was about, and marks anything that didn't come from the page "(not from the page)", so the clip never passes off Claude's background knowledge as the source's.
 
 Answers live in the conversation like parts do. Gleaner can't save an answer from an earlier session; ask the question again instead.
@@ -571,6 +573,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Questions about a page are answered only from that page. When the answer isn't on the page (or, for a YouTube video, in its transcript, description, or chapters), Claude says it wasn't found instead of answering from background knowledge, and saves nothing. Say "answer from what you know" to go beyond the page.
 
 **2.2.0** (2026-10-18)
 - Added `/gleaner:preferences` for shared, versioned save destinations and formats, local-first storage, project/session overrides, and optional invocation-time Google Drive sync.
