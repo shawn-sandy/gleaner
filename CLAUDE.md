@@ -8,17 +8,17 @@ A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner
 
 ## Validate
 
-CI (`.github/workflows/validate.yml`) runs these three:
+Run local validation before pushing (Node.js 22 or newer and npm required):
 
 ```bash
-claude plugin validate . --strict
-claude plugin validate ./plugins/gleaner --strict
-npx --yes markdownlint-cli2@0.18.1
+npm ci
+npm run validate
+npm test
 ```
 
 Markdownlint takes its globs and rule overrides from `.markdownlint-cli2.jsonc`, where the disabled rules record house style; fix findings rather than disabling more rules. A PostToolUse hook in `.claude/settings.json` reruns both validates after a Write or Edit under `.claude-plugin/` or `plugins/`; shell edits (`sed`, heredocs) bypass it, and it does not run markdownlint.
 
-Validation covers manifests and Markdown syntax only. It does not fully parse SKILL.md frontmatter: an unterminated quote in `argument-hint` still passes, so check frontmatter edits with a YAML parser. Live testing against Chrome, Drive, Notion, and Cowork is done by the maintainer; never report a change as live-tested.
+Local validation parses both Skills' frontmatter and ChatGPT metadata, checks manifests, required files and local references, and lints Markdown. It runs both strict Claude validators when `claude` is on `PATH` and reports a skip otherwise. Live testing against Chrome, Drive, Notion, and Cowork is done by the maintainer; never report a change as live-tested.
 
 ## Versioning and changelog
 
@@ -34,4 +34,4 @@ Validation covers manifests and Markdown syntax only. It does not fully parse SK
 
 ## Git
 
-Work on a branch and open a PR to `main` so the validate workflow runs before merge. Release commits use the subject `Gleaner X.Y.Z: <lowercase summary>`; other commits use a plain imperative subject.
+Work on a branch and open a PR to `main` and run local validation before merge. Release commits use the subject `Gleaner X.Y.Z: <lowercase summary>`; other commits use a plain imperative subject.

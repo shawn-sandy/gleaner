@@ -81,7 +81,7 @@ How a request after an answer is routed. The only new branch is "points at the a
 ## Before and after
 
 | Before | After |
-|---|---|
+| --- | --- |
 | Gleaner could save a page, a highlight, a described section, or pasted text. | It can also save an answer Claude gave about the page. |
 | "Save that" after an answer fell through to the page rules and saved the page. | "Save that" right after an answer saves the answer, and the confirmation says so. |
 | "Save this" after an answer saved the page silently. | It still saves the page, but the confirmation mentions that "save that answer" saves the answer instead. |
