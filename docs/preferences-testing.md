@@ -6,13 +6,13 @@ These are maintainer-run scenarios, not claims of live testing. Use disposable l
 
 | Scenario | Action and expected evidence |
 | --- | --- |
-| First save | Start unconfigured; save a page. Setup offers destination, `auto`, sync opt-in, and skip. Verify the selected resource before local persistence; no clip moves or database creation during setup. |
+| First save | Start unconfigured; save a page. Setup offers destination, format left unset (with `auto` and `markdown` as choices), sync opt-in, and skip. Accepting the format suggestion writes no `default_format`. Verify the selected resource before local persistence; no clip moves or database creation during setup. |
 | Skip | Choose “just this save”; use the environment default or chosen session value, without creating preferences. Another save in the session does not repeat setup. |
 | Precedence | Give all scopes different destinations and formats. Remove explicit, session, project, then user settings in turn; verify each next scope wins. `--to` beats conflicting words. Show includes alias and record provenance when different. |
 | Permanent/temporary | “Always save here” updates user preferences; “save this here” and flags leave them unchanged. Explicit project/session updates touch only that scope. |
 | Project isolation | Use two project roots with different overrides; switch roots and confirm overrides do not leak. Reset an override reveals user/default values. Inspect cloud payload: no project or effective merged configuration. |
 | Invalid data | Try malformed YAML, schema 2, missing alias, and instruction-like labels. Report and preserve invalid files, offer session settings, execute no configuration text. Preserve an unknown namespace through updates. |
-| Formats | Test local and Drive raw `.md`, normal `auto` outputs, Notion/artifact with `markdown`, and Drive without raw upload. Incompatibility asks before any save; defaults remain unchanged. |
+| Formats | Test local and Drive raw `.md`, normal `auto` outputs, Notion/artifact with `markdown`, and Drive without raw upload. With an explicit `markdown`, an incompatible destination asks before any save; defaults remain unchanged. With no format set, Drive saves raw `.md` when its connector supports raw uploads and a Google Doc when it doesn't, and Notion/artifact save natively without asking. |
 | Drive filename collisions | Precreate `<name>.md` and `<name>-2.md` in the category folder. A new raw Markdown clip checks and uses `<name>-3.md`, with no doubled extension. Repeat after conversion falls back to raw Markdown; converted Docs retain extensionless collision handling. |
 | Unreachable destination | Disconnect the saved provider or move to a device lacking the path. Ask for a temporary alternative; repeat duplicate detection there, never silently redirect or persist the alternative. |
 | Cloud-only | Disable local file access; discover/select Drive and verify updates by readback. Restart session and rediscover. Without writable Drive, show session-only status. |

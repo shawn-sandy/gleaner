@@ -12,7 +12,7 @@ Read and follow the [shared preferences contract](references/contract.md) direct
 
 | Operation | Behavior |
 | --- | --- |
-| `setup` | Offer destination, format (`auto` suggested), and optional Drive sync. Verify the destination, then persist at user scope unless another scope was requested. |
+| `setup` | Offer destination, format (unset suggested, so the skill's normal format applies), and optional Drive sync. Verify the destination, then persist at user scope unless another scope was requested. |
 | `show` | Synchronize when enabled, then show the effective destination and format, the scope supplying each, verified ID/path, persistence location, and sync status (disabled, synchronized, pending, conflict, or cloud-only). Include any session fallback or invalid store excluded from resolution. |
 | `update` | Apply the requested fields only, preserving unrelated destinations and namespaces. “Always save here” persists at user scope; “for this project” writes project scope; “for this session” is memory only. Verify changed destinations before writing. |
 | `reset` | Remove the named override in the requested scope (user by default), revealing the next applicable value. Preserve other settings. Do not delete destination aliases still referenced in that scope or known project/session overrides; ask the user to select a replacement or remove those references. Resetting all user settings leaves a valid schema-only document so deletions can synchronize. Reset never deletes clips or the Drive document. |
