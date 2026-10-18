@@ -20,7 +20,7 @@ The rename does not change existing clips or plain-language requests such as "sa
 
 ## preferences: shared save settings
 
-On the first unconfigured save, choose a verified default destination, `auto` or `markdown`, and optional Drive sync, or choose “just this save” to keep session settings. Existing environment defaults remain when setup is skipped. Both page and video saves use the same preferences.
+On the first unconfigured save, choose a verified default destination, a format (left unset by default, so Gleaner saves Markdown where supported; `default_format` is written only if you pick `auto` or `markdown`), and optional Drive sync, or choose “just this save” to keep session settings. Existing environment defaults remain when setup is skipped. Both page and video saves use the same preferences.
 
 ```text
 /gleaner:preferences setup

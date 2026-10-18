@@ -275,7 +275,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 | **Notion** → `Browser Research` database | "save to Notion", or `--to notion` | Notion connector |
 | **Artifact** → a private page on claude.ai | "save it as an artifact", or `--to artifact` | A session that can publish artifacts, such as Claude Code |
 
-Folders are created the first time they're needed. Clips are saved as Markdown (`.md`) files, in Drive too. Say "save it as a Google Doc" for a Doc instead, or set your default format to `auto` to always get Docs in Drive. Notion and artifact clips keep their own formats, and a Drive connector that can't upload raw files saves Google Docs.
+Folders are created the first time they're needed. Clips are saved as Markdown (`.md`) files, in Drive too. Say "save it as a Google Doc" for a Doc instead, or set your default format to `auto` to get Docs whenever Drive can convert them (otherwise `auto` saves `.md` too). Notion and artifact clips keep their own formats, and a Drive connector that can't upload raw files saves Google Docs.
 
 If a destination can't be reached, Gleaner gives you the clip as a file and says plainly that it wasn't saved. It never claims a save that didn't happen.
 
@@ -479,7 +479,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 | Gleaner doesn't respond to "save this" | Check you're on the new side panel (not classic) and that Gleaner is enabled in your skills. |
 | It saved the whole page instead of my highlight | Highlight again right before asking, or name the part: "grab the part about X." Some sites clear highlights when you click away. |
 | "Couldn't reach the project folder" | Open the Claude desktop app and make sure it's connected, then ask again. |
-| Clip saved as a `.md` file, not a formatted Doc | Markdown is the default. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to always get Docs in Drive. |
+| Clip saved as a `.md` file, not a formatted Doc | Markdown is the default. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to get Docs whenever Drive can convert them. |
 | Similar tags like `#ai-design` and `#ai-designs` | Name the tag you want in the request ("tag it ai-design"). Gleaner reuses existing spellings by default, so this gets rarer as your library grows. |
 
 ## Customizing
@@ -574,7 +574,7 @@ MIT © Shawn Sandy
 
 **2.3.0** (2026-10-18)
 - Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Notion and artifact clips keep their own formats without asking.
-- Say "save it as a Google Doc" for one Doc (in Claude Code, this saves to Drive), or set your default format to `auto` to keep getting Docs. First-save setup leaves the format unset unless you pick one.
+- Say "save it as a Google Doc" for one Doc (in Claude Code, this saves to Drive), or set your default format to `auto` to get Docs whenever Drive can convert them. First-save setup leaves the format unset unless you pick one.
 
 **2.2.0** (2026-10-18)
 - Added `/gleaner:preferences` for shared, versioned save destinations and formats, local-first storage, project/session overrides, and optional invocation-time Google Drive sync.
