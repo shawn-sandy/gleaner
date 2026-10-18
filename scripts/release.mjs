@@ -83,9 +83,9 @@ function main() {
   }
   const target = branch === 'main' ? `release/${version}` : branch;
 
-  writeFileSync(manifestPath, manifest);
-  writeFileSync(readmePath, readme);
   try {
+    writeFileSync(manifestPath, manifest);
+    writeFileSync(readmePath, readme);
     if (!succeeds('npm', ['run', 'validate']) || !succeeds('npm', ['test'])) throw new Error('validation failed');
     if (target !== branch) capture('git', ['switch', '--create', target]);
     // --all stages tracked changes only if the commit succeeds, so a failed commit leaves the index as it was.

@@ -93,6 +93,7 @@ export function stamp(readme, version, date) {
     throw new Error(`add a ${unreleased} line at the top of ## Changelog, with the user-facing changes as bullets under it`);
   }
   if (!body(lines, top, end).startsWith('- ')) throw new Error(`the ${unreleased} entry needs at least one bullet`);
+  if (lines.slice(top + 1, end).includes(unreleased)) throw new Error(`merge the ${unreleased} entries into one at the top`);
   if (lines.slice(start, end).some(line => line.match(entryHeading)?.[1] === version)) {
     throw new Error(`the changelog already has an entry for ${version}`);
   }

@@ -89,6 +89,7 @@ test('reads and stamps changelog entries', () => {
   assert.throws(() => stamp(readme, '1.1.0', '2026-01-03'), /already has an entry/);
   assert.throws(() => stamp(readme.replace('**Unreleased**\n- New.\n\n', ''), '1.2.0', '2026-01-03'), /Unreleased/);
   assert.throws(() => stamp(readme.replace('- New.\n', ''), '1.2.0', '2026-01-03'), /at least one bullet/);
+  assert.throws(() => stamp(readme.replace('**1.0.0**', '**Unreleased**\n- Older.\n\n**1.0.0**'), '1.2.0', '2026-01-03'), /merge the \*\*Unreleased\*\* entries/);
 });
 
 test('the README has a changelog entry for the current plugin version', () => {
