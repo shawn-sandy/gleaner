@@ -8,7 +8,9 @@ argument-hint: "[--to drive | notion | artifact | local | <path>]"
 
 Clip a YouTube video, or moments from it, into a Gleaner clip: a summary written from the transcript, with key moments that link to the second they happen.
 
-This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, destinations, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
+This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, shared preference setup and synchronization, destinations and formats, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
+
+Before any video save, run glean step 2 including its shared preferences contract before duplicate detection. Reuse the resolved destination and format through saving; transcript handling never overrides preferences.
 
 ## Get the video
 

@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its glean skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its glean skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it. Shared local-first preferences manage save destinations and formats with optional Google Drive sync.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -24,6 +24,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [Install](#install)
 - [Local development and validation](#local-development-and-validation)
 - [Quick start](#quick-start)
+- [Shared preferences](#shared-preferences)
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
   - [Saving parts of pages](#saving-parts-of-pages)
@@ -65,12 +66,13 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 
 ## Skills
 
-Gleaner includes two skills that share the same clip format and saving workflow:
+Gleaner includes three skills: two share the clip format and saving workflow, and one manages reusable preferences:
 
 | Skill | Claude Code command | Use it for |
 | --- | --- | --- |
 | [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
 | [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
+| **preferences** | `/gleaner:preferences` | Shared destinations, formats, setup, and sync |
 
 Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
 
@@ -138,6 +140,32 @@ If you installed the earlier **page-to-project** skill, remove it so the two don
 That's it. Everything below is optional.
 
 ---
+
+## Shared preferences
+
+Use `/gleaner:preferences setup`, `show`, `update`, `reset`, or `sync`, or ask naturally:
+
+```text
+set up my save preferences
+always save here
+use markdown by default
+show my preferences
+reset my project format override
+sync my preferences
+save this page here
+```
+
+On your first unconfigured save, Gleaner offers a default destination, format (`auto` suggested), and optional Drive sync. Choose “just this save” to continue with session settings and the existing environment defaults. Setup verifies an existing destination; it does not move clips or create research databases. “Always save here” persists at user scope; “save this here” and `--to` apply to that save only. Explicit project or session requests use that scope. Reset removes an override so the next default applies.
+
+User preferences live at `$XDG_CONFIG_HOME/agent-preferences/preferences.yaml`, falling back to `~/.config/agent-preferences/preferences.yaml`. Project overrides live at `.agent-preferences/preferences.yaml` under the session project root. Resolution is explicit request (`--to` beats words), session, project, user, then existing skill defaults. Show reports each effective value and its scope, persistence location, and sync status. Page and YouTube saves use the same resolved preferences.
+
+`auto` keeps existing destination behavior. `markdown` requests a raw `.md` file for local/Cowork or a Drive connector supporting raw uploads. Notion pages and HTML artifacts are incompatible; Gleaner explains and asks before saving. Saved local paths are device-specific: an unreachable path prompts for a temporary alternative and never changes the permanent default silently.
+
+Optional sync uses one Google Drive document titled `Agent Preferences`, discovered before creation and selected by you if duplicates exist. Only user preferences synchronize; project overrides and local `sync-state.yaml` metadata never upload. Before saves and during preference invocations, Gleaner compares local/cloud values with the last verified snapshot, propagates one-sided changes, merges independent settings, and asks about conflicting settings. Different existing copies without a baseline require reconciliation before upload. Updates persist locally first, then synchronize when connected; failures remain pending for the next invocation. There is no background service.
+
+Cloud writes require read/update capabilities, a fresh remote check, and readback verification. Connectors without conditional writes cannot fully prevent a simultaneous edit between check and write. Hosts without local files can use Drive as their persistent store; with neither store writable, preferences are clearly labeled session-only. Invalid YAML and unsupported schema versions remain untouched; session settings can continue the save.
+
+See the [shared contract and examples](plugins/gleaner/skills/preferences/references/contract.md) and [maintainer acceptance scenarios](docs/preferences-testing.md). Static fixtures check packaging and examples, not live synchronization reliability.
 
 ## Usage guide
 
@@ -298,7 +326,7 @@ done --to cowork:Serve513
 | `--to cowork:"Project Name"` | That Cowork project → `browser-research/<category>/` |
 | `--to <path>` | Any local folder, like `./notes` or `~/Documents/research` → `<path>/<category>/` |
 
-A flag beats a destination you describe in words, which beats the default. If the flagged destination can't be reached, Gleaner tells you rather than quietly saving somewhere else.
+A flag beats a destination you describe in words, followed by session, project, user preferences, and the environment default. If the flagged destination can't be reached, Gleaner tells you rather than quietly saving somewhere else.
 
 ### Categories and tags
 
@@ -423,14 +451,14 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **A plain "save this"** → saves your highlight or collected parts if there are any, otherwise the whole page.
 - **"Save that" right after an answer** → takes the answer, even with text highlighted, and says so: it saves the answer, or adds it as the next part while you're collecting. "Save this page" still saves the page.
 - **Highlights under ~40 characters** (a stray word) are ignored.
-- **It acts instead of asking**, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
+- **It acts when intent is clear**, with prompts for first-save setup, sync conflicts, and unsupported formats, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
 - **Duplicate check:** saving a page you've clipped before shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check.
 
 ## Limitations
 
 - **One highlight at a time.** Chrome doesn't support multiple simultaneous selections; collect parts one by one instead.
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
-- **Drive files can't be edited.** The Drive connector can create and read files but not change them, so updates are new copies and index sheets are snapshots.
+- **Drive capabilities vary.** Clips remain new copies and index sheets remain snapshots. Preference sync needs a connector that can read and update the selected document; create-only connectors leave sync pending.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
 - **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), the clip comes from the title, description, and chapters only, and parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
@@ -452,10 +480,9 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 Gleaner's behavior lives in [`plugins/gleaner/skills/glean/SKILL.md`](plugins/gleaner/skills/glean/SKILL.md), with video-specific steps (transcript, Key moments format) in [`plugins/gleaner/skills/youtube/SKILL.md`](plugins/gleaner/skills/youtube/SKILL.md). Common edits:
 
-- **Default folder:** change `Browser Research` in step 2.
+- **Default folder/destination/format:** use `/gleaner:preferences`; resolution and fallback defaults are in step 2 and the shared contract.
 - **Categories:** edit the list in step 4 (names double as folder names).
 - **Summary length:** adjust the word limits in step 3.
-- **Default destination:** make a Cowork project the default instead of Drive in step 2.
 
 Fork this repo, make your edits in `plugins/gleaner/skills/glean/SKILL.md`, bump `version` in `plugins/gleaner/.claude-plugin/plugin.json`, and add your fork as a marketplace.
 
@@ -474,11 +501,15 @@ gleaner/
 │       ├── .claude-plugin/
 │       │   └── plugin.json     # plugin manifest (version lives here)
 │       └── skills/
-│           ├── README.md       # usage guide for both skills
+│           ├── README.md       # usage guide for all three skills
 │           ├── glean/
 │           │   ├── agents/
 │           │   │   └── openai.yaml  # skill name shown in ChatGPT
 │           │   └── SKILL.md    # pages, parts, answers, and search
+│           ├── preferences/
+│           │   ├── agents/openai.yaml
+│           │   ├── references/   # shared contract and YAML examples
+│           │   └── SKILL.md      # setup, show, update, reset, sync
 │           └── youtube/
 │               ├── agents/
 │               │   └── openai.yaml  # YouTube skill display metadata
@@ -498,7 +529,7 @@ npm ci
 npm run validate
 ```
 
-Run `npm run validate` before pushing. It checks both Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
+Run `npm run validate` before pushing. It checks all three Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, preference example schemas and destination references, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
 
 When `claude` is on `PATH`, validation also runs both existing strict checks:
 
@@ -516,6 +547,12 @@ Validation runs locally without GitHub Actions or a build step. After dependenci
 MIT © Shawn Sandy
 
 ## Changelog
+
+**2.1.0** (2026-10-18)
+- Added `/gleaner:preferences` for shared, versioned save destinations and formats, local-first storage, project/session overrides, and optional invocation-time Google Drive sync.
+- Page and YouTube saves share first-save setup, explicit-request precedence, verified destinations, and format checks. Temporary saves never change permanent defaults.
+- Added three-way sync instructions with conflict reconciliation, readback verification, pending retries, and cloud-only/session fallbacks. Project overrides and sync metadata never upload.
+- Extended static validation for preferences metadata, contract references, and YAML examples; added maintainer-run acceptance scenarios. Live connector sync remains separately tested.
 
 **2.0.0** (2026-10-17)
 - Renamed the `clip` skill to `glean`. Use `/gleaner:glean` instead of `/gleaner:clip`; the old command is no longer available. Natural-language clipping requests and the `youtube` skill are unchanged.

@@ -1,12 +1,12 @@
 ---
 name: glean
-description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged gleans in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the glean", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find, list, or index saved gleans, such as "what did I save about Cowork" or "make me an index sheet".
+description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged gleans in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the glean", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find or index saved gleans. Shared local-first preferences manage destinations and formats with optional Google Drive sync.
 argument-hint: '[--to drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
 # Gleaner
 
-Gather the best of what you read into tagged, searchable clips.
+Gather the best of what you read into tagged, searchable clips. Use shared local-first preferences with optional Google Drive sync for save destinations and formats.
 
 Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of five places:
 
@@ -113,7 +113,7 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 | `--to <path>` | A local folder, such as `./notes`, `../research`, or `~/Documents/clips` → `<path>/<category-folder>/` |
 
 Rules:
-- **Precedence:** a `--to` flag beats a destination described in words, which beats the surface's default. If the flag and the words disagree in the same request, follow the flag and mention it.
+- **Precedence:** a `--to` flag beats a destination described in words, which beats session overrides, project preferences, user preferences, then the surface's default. If the flag and the words disagree in the same request, follow the flag and mention it.
 - **Paths:** a value starting with `./`, `../`, `/`, or `~` is a local path. Relative paths resolve from the session's working directory. Create the folder if it's missing, but only inside the working directory or the user's home folder; for anything else, ask first.
 - **Unavailable destinations:** local paths need local file access (Claude Code, or a desktop session with the folder connected), `drive` needs the Google Drive connector, and `artifact` needs the Artifact tool. If the flagged destination can't be reached, don't silently switch: say so in one line and use the fallback in step 6.
 - **Scope:** the flag applies to the clip being saved now. When collecting parts, a flag on any part request or on the final save applies to the whole clip; if different parts carry conflicting flags, use the one on the final save, or the most recent one.
@@ -121,9 +121,13 @@ Rules:
 - `notion` needs the Notion connector. If it isn't connected, say so in one line and suggest connecting it.
 - Strip the flag from the request before reading the note, so `--to drive` never ends up in a clip's note.
 
+### Shared preferences
+
+Read the [shared preferences contract](../preferences/references/contract.md) directly before resolving any save. Follow its schema, setup, scope precedence, synchronization, and destination/format verification rules. Route management requests such as “always save here”, setup, show, update, reset, and sync to the [preferences skill](../preferences/SKILL.md). “Save this here” stays temporary. YouTube uses this same resolution through glean; do not maintain separate defaults for videos.
+
 ### When to ask
 
-Ask one short question only when acting would likely do the wrong thing, such as when two very different readings are equally plausible, or a named destination doesn't exist. Otherwise act, and say in the confirmation what you assumed so the user can correct it ("Saved the whole page — say 'just the highlighted part' if you meant only that").
+Offer first-save preference setup as defined in the shared contract. Ask about sync conflicts and incompatible formats before saving. Otherwise ask one short question only when acting would likely do the wrong thing, such as when two very different readings are equally plausible, or a named destination doesn't exist. Otherwise act, and say in the confirmation what you assumed so the user can correct it ("Saved the whole page — say 'just the highlighted part' if you meant only that").
 
 ### Collecting parts
 
@@ -147,17 +151,20 @@ To add a part:
    - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
    - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
-2. **Pick the destination.**
+2. **Resolve preferences, then pick the destination.**
+   - Read the shared preferences contract, load valid stores, run enabled sync, and offer first-save setup when unconfigured. Resolve destination and format with their scopes before any duplicate check. Invalid configuration stays untouched; offer explicit session settings to continue.
+   - The following environment defaults apply only when no higher-precedence setting exists or setup is skipped. A configured destination uses its verified ID/path throughout this save, never a fresh lookup by label. Check format support before proceeding; `markdown` means raw Markdown, not Notion content or HTML.
+   - Keep the resolved clip base path or remote ID for duplicate checks, recent-tag reads, category organization, and the final save. A temporary alternative requires the user's choice and a fresh duplicate check; never modify the permanent default because it is unreachable.
    - A `--to` flag decides the destination (see Destination flag).
    - "Save to Notion" or "put it in Notion" in words means the Notion destination, the same as `--to notion`.
    - "Save it as an artifact", "make it an artifact", or "save to my artifacts" means the Artifact destination, the same as `--to artifact`.
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
    - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
-   - **In Claude Code, the default is This project** (the folder the session is working in). Use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research").
+   - **In Claude Code, the default is This project** (the folder the session is working in). With no saved preference, use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research").
    - Everywhere else, default to Google Drive in a folder named `Browser Research`.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
-     - Cowork project or This project: search `browser-research/` for the URL.
+     - Cowork project or This project: search the resolved clip base path for the URL (the environment default is `browser-research/`).
      - Notion: query the destination database for pages whose **Source** property equals the URL. Use a structured rows query with a property filter rather than SQL, which is rate-limited on some Notion plans.
      - Artifact: list the user's artifacts and read the ones titled like this page (clips are named after it). A match is a Gleaner clip (its page has the `Gleaner clip` generator line) whose Source row is the URL.
      - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. If they don't answer, save the updated copy.
@@ -246,14 +253,14 @@ To add a part:
 
 5. **Name the file** `<yyyy-mm-dd>-<short-kebab-title>` (kebab-case, max ~60 characters). For a part clip, base the name on the topic tying the parts together.
 
-6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`).
+6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`). Use the destination and format already resolved in step 2. The name-based discovery and default paths below apply only to an unconfigured or explicit destination without a verified locator. For configured Drive/Notion destinations use the retained ID; for configured local/Cowork destinations use the retained base path and append only the category folder. Recheck access, never substitute a same-named resource.
 
    **Google Drive**
    - **Other Drive connectors** (such as ChatGPT's): the Drive queries and parameters in this skill, here and in step 2 and the Clip index, are the Claude connector's. Use your connector's equivalents by the names this session shows. If it has no equivalent for a check, such as the duplicate search, say so in one line and skip that check. If it can't convert an upload to a Google Doc or Sheet, or the conversion fails, upload the raw file with `.md` (or `.csv` for a snapshot sheet) added to the title; use the fallback below only if that upload also fails.
    - Find the destination folder: search Drive for a folder with that exact title (`mimeType = 'application/vnd.google-apps.folder'`, owned by the user, not trashed). If several match, ask which one. If none exist, create it in My Drive.
    - Inside it, find or create the category subfolder the same way (search with `parentId` set to the destination folder).
    - Check for a file with the same title in the category subfolder. If one exists, add `-2`, `-3`, and so on. Never overwrite.
-   - Upload the summary into the category subfolder with `contentMimeType: text/markdown`, letting Drive convert it to a Google Doc so headings and lists render. If the user asked to keep raw Markdown, set `disableConversionToGoogleType: true` and add `.md` to the title.
+   - Upload the summary into the category subfolder with `contentMimeType: text/markdown`, letting Drive convert it to a Google Doc so headings and lists render. If the resolved format is `markdown`, set `disableConversionToGoogleType: true` and add `.md` to the title.
    - If the Drive connector isn't available or the upload fails, say so and use the fallback below.
 
    **Cowork project**
@@ -361,11 +368,12 @@ The clips themselves are the index: each one carries its source URL, date, categ
 When the user asks to find or list clips ("show my clip index", "what did I save about Cowork?", "list my #prompting clips", "clips from this week"):
 
 1. **Gather.**
+   - Load the shared contract and resolve explicit scope or preferences, synchronizing when enabled without prompting for first-save setup. Search the verified destination ID/base path; the default names below apply only when no configured destination exists. Keep artifact search opt-in as before.
    - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
    - Cowork project or This project: search `browser-research/` recursively.
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date, but clips are never republished, so an artifact's last-updated time is when it was saved: for a date range, skip artifacts updated outside it without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
-   - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other locations when the user asks for them or names one.
+   - Search the effective preference destination, or the existing surface default when unconfigured. Include the other locations when the user asks for them or names one.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)" or "(2 parts, 1 answer)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.

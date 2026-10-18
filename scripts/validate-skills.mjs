@@ -6,7 +6,7 @@ import { parseDocument } from 'yaml';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const plugin = 'plugins/gleaner';
-const skills = ['glean', 'youtube'];
+const skills = ['glean', 'youtube', 'preferences'];
 let failures = 0;
 
 function check(label, action) {
@@ -128,7 +128,64 @@ for (const name of skills) {
   check(`${name} local references`, () => references(`${directory}/SKILL.md`));
 }
 
-for (const file of ['README.md', 'LICENSE', 'plugins/gleaner/skills/README.md', 'docs/chatgpt-marketplace.md']) {
+// Validate shipped contract examples only; this is not a runtime preference loader.
+function preferences(data, inherited = {}) {
+  object(data, 'preferences');
+  requireValue(data.schema_version === 1, 'unsupported preferences schema version');
+  const allowed = ['schema_version', 'destinations', 'default_destination', 'default_format', 'skills'];
+  for (const key of Object.keys(data)) requireValue(allowed.includes(key), `unknown preferences field: ${key}`);
+  if (data.destinations !== undefined) {
+    object(data.destinations, 'destinations');
+    for (const [alias, record] of Object.entries(data.destinations)) {
+      text(alias, 'destination alias');
+      object(record, `destination ${alias}`);
+      requireValue(['drive', 'notion', 'cowork', 'local', 'artifact'].includes(record.provider), 'invalid destination provider');
+      text(record.label, 'destination label');
+      const locator = ['local', 'cowork'].includes(record.provider) ? 'path' : 'remote_id';
+      text(record[locator], `destination ${locator}`);
+      for (const key of Object.keys(record)) {
+        requireValue(['provider', 'label', locator].includes(key), `invalid destination field: ${key}`);
+      }
+      if (locator === 'path') requireValue(isAbsolute(record.path), 'destination path must be absolute');
+    }
+  }
+  if (data.default_format !== undefined) {
+    requireValue(['auto', 'markdown'].includes(data.default_format), 'invalid default format');
+  }
+  if (data.skills !== undefined) {
+    object(data.skills, 'skills');
+    for (const [name, value] of Object.entries(data.skills)) {
+      text(name, 'skill namespace');
+      object(value, `skill namespace ${name}`);
+    }
+  }
+  const destinations = { ...inherited.destinations, ...data.destinations };
+  if (data.default_destination !== undefined) text(data.default_destination, 'default destination');
+  const alias = data.default_destination === undefined ? inherited.default_destination : data.default_destination;
+  if (alias !== undefined) {
+    text(alias, 'default destination');
+    requireValue(Object.hasOwn(destinations, alias), `invalid destination reference: ${alias}`);
+  }
+}
+
+const contract = `${plugin}/skills/preferences/references/contract.md`;
+check('preferences shared contract and references', () => {
+  text(read(contract), 'shared contract');
+  references(contract);
+  for (const name of ['glean', 'preferences']) {
+    const file = `${plugin}/skills/${name}/SKILL.md`;
+    const link = name === 'glean' ? '../preferences/references/contract.md' : 'references/contract.md';
+    requireValue(read(file).includes(`](${link})`), `${name} must link directly to shared contract`);
+  }
+});
+check('preferences example configurations', () => {
+  const user = yaml(read(`${plugin}/skills/preferences/references/examples/user.yaml`));
+  preferences(user);
+  const project = yaml(read(`${plugin}/skills/preferences/references/examples/project.yaml`));
+  preferences(project, user);
+});
+
+for (const file of ['README.md', 'LICENSE', 'plugins/gleaner/skills/README.md', 'docs/chatgpt-marketplace.md', 'docs/preferences-testing.md']) {
   check(`${file} required file${file.endsWith('.md') ? ' and local references' : ''}`, () => {
     read(file);
     if (file.endsWith('.md')) references(file);

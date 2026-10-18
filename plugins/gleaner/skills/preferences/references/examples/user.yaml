@@ -1,0 +1,29 @@
+schema_version: 1
+destinations:
+  research:
+    provider: drive
+    label: Browser Research
+    remote_id: example-drive-folder-id
+  notes:
+    provider: local
+    label: Local notes
+    path: /Users/example/notes
+  team:
+    provider: notion
+    label: Team research
+    remote_id: example-notion-database-id
+  cowork:
+    provider: cowork
+    label: Cowork research
+    path: /Users/example/cowork/browser-research
+  web:
+    provider: artifact
+    label: Private artifacts
+    remote_id: example-publishing-workspace-id
+default_destination: research
+default_format: auto
+skills:
+  gleaner: {}
+  youtube: {}
+  another_skill:
+    detail: preserved data

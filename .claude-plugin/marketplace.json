@@ -9,7 +9,7 @@
     {
       "name": "gleaner",
       "source": "./plugins/gleaner",
-      "description": "Save web pages and YouTube videos, or just the parts that matter, as summarized, tagged, searchable clips in Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact, using plain language from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser.",
+      "description": "Save web pages and YouTube videos, or just the parts that matter, as summarized, tagged, searchable clips in Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact, using plain language from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Shared local-first preferences manage save destinations and formats with optional Google Drive sync.",
       "category": "productivity",
       "tags": [
         "artifacts",

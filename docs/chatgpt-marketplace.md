@@ -1,6 +1,6 @@
 # ChatGPT marketplace installation
 
-Gleaner is distributed from the same GitHub repository as its Claude plugin. The marketplace manifest is at `.claude-plugin/marketplace.json` and points to `plugins/gleaner`. Its two skills are `glean` and `youtube`.
+Gleaner is distributed from the same GitHub repository as its Claude plugin. The marketplace manifest is at `.claude-plugin/marketplace.json` and points to `plugins/gleaner`. Its three skills are `glean`, `youtube`, and `preferences`.
 
 ## Import into ChatGPT
 
@@ -29,7 +29,7 @@ For YouTube, use timestamped transcript text only if it is actually available fr
 ## Validation checklist
 
 - [ ] Import succeeds in an eligible ChatGPT workspace
-- [ ] Both `glean` and `youtube` are discoverable
+- [ ] All three skills (`glean`, `youtube`, `preferences`) are discoverable
 - [ ] URL clipping works without browser access
 - [ ] Accessible Chrome tab clipping works where the connector exposes tabs
 - [ ] Work browser clipping works in Work mode

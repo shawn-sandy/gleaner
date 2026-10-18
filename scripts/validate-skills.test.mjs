@@ -9,6 +9,10 @@ import { spawnSync } from 'node:child_process';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const glean = 'plugins/gleaner/skills/glean/SKILL.md';
 const metadata = 'plugins/gleaner/skills/youtube/agents/openai.yaml';
+const preferencesMetadata = 'plugins/gleaner/skills/preferences/agents/openai.yaml';
+const contract = 'plugins/gleaner/skills/preferences/references/contract.md';
+const example = 'plugins/gleaner/skills/preferences/references/examples/user.yaml';
+const projectExample = 'plugins/gleaner/skills/preferences/references/examples/project.yaml';
 const marketplace = '.claude-plugin/marketplace.json';
 
 function fixture(t) {
@@ -42,6 +46,23 @@ test('valid repository passes without Claude and reports the skip', t => {
 });
 
 const cases = [
+  ['broken contract reference', glean, '../preferences/references/contract.md', '../preferences/references/missing.md', /ENOENT|shared contract/],
+  ['broken contract example link', contract, 'examples/user.yaml', 'examples/missing.yaml', /ENOENT/],
+  ['malformed preference example', example, 'label: Browser Research', 'label: "Browser Research', /quote/],
+  ['unsupported preference schema', example, 'schema_version: 1', 'schema_version: 2', /unsupported preferences schema/],
+  ['invalid user destination reference', example, 'default_destination: research', 'default_destination: missing', /invalid destination reference/],
+  ['invalid project destination reference', projectExample, 'default_destination: notes', 'default_destination: missing', /invalid destination reference/],
+  ['invalid destination provider', example, 'provider: drive', 'provider: unknown', /invalid destination provider/],
+  ['invalid destination locator', example, 'remote_id: example-drive-folder-id', 'path: /example', /remote_id/],
+  ['relative destination path', example, '/Users/example/notes', './notes', /path must be absolute/],
+  ['null destination', example, 'default_destination: research', 'default_destination: null', /default destination must/],
+  ['unsupported project schema', projectExample, 'schema_version: 1', 'schema_version: 2', /unsupported preferences schema/],
+  ['malformed project example', projectExample, 'default_format: markdown', 'default_format: [markdown', /flow sequence|end with/],
+  ['duplicate preference keys', example, 'schema_version: 1', 'schema_version: 1\nschema_version: 1', /unique/],
+  ['invalid format', example, 'default_format: auto', 'default_format: html', /invalid default format/],
+  ['null format', example, 'default_format: auto', 'default_format: null', /invalid default format/],
+  ['unknown contract field', example, 'schema_version: 1', 'schema_version: 1\nsync_metadata: {}', /unknown preferences field/],
+  ['invalid namespace', example, 'another_skill:', 'another_skill: false\n  different:', /skill namespace/],
   ['malformed frontmatter', glean, 'name: glean', 'name: "glean', /quote/],
   ['duplicate YAML keys', glean, 'name: glean', 'name: glean\nname: glean', /unique/],
   ['wrong skill name', glean, 'name: glean', 'name: clip', /name must match/],
@@ -65,7 +86,7 @@ for (const [name, file, from, to, message] of cases) {
   });
 }
 
-for (const file of [glean, metadata, 'LICENSE']) {
+for (const file of [glean, metadata, preferencesMetadata, contract, example, projectExample, 'LICENSE']) {
   test(`rejects missing required file: ${file}`, t => {
     const directory = fixture(t);
     rmSync(join(directory, file));
@@ -110,6 +131,14 @@ test('ignores examples and remote URLs but checks encoded local file links', t =
     '[anchor](#example)', '`./notes`', '`[template](<URL>)`',
     '```md', '[example](missing.md)', '```',
   ].join('\n'));
+  const result = run(directory);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+});
+
+test('accepts sparse reset and preserves opaque namespace data in validation', t => {
+  const directory = fixture(t);
+  writeFileSync(join(directory, example), 'schema_version: 1\nskills:\n  unknown_skill:\n    nested: [one, two]\n');
+  writeFileSync(join(directory, projectExample), 'schema_version: 1\n');
   const result = run(directory);
   assert.equal(result.status, 0, result.stdout + result.stderr);
 });
