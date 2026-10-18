@@ -23,7 +23,7 @@ This skill does not write to claude.ai Projects; those can only be read from Cow
 Gleaner works wherever Claude can see a web page. Before reading anything, work out which browser you're in by checking which tools are available, and use that browser for every page read and highlight check in the request.
 
 | Surface | Browser tools | "The page" means |
-|---|---|---|
+| --- | --- | --- |
 | **Chrome side panel** | the side panel's page tools | the tab the user is viewing |
 | **Claude Code desktop, built-in browser** | `mcp__Claude_Browser__*` (or `mcp__remote-devices__Claude_Browser__*` when linked from the cloud) | the active tab in the Browser pane |
 | **Claude in Chrome** (Claude Code with `--chrome`, or Cowork) | `mcp__claude-in-chrome__*` | a tab Gleaner opens; this extension works in its own tabs, so ask for a URL if none was given |
@@ -64,7 +64,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 ### Intents
 
 | Intent | What it does | Sounds like |
-|---|---|---|
+| --- | --- | --- |
 | **Save page** | Saves a summary of the whole page now, or refreshes the page's clip if one was saved this session | "save this page", "keep this article", "bookmark this for later", "file this under design", "I want to remember this one", "stash this doc" |
 | **Add part** | Adds a part to the clip being collected (nothing saved yet), or straight to the page's clip if one was saved this session | "save this part about animation lengths", "add this", "grab this bit", "keep this section too", "and this paragraph on easing", "this table matters" |
 | **Save answer** | Saves an answer you gave in this conversation as a clip now; adds it as a part instead while parts are being collected, or to the page's clip if one was saved this session | "save that answer", "keep that explanation", "save those steps", "save what you just told me", "explain the auth flow and save it" |
@@ -85,7 +85,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 ### Details to pull out
 
 | Detail | Cue words | Example → value |
-|---|---|---|
+| --- | --- | --- |
 | **Topic** of a part | "about", "on", "covering", "the bit where" | "the part about animation lengths" → `animation lengths` |
 | **Note** (why they're saving it) | "for", "because", "so I can", "good example of", or any comment after the request | "keep this, great example of scroll-driven animation" → `great example of scroll-driven animation` |
 | **Destination** | "to/in my … folder", "in Drive", "to my … project", "as an artifact" | "save to my Serve513 project" → Cowork project `Serve513`; "save it to this project/repo" → This project; "save it as an artifact" → Artifact |
@@ -102,7 +102,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 Any request can carry a `--to` flag (short form `-t`) that sets the destination for that save only. It works typed into the message ("save this page --to drive") or as an argument to the slash command (`/gleaner:glean --to ./notes`).
 
 | Flag | Saves to |
-|---|---|
+| --- | --- |
 | `--to drive` | Google Drive → `Browser Research/<Category>/` |
 | `--to notion` | Notion → the `Browser Research` database |
 | `--to notion:"Database Name"` | Notion → that database |
@@ -290,7 +290,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **No database yet:** ask once where to create it ("Which Notion page should hold your Browser Research database?"), then create it there with these properties:
 
      | Property | Type | Values |
-     |---|---|---|
+     | --- | --- | --- |
      | Name | title | the clip title |
      | Category | select | the seven categories from step 4, readable names |
      | Type | select | article, docs, video, webinar, tutorial, release-notes, repo, tool, other |

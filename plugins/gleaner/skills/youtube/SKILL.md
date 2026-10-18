@@ -100,7 +100,7 @@ ChatGPT's connected Chrome tabs have no JavaScript tool, and the Work browser ha
 Adding parts works as in the glean skill's "Collecting parts", using time in place of highlights:
 
 | The user says | The part is |
-|---|---|
+| --- | --- |
 | "3:10 to 5:40", "from 12:00 on", "the first five minutes" | the transcript lines in that range |
 | "the part about generics" | the chapter or passage that best matches the topic |
 | "add this part", "this bit" while watching | the chapter that contains the current playback position; with no chapters, the ~60 seconds before it |

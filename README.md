@@ -20,7 +20,9 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 
 - [Features](#features)
 - [Skills](#skills)
+- [ChatGPT marketplace](#chatgpt-marketplace)
 - [Install](#install)
+- [Local development and validation](#local-development-and-validation)
 - [Quick start](#quick-start)
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
@@ -66,11 +68,17 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 Gleaner includes two skills that share the same clip format and saving workflow:
 
 | Skill | Claude Code command | Use it for |
-|---|---|---|
+| --- | --- | --- |
 | [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
 | [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
 
 Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
+
+## ChatGPT marketplace
+
+Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers both `glean` and `youtube` skills through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
+
+See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) for installation, supported browser surfaces, limitations, and a manual test checklist. ChatGPT marketplace import requires verification in an eligible workspace.
 
 ## Install
 
@@ -219,7 +227,7 @@ Any link to a video (`youtu.be`, Shorts, a share link) is saved with the same **
 A note is your reason for saving. Add it anywhere in the request:
 
 | You say | Note saved |
-|---|---|
+| --- | --- |
 | save this page, good intro to view transitions | good intro to view transitions |
 | grab the part about animation lengths | animation lengths |
 | grab the part about easing, for the motion post | easing — for the motion post |
@@ -230,7 +238,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 ### Choosing where clips go
 
 | Destination | How to choose it | Needs |
-|---|---|---|
+| --- | --- | --- |
 | **Google Drive** → `Browser Research/<category>/` | Default in the Chrome side panel, ChatGPT, and Cowork; "save to Drive" in Claude Code | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or work inside a project | Claude desktop app open and connected |
@@ -249,7 +257,7 @@ If a destination can't be reached, Gleaner gives you the clip as a file and says
 Connect the **Notion** connector, then say "save to Notion" or add `--to notion`. Each clip becomes a page in a **Browser Research** database, with its details as real database properties:
 
 | Property | Holds |
-|---|---|
+| --- | --- |
 | Name | clip title |
 | Category, Type | select fields |
 | Tags | multi-select (no `#`) |
@@ -282,7 +290,7 @@ done --to cowork:Serve513
 ```
 
 | Flag | Saves to |
-|---|---|
+| --- | --- |
 | `--to drive` | Drive → `Browser Research/<Category>/` |
 | `--to drive:"Folder Name"` | Drive → `<Folder Name>/<Category>/` |
 | `--to notion` | Notion → `Browser Research` database |
@@ -299,7 +307,7 @@ A flag beats a destination you describe in words, which beats the default. If th
 Each clip gets exactly one **category**, which is also its folder:
 
 | Category | Covers |
-|---|---|
+| --- | --- |
 | AI & Agents | models, prompting, Claude, agents, MCP, skills |
 | Design Engineering | UI/UX, design systems, CSS, prototyping, accessibility |
 | Frontend Dev | Astro, React, TypeScript, build tools, performance |
@@ -360,7 +368,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 ## Phrase cheat sheet
 
 | Goal | Say something like |
-|---|---|
+| --- | --- |
 | Save a whole page | "save this page" · "keep this article" · "bookmark this" |
 | Save a highlight now | highlight, then "save this" |
 | Collect a part | "add this" · "grab the part about X" · "this table too" |
@@ -436,7 +444,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 ## Troubleshooting
 
 | Problem | Fix |
-|---|---|
+| --- | --- |
 | Claude Code says no page is open | Open the Browser pane (Cmd/Ctrl+Shift+B) and load the page, or include the URL in your request. |
 | Clip is cut off at a login or paywall (Claude Code) | Sign in to the site inside the Browser pane once; it has its own logins, separate from Chrome. |
 | Gleaner doesn't respond to "save this" | Check you're on the new side panel (not classic) and that Gleaner is enabled in your skills. |
@@ -462,9 +470,10 @@ Fork this repo, make your edits in `plugins/gleaner/skills/glean/SKILL.md`, bump
 gleaner/
 ├── .claude-plugin/
 │   └── marketplace.json        # marketplace "shawn-sandy"
-├── .github/
-│   └── workflows/
-│       └── validate.yml        # CI: plugin validation, Markdown lint
+├── package.json              # local validation commands and dev dependencies
+├── package-lock.json         # reproducible dependency versions
+├── scripts/
+│   └── validate-skills.mjs    # Skill, metadata, manifest, and reference checks
 ├── plugins/
 │   └── gleaner/
 │       ├── .claude-plugin/
@@ -476,18 +485,36 @@ gleaner/
 │           │   │   └── openai.yaml  # skill name shown in ChatGPT
 │           │   └── SKILL.md    # pages, parts, answers, and search
 │           └── youtube/
+│               ├── agents/
+│               │   └── openai.yaml  # YouTube skill display metadata
 │               └── SKILL.md    # YouTube videos (uses glean for saving)
 ├── LICENSE
 └── README.md
 ```
 
-Validate changes before pushing:
+## Local development and validation
+
+Install Node.js 22 or newer and npm, then clone the repository and install its two development dependencies (`yaml` and `markdownlint-cli2`):
+
+```bash
+git clone https://github.com/shawn-sandy/gleaner.git
+cd gleaner
+npm ci
+npm run validate
+```
+
+Run `npm run validate` before pushing. It checks both Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
+
+When `claude` is on `PATH`, validation also runs both existing strict checks:
 
 ```bash
 claude plugin validate . --strict
 claude plugin validate ./plugins/gleaner --strict
-npx --yes markdownlint-cli2@0.18.1
 ```
+
+Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests.
+
+Validation runs locally without GitHub Actions or a build step. After dependencies are installed, the static checks need no network access. These checks do not establish live ChatGPT marketplace, browser, or connector compatibility; use the [manual checklist](docs/chatgpt-marketplace.md#validation-checklist) for that.
 
 ## License
 

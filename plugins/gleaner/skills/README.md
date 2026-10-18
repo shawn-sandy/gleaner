@@ -3,7 +3,7 @@
 Gleaner ships two skills. You don't have to pick one: describe what you want, and Claude loads the right skill from your words and the page you're on. In Claude Code you can also call either one directly.
 
 | Skill | Claude Code command | Use it for |
-|---|---|---|
+| --- | --- | --- |
 | [glean](glean/SKILL.md) | `/gleaner:glean` | Web pages, parts of pages, Claude's answers about them, and finding saved clips |
 | [youtube](youtube/SKILL.md) | `/gleaner:youtube` | YouTube videos and moments from them |
 
