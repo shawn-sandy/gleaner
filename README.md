@@ -156,11 +156,11 @@ sync my preferences
 save this page here
 ```
 
-On your first unconfigured save, Gleaner offers a default destination, format (`auto` suggested), and optional Drive sync. Choose “just this save” to continue with session settings and the existing environment defaults. Setup verifies an existing destination; it does not move clips or create research databases. “Always save here” persists at user scope; “save this here” and `--to` apply to that save only. Explicit project or session requests use that scope. Reset removes an override so the next default applies.
+On your first unconfigured save, Gleaner offers a default destination, format (left unset by default, so clips are Markdown wherever the destination supports it), and optional Drive sync. Choose “just this save” to continue with session settings and the existing environment defaults. Setup verifies an existing destination; it does not move clips or create research databases. “Always save here” persists at user scope; “save this here” and `--to` apply to that save only. Explicit project or session requests use that scope. Reset removes an override so the next default applies.
 
 User preferences live at `$XDG_CONFIG_HOME/agent-preferences/preferences.yaml`, falling back to `~/.config/agent-preferences/preferences.yaml`. Project overrides live at `.agent-preferences/preferences.yaml` under the session project root. Resolution is explicit request (`--to` beats words), session, project, user, then existing skill defaults. Show reports each effective value and its scope, persistence location, and sync status. Page and YouTube saves use the same resolved preferences.
 
-`auto` keeps existing destination behavior. `markdown` requests a raw `.md` file for local/Cowork or a Drive connector supporting raw uploads. Notion pages and HTML artifacts are incompatible; Gleaner explains and asks before saving. Saved local paths are device-specific: an unreachable path prompts for a temporary alternative and never changes the permanent default silently.
+`auto` gives each destination's native output, such as Google Docs in Drive. `markdown` requests a raw `.md` file for local/Cowork or a Drive connector supporting raw uploads. Notion pages and HTML artifacts are incompatible; Gleaner explains and asks before saving. Saved local paths are device-specific: an unreachable path prompts for a temporary alternative and never changes the permanent default silently.
 
 Optional sync uses one Google Drive document titled `Agent Preferences`, discovered before creation and selected by you if duplicates exist. Only user preferences synchronize; project overrides and local `sync-state.yaml` metadata never upload. Before saves and during preference invocations, Gleaner compares local/cloud values with the last verified snapshot, propagates one-sided changes, merges independent settings, and asks about conflicting settings. Different existing copies without a baseline require reconciliation before upload. Updates persist locally first, then synchronize when connected; failures remain pending for the next invocation. There is no background service.
 
@@ -479,7 +479,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 | Gleaner doesn't respond to "save this" | Check you're on the new side panel (not classic) and that Gleaner is enabled in your skills. |
 | It saved the whole page instead of my highlight | Highlight again right before asking, or name the part: "grab the part about X." Some sites clear highlights when you click away. |
 | "Couldn't reach the project folder" | Open the Claude desktop app and make sure it's connected, then ask again. |
-| Clip saved as plain text, not a formatted Doc | Drive's conversion may not have applied formatting. Ask "keep it as markdown" to save a `.md` file instead. |
+| Clip saved as a `.md` file, not a formatted Doc | Markdown is the default. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to always get Docs in Drive. |
 | Similar tags like `#ai-design` and `#ai-designs` | Name the tag you want in the request ("tag it ai-design"). Gleaner reuses existing spellings by default, so this gets rarer as your library grows. |
 
 ## Customizing
@@ -573,7 +573,7 @@ MIT © Shawn Sandy
 ## Changelog
 
 **Unreleased**
-- Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to keep getting Docs. Notion and artifact clips keep their own formats without asking. First-save setup now suggests `markdown`.
+- Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to keep getting Docs. Notion and artifact clips keep their own formats without asking. First-save setup leaves the format unset unless you pick one, and "save it as a Google Doc" in Claude Code saves to Drive.
 
 **2.2.0** (2026-10-18)
 - Added `/gleaner:preferences` for shared, versioned save destinations and formats, local-first storage, project/session overrides, and optional invocation-time Google Drive sync.
