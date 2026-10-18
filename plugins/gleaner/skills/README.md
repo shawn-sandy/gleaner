@@ -38,7 +38,7 @@ Gleaner reads the page, skips navigation and ads, and saves a clip of up to ~400
 
 ### Collect parts, then save once
 
-Highlight text and say "add this", or describe the part and let Gleaner find it. Parts can come from several tabs and sites.
+Highlight text and say "add this", or describe the part and let Gleaner find it. Parts can come from several tabs and sites. In ChatGPT, where highlights usually can't be read, describe the part or paste it.
 
 ```text
 grab the part about animation lengths, for the motion post
@@ -137,6 +137,7 @@ To copy a transcript on YouTube, open **…more** under the video, then **Show t
 - **Ads:** if an ad is playing, Gleaner skips it or waits for it to end before reading the transcript.
 - **Auto-captions:** Gleaner checks names and code terms against the title and description, since auto-captions often mishear them.
 - **Private, members-only, or age-restricted videos:** sign in to YouTube in the browser Gleaner is using. The Claude Code Browser pane has its own sign-ins, separate from Chrome.
+- **ChatGPT:** Gleaner uses a transcript only when the video's tab shows one, and otherwise saves a description-only clip. It usually can't read where you are in the video, so give "add this part" a time range or topic instead.
 
 ## More help
 

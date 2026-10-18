@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its glean skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and it also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -22,8 +22,6 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [Skills](#skills)
 - [ChatGPT marketplace](#chatgpt-marketplace)
 - [Install](#install)
-- [Local development and validation](#local-development-and-validation)
-  - [Releasing](#releasing)
 - [Quick start](#quick-start)
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
@@ -46,6 +44,8 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [Troubleshooting](#troubleshooting)
 - [Customizing](#customizing)
 - [Repository layout](#repository-layout)
+- [Local development and validation](#local-development-and-validation)
+  - [Releasing](#releasing)
 - [License](#license)
 - [Changelog](#changelog)
 
@@ -84,8 +84,8 @@ See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) f
 ## Install
 
 **Requirements**
-- A paid Claude plan with the new Chrome side panel (the Cowork-style panel; its three-dot menu shows "Switch back to classic").
-- The **Google Drive** connector, for the default destination.
+- A paid Claude plan with the new Chrome side panel (the Cowork-style panel; its three-dot menu shows "Switch back to classic"), or Claude Code. For ChatGPT, see [ChatGPT marketplace](#chatgpt-marketplace).
+- The **Google Drive** connector, for the default destination. Claude Code saves to your project folder instead.
 - *Optional:* the Claude desktop app, open and connected, for saving to Cowork projects.
 - *Optional:* the **Notion** connector, for saving to Notion.
 - *Optional:* a session that can publish artifacts, such as Claude Code, for saving clips as artifacts.
@@ -336,7 +336,7 @@ Ask in plain language:
 > anything on view transitions?
 > show my clip index
 
-You get a table, newest first: date, title (linked), category, type, tags, note, and source. Multi-part clips are marked with their count, such as "(3 parts)" or "(2 parts, 1 answer)." Keyword searches match titles, tags, notes, and summary text.
+You get a table, newest first: date, title (linked), category, type, tags, note, and source. Multi-part clips are marked with their count, such as "(3 parts)," "(2 parts, 1 answer)," or "(whole page + 2 parts)." Keyword searches match titles, tags, notes, and summary text.
 
 You can also search directly in Google Drive: type a tag like `#motion` or a note phrase into Drive's search bar.
 
@@ -346,7 +346,7 @@ Clips saved as artifacts are searched only when you ask for them ("what did I sa
 
 > make me an index sheet
 
-Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every clip as a row. It's a **snapshot**: it won't update itself, so ask for a fresh one whenever you need it.
+Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every clip as a row, or a `.csv` file where the session's Drive connector can't convert it. It's a **snapshot**: it won't update itself, so ask for a fresh one whenever you need it. If you save to Notion, Gleaner offers the database link first, since it's already a live index.
 
 ---
 
@@ -375,6 +375,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Collect a part | "add this" · "grab the part about X" · "this table too" |
 | Save collected parts | "done" · "save them" · "wrap it up" |
 | Save an answer | "save that" · "save those steps" · "add that answer" |
+| Keep a separate clip | add "as a new clip" to any request |
 | Review or fix parts | "what have I got?" · "drop part 2" · "start over" |
 | Add a reason | add ", for …" or ", because …" to any request |
 | Pick a folder | "…to my Research folder" · "…to my Serve513 project" · "…to this project" |
@@ -436,6 +437,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 - **One highlight at a time.** Chrome doesn't support multiple simultaneous selections; collect parts one by one instead.
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
+- **No highlights or playback position in ChatGPT.** Connected Chrome tabs, and a Work browser without a JavaScript tool, can't read either. Name the part or paste it, and give a video part a time range or topic instead of "this part."
 - **Drive files can't be edited.** The Drive connector can create and read files but not change their content. Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive's trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
@@ -449,6 +451,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 | Claude Code says no page is open | Open the Browser pane (Cmd/Ctrl+Shift+B) and load the page, or include the URL in your request. |
 | Clip is cut off at a login or paywall (Claude Code) | Sign in to the site inside the Browser pane once; it has its own logins, separate from Chrome. |
 | Gleaner doesn't respond to "save this" | Check you're on the new side panel (not classic) and that Gleaner is enabled in your skills. |
+| ChatGPT can't see the page | Connect your browser in ChatGPT, or switch to Work mode for the Work browser. Or include the URL or paste the text. |
 | It saved the whole page instead of my highlight | Highlight again right before asking, or name the part: "grab the part about X." Some sites clear highlights when you click away. |
 | "Couldn't reach the project folder" | Open the Claude desktop app and make sure it's connected, then ask again. |
 | Clip saved as plain text, not a formatted Doc | Drive's conversion may not have applied formatting. Ask "keep it as markdown" to save a `.md` file instead. |
@@ -469,18 +472,20 @@ Fork this repo, make your edits in `plugins/gleaner/skills/glean/SKILL.md`, bump
 
 ```text
 gleaner/
+├── .claude/
+│   ├── settings.json           # hook: strict plugin validation after skill or manifest edits
+│   └── skills/
+│       └── release/
+│           └── SKILL.md        # /release: writes the changelog entry, runs npm run release
 ├── .claude-plugin/
 │   └── marketplace.json        # marketplace "shawn-sandy"
 ├── .github/
 │   └── workflows/
 │       └── release.yml         # tags and publishes a GitHub Release when the version changes on main
-├── package.json              # local validation and release commands, dev dependencies
-├── package-lock.json         # reproducible dependency versions
-├── scripts/
-│   ├── changelog.mjs          # changelog parsing shared by the release scripts
-│   ├── release.mjs            # npm run release: bump, date the changelog, validate, commit
-│   ├── release-notes.mjs      # prints one version's changelog entry for the GitHub Release
-│   └── validate-skills.mjs    # Skill, metadata, manifest, and reference checks
+├── docs/
+│   ├── artifacts/              # HTML artifacts library
+│   ├── plans/                  # planning and session notes
+│   └── chatgpt-marketplace.md  # ChatGPT import, compatibility, and test checklist
 ├── plugins/
 │   └── gleaner/
 │       ├── .claude-plugin/
@@ -495,7 +500,20 @@ gleaner/
 │               ├── agents/
 │               │   └── openai.yaml  # YouTube skill display metadata
 │               └── SKILL.md    # YouTube videos (uses glean for saving)
+├── scripts/
+│   ├── changelog.mjs           # changelog parsing shared by the release scripts
+│   ├── release.mjs             # npm run release: bump, date the changelog, validate, commit
+│   ├── release-notes.mjs       # prints one version's changelog entry for the GitHub Release
+│   ├── release.test.mjs        # release script tests
+│   ├── validate-skills.mjs     # Skill, metadata, manifest, and reference checks
+│   └── validate-skills.test.mjs  # validator fixture tests
+├── .markdownlint-cli2.jsonc    # Markdown lint rules and house style
+├── AGENTS.md                   # contributor guide for coding agents
+├── CLAUDE.md                   # Claude Code project instructions
+├── gleaner-symbol.svg          # logo
 ├── LICENSE
+├── package.json                # local validation and release commands, dev dependencies
+├── package-lock.json           # reproducible dependency versions
 └── README.md
 ```
 
@@ -519,7 +537,9 @@ claude plugin validate . --strict
 claude plugin validate ./plugins/gleaner --strict
 ```
 
-Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests.
+Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests and the release script's tests.
+
+In Claude Code, a hook in `.claude/settings.json` reruns both strict checks after each Write or Edit under `.claude-plugin/` or `plugins/`. It doesn't see shell edits or run markdownlint, so still run `npm run validate` before pushing.
 
 Validation runs locally without GitHub Actions or a build step. After dependencies are installed, the static checks need no network access. These checks do not establish live ChatGPT marketplace, browser, or connector compatibility; use the [manual checklist](docs/chatgpt-marketplace.md#validation-checklist) for that.
 
