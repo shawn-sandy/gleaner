@@ -13,15 +13,15 @@ Gleaner is a Claude plugin marketplace whose runtime behavior is defined primari
 
 ## Build, Test, and Development Commands
 
-There is no application build or development server. With Claude Code CLI and Node.js installed (CI uses Node 22), run from the repository root:
+There is no application build or development server. With Node.js 22 or newer and pnpm installed, run from the repository root:
 
 ```bash
-claude plugin validate . --strict                  # Validate marketplace
-claude plugin validate ./plugins/gleaner --strict  # Validate plugin
-npx --yes markdownlint-cli2@0.18.1                 # Lint Markdown
+pnpm install --frozen-lockfile
+pnpm validate
+pnpm test
 ```
 
-These checks match `.github/workflows/validate.yml`.
+Local validation checks both Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow.
 
 ## Coding Style & Naming Conventions
 
@@ -29,7 +29,7 @@ Write direct, actionable skill instructions. Keep each paragraph or list item on
 
 ## Testing Guidelines
 
-There is no automated behavioral test suite, test naming convention, or coverage threshold. Run all three validation commands before pushing. Parse changed skill frontmatter with a YAML parser; plugin validation can miss malformed quotes. Live browser and connector testing is maintainer-run; distinguish static validation from live testing in reports.
+Run `pnpm validate` and `pnpm test` before pushing. The fixture tests exercise validator failures; there is no automated Skill runtime test suite. Frontmatter is parsed with `yaml`; Claude plugin validation alone can miss malformed quotes. Live browser and connector testing is maintainer-run; distinguish static validation from live testing in reports.
 
 ## Commit & Pull Request Guidelines
 

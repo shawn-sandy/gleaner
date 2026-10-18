@@ -18,19 +18,15 @@ Cut a Gleaner release. Bump type: `$ARGUMENTS` (if empty, ask: patch, minor, or 
 
    Use today's date. Describe what changed for the user, not the implementation.
 4. **Check the four descriptions.** If this release changes destinations or surfaces, confirm the `marketplace.json` plugin description, the `plugin.json` description, the SKILL.md frontmatter `description`, and the README intro paragraph all name the same set. Fix any that drift.
-5. **Validate.** Run all three, the same checks CI runs, and read the output; both validates must print `Validation passed` and markdownlint must report `0 error(s)`:
+5. **Validate.** Run local checks and read the output; all must pass. Claude Code CLI must be installed for a release so both strict Claude checks run rather than skip:
 
    ```bash
-   claude plugin validate . --strict
-   claude plugin validate ./plugins/gleaner --strict
-   npx --yes markdownlint-cli2@0.18.1
+   pnpm install --frozen-lockfile
+   pnpm validate
+   pnpm test
    ```
 
-   The validates do not fully parse frontmatter YAML, so if step 4 changed the SKILL.md frontmatter, also run this; it must exit 0:
-
-   ```bash
-   ruby -Eutf-8 -ryaml -e 'YAML.load(File.read(ARGV[0]).split(/^---$/)[1])' plugins/gleaner/skills/glean/SKILL.md
-   ```
+   Local validation parses both Skills' YAML frontmatter and ChatGPT metadata in addition to manifests, references, and Markdown.
 
 6. **Commit on a branch** (create one if on `main`), all modified files in one commit:
    - Subject: `Gleaner X.Y.Z: <lowercase summary>`
