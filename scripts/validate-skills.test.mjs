@@ -14,7 +14,7 @@ const marketplace = '.claude-plugin/marketplace.json';
 function fixture(t) {
   const directory = mkdtempSync(join(tmpdir(), 'gleaner-validation-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
-  for (const file of ['.claude-plugin', 'plugins', 'docs', 'README.md', 'LICENSE', 'scripts']) {
+  for (const file of ['.claude-plugin', '.github', 'plugins', 'docs', 'README.md', 'LICENSE', 'scripts']) {
     cpSync(join(root, file), join(directory, file), { recursive: true });
   }
   symlinkSync(join(root, 'node_modules'), join(directory, 'node_modules'), 'dir');
