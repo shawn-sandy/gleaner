@@ -13,12 +13,12 @@ Gleaner is a Claude plugin marketplace whose runtime behavior is defined primari
 
 ## Build, Test, and Development Commands
 
-There is no application build or development server. With Node.js 22 or newer and pnpm installed, run from the repository root:
+There is no application build or development server. With Node.js 22 or newer and npm installed, run from the repository root:
 
 ```bash
-pnpm install --frozen-lockfile
-pnpm validate
-pnpm test
+npm ci
+npm run validate
+npm test
 ```
 
 Local validation checks both Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow.
@@ -29,7 +29,7 @@ Write direct, actionable skill instructions. Keep each paragraph or list item on
 
 ## Testing Guidelines
 
-Run `pnpm validate` and `pnpm test` before pushing. The fixture tests exercise validator failures; there is no automated Skill runtime test suite. Frontmatter is parsed with `yaml`; Claude plugin validation alone can miss malformed quotes. Live browser and connector testing is maintainer-run; distinguish static validation from live testing in reports.
+Run `npm run validate` and `npm test` before pushing. The fixture tests exercise validator failures; there is no automated Skill runtime test suite. Frontmatter is parsed with `yaml`; Claude plugin validation alone can miss malformed quotes. Live browser and connector testing is maintainer-run; distinguish static validation from live testing in reports.
 
 ## Commit & Pull Request Guidelines
 

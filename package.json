@@ -11,6 +11,5 @@
   "devDependencies": {
     "markdownlint-cli2": "0.23.3",
     "yaml": "2.9.1"
-  },
-  "packageManager": "pnpm@8.6.2"
+  }
 }

@@ -21,9 +21,9 @@ Cut a Gleaner release. Bump type: `$ARGUMENTS` (if empty, ask: patch, minor, or 
 5. **Validate.** Run local checks and read the output; all must pass. Claude Code CLI must be installed for a release so both strict Claude checks run rather than skip:
 
    ```bash
-   pnpm install --frozen-lockfile
-   pnpm validate
-   pnpm test
+   npm ci
+   npm run validate
+   npm test
    ```
 
    Local validation parses both Skills' YAML frontmatter and ChatGPT metadata in addition to manifests, references, and Markdown.

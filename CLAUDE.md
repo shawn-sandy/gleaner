@@ -8,12 +8,12 @@ A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner
 
 ## Validate
 
-Run local validation before pushing (Node.js 22 or newer and pnpm required):
+Run local validation before pushing (Node.js 22 or newer and npm required):
 
 ```bash
-pnpm install --frozen-lockfile
-pnpm validate
-pnpm test
+npm ci
+npm run validate
+npm test
 ```
 
 Markdownlint takes its globs and rule overrides from `.markdownlint-cli2.jsonc`, where the disabled rules record house style; fix findings rather than disabling more rules. A PostToolUse hook in `.claude/settings.json` reruns both validates after a Write or Edit under `.claude-plugin/` or `plugins/`; shell edits (`sed`, heredocs) bypass it, and it does not run markdownlint.

@@ -466,7 +466,7 @@ gleaner/
 ├── .claude-plugin/
 │   └── marketplace.json        # marketplace "shawn-sandy"
 ├── package.json              # local validation commands and dev dependencies
-├── pnpm-lock.yaml            # reproducible dependency versions
+├── package-lock.json         # reproducible dependency versions
 ├── scripts/
 │   └── validate-skills.mjs    # Skill, metadata, manifest, and reference checks
 ├── plugins/
@@ -489,16 +489,16 @@ gleaner/
 
 ## Local development and validation
 
-Install Node.js 22 or newer and pnpm 8.6.2 (pinned in `package.json`), then clone the repository and install its two development dependencies (`yaml` and `markdownlint-cli2`):
+Install Node.js 22 or newer and npm, then clone the repository and install its two development dependencies (`yaml` and `markdownlint-cli2`):
 
 ```bash
 git clone https://github.com/shawn-sandy/gleaner.git
 cd gleaner
-pnpm install --frozen-lockfile
-pnpm validate
+npm ci
+npm run validate
 ```
 
-Run `pnpm validate` before pushing. It checks both Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
+Run `npm run validate` before pushing. It checks both Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
 
 When `claude` is on `PATH`, validation also runs both existing strict checks:
 
@@ -507,7 +507,7 @@ claude plugin validate . --strict
 claude plugin validate ./plugins/gleaner --strict
 ```
 
-Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `pnpm test` for the validator's fixture tests.
+Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests.
 
 Validation runs locally without GitHub Actions or a build step. After dependencies are installed, the static checks need no network access. These checks do not establish live ChatGPT marketplace, browser, or connector compatibility; use the [manual checklist](docs/chatgpt-marketplace.md#validation-checklist) for that.
 
