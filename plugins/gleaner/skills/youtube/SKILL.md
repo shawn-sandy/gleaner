@@ -78,7 +78,11 @@ Before any video save, run glean step 2 including its shared preferences contrac
 
 ### No transcript
 
-Act instead of asking: save a description-only clip from the title, description, and chapters, with `none` as its transcript source, and say in the confirmation that a transcript wasn't available. Mention that pasting the transcript (on YouTube: "…more" under the video, then "Show transcript", then copy) gets a full summary as an updated copy. If the user pastes one, its timestamps work the same as the snippet's.
+Before saving, ask in one line for a short description, such as `This video has no transcript. Leave a short description of it and I'll save that with the title and description, or paste the transcript for a full summary.` Then follow the reply:
+
+- **A description:** save a description-only clip from the title, description, and chapters, with `none` as its transcript source and the user's words, lightly trimmed, as its TL;DR.
+- **A pasted transcript** (on YouTube: "…more" under the video, then "Show transcript", then copy): use it as the snippet's transcript, with `pasted` as its source. Its timestamps work the same as the snippet's.
+- **No description** ("just save it", or a reply about something else): save the description-only clip without one, and say in the confirmation that a transcript wasn't available. Pasting the transcript later gets a full summary as an updated copy.
 
 That fallback is for whole videos only. A part (a time range, a topic, or "this part") needs transcript lines, so don't save one without them: say the part can't be clipped without a transcript, ask for it pasted, and offer a description-only clip of the whole video instead.
 
@@ -151,6 +155,6 @@ Rules:
 
 ## Edge cases
 
-- **Live streams and premieres** have no transcript until they end; save a description-only clip.
+- **Live streams and premieres** have no transcript until they end; follow "No transcript".
 - **Private, members-only, or age-restricted videos** don't load in a signed-out browser. Say so, and suggest signing in to YouTube in that browser.
 - **Several videos** ("save these videos"): one clip per video, or one part clip if the user wants them together.
