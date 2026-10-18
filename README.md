@@ -58,7 +58,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **YouTube videos too.** Save a video, or just the moments that matter, as a summary built from its transcript, with key moments that link to the exact second.
 - **Your reasons, kept.** Add a note to any request ("…for the motion post") and it's saved with the clip. Gleaner never invents notes.
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
-- **No duplicates.** Saving a page you've already clipped offers an updated copy that links to the original. Nothing is ever overwritten or deleted.
+- **One clip per page.** In a session, saving or adding more from a page you've already clipped updates that clip instead of starting a new doc. A page clipped in an earlier session gets an updated copy that links to the original; clips from earlier sessions are never changed or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
 - **Drive, Notion, artifacts, or local.** Saves to Google Drive by default, to a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
 - **Works where you browse.** The Chrome side panel, the built-in browser in Claude Code desktop, or ChatGPT's connected Chrome tabs and Work browser. Hand it a URL and it opens or fetches the page for you.
@@ -181,6 +181,8 @@ All parts are saved as one clip, grouped under headings with a link to each sour
 
 > **Tip:** Parts can come from different tabs and sites. Collect from three articles, then save once.
 
+> **Already saved this page?** In the same session, "add this bit too" goes straight into that clip and saves it, so a page never ends up split across several docs. Say "as a new clip" to start a separate one.
+
 > **Heads up:** Collected parts live in the side panel conversation until you save. Close the session first and they're gone.
 
 ### Saving answers
@@ -191,7 +193,7 @@ Ask Claude about the page you're reading, such as a clarification, a list of ste
 > save that
 > explain the auth flow and save it
 
-"Save that" right after an answer saves the answer and says so; say "save the page" if you meant the whole page. While you're collecting parts, an answer is added as another part instead, and "done" saves them together:
+"Save that" right after an answer saves the answer and says so; say "save the page" if you meant the whole page. While you're collecting parts, an answer is added as another part instead, and "done" saves them together. If you already saved the page this session, the answer is added to that clip:
 
 > add that answer
 > save our back-and-forth about webhooks
@@ -268,7 +270,7 @@ The first time, Gleaner asks which Notion page should hold the database and crea
 
 #### Saving as an artifact
 
-Say "save it as an artifact" or add `--to artifact`. Each clip becomes its own artifact: a private web page on claude.ai with the clip's details (source, date, category, type, tags, note) at the top and the summary below, readable in light or dark mode and on a phone. It stays private until you share it. Every save, updated copies included, is a new artifact; Gleaner never republishes over an old one.
+Say "save it as an artifact" or add `--to artifact`. Each clip becomes its own artifact: a private web page on claude.ai with the clip's details (source, date, category, type, tags, note) at the top and the summary below, readable in light or dark mode and on a phone. It stays private until you share it. Each new clip is a new artifact. Adding to a clip later in the same session republishes its artifact at the same link; Gleaner never republishes over a clip from an earlier session.
 
 This needs a session that can publish artifacts, such as Claude Code. Where it can't, Gleaner says so and gives you the clip as a file.
 
@@ -412,6 +414,8 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 
 **Answer** parts sit in the same Parts section, headed by your question, with the answer kept as given. The Scope line counts them separately, such as `2 parts, 1 answer from 1 page`. A clip of a single answer skips the TL;DR.
 
+**A page clip you add to** in the same session keeps its summary and gains a Parts section before its Takeaways, with a Scope line such as `whole page + 2 parts`. Its TL;DR and Takeaways are rewritten to cover the new parts.
+
 **Video clip** adds a `**Video:**` line (channel, publish date, length, and transcript source) and swaps Key points for **Key moments**, each linking to its second in the video. A video part's heading links to where it starts, such as `3:10–5:40`.
 
 Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`, `-3`, and so on.
@@ -424,13 +428,14 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **"Save that" right after an answer** → takes the answer, even with text highlighted, and says so: it saves the answer, or adds it as the next part while you're collecting. "Save this page" still saves the page.
 - **Highlights under ~40 characters** (a stray word) are ignored.
 - **It acts instead of asking**, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
-- **Duplicate check:** saving a page you've clipped before shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check.
+- **Same page, same session** → saves and parts from a page you've already clipped this session go into that clip, wherever it was saved, unless you name another destination or say "as a new clip". The URL decides: other pages on the same site get their own clips.
+- **Duplicate check:** saving a page you clipped in an earlier session shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check.
 
 ## Limitations
 
 - **One highlight at a time.** Chrome doesn't support multiple simultaneous selections; collect parts one by one instead.
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
-- **Drive files can't be edited.** The Drive connector can create and read files but not change them, so updates are new copies and index sheets are snapshots.
+- **Drive files can't be edited.** The Drive connector can create and read files but not change their content. Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive's trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
 - **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), the clip comes from the title, description, and chapters only, and parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
@@ -516,6 +521,12 @@ Validation runs locally without GitHub Actions or a build step. After dependenci
 MIT © Shawn Sandy
 
 ## Changelog
+
+**2.1.0** (2026-10-18)
+- One clip per page per session: saving, adding a part, or saving an answer from a page you already clipped this session updates that clip instead of creating a new doc, file, Notion page, or artifact. Say "as a new clip" to keep one separate.
+- Updates stay where the clip was saved: local files and Notion pages are updated in place, and artifacts are republished at the same link. Drive can't change a file's content, so the updated clip is uploaded and the version saved earlier in the session goes to Drive's trash, where it can be restored for 30 days.
+- With nothing being collected, "drop the last part" and similar requests edit the parts of the clip saved from the page this session.
+- Clips from earlier sessions are still never changed; saving one of their pages again offers an updated copy, as before.
 
 **2.0.0** (2026-10-17)
 - Renamed the `clip` skill to `glean`. Use `/gleaner:glean` instead of `/gleaner:clip`; the old command is no longer available. Natural-language clipping requests and the `youtube` skill are unchanged.

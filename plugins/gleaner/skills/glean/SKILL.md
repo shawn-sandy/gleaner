@@ -59,15 +59,15 @@ If it isn't clear which tab "the page" is, such as several open tabs with none m
 
 ## Understanding requests
 
-Users speak naturally; don't wait for exact phrasing. Read each request for an **intent** and any **details**, then act. When the meaning is clear enough to act on, act; mistakes are cheap because clips are never overwritten.
+Users speak naturally; don't wait for exact phrasing. Read each request for an **intent** and any **details**, then act. When the meaning is clear enough to act on, act; mistakes are cheap because clips from earlier sessions are never changed, and anything added this session can be dropped again.
 
 ### Intents
 
 | Intent | What it does | Sounds like |
 | --- | --- | --- |
-| **Save page** | Saves a summary of the whole page now | "save this page", "keep this article", "bookmark this for later", "file this under design", "I want to remember this one", "stash this doc" |
-| **Add part** | Adds a part to the clip being collected; nothing saved yet | "save this part about animation lengths", "add this", "grab this bit", "keep this section too", "and this paragraph on easing", "this table matters" |
-| **Save answer** | Saves an answer you gave in this conversation as a clip now; while parts are being collected, adds it as a part instead | "save that answer", "keep that explanation", "save those steps", "save what you just told me", "explain the auth flow and save it" |
+| **Save page** | Saves a summary of the whole page now, or refreshes the page's clip if one was saved this session | "save this page", "keep this article", "bookmark this for later", "file this under design", "I want to remember this one", "stash this doc" |
+| **Add part** | Adds a part to the clip being collected (nothing saved yet), or straight to the page's clip if one was saved this session | "save this part about animation lengths", "add this", "grab this bit", "keep this section too", "and this paragraph on easing", "this table matters" |
+| **Save answer** | Saves an answer you gave in this conversation as a clip now; adds it as a part instead while parts are being collected, or to the page's clip if one was saved this session | "save that answer", "keep that explanation", "save those steps", "save what you just told me", "explain the auth flow and save it" |
 | **Save clip** | Saves all collected parts (plus a current highlight not yet added) as one clip | "save this clip", "that's it, save them", "done", "wrap it up", "save what I've got" |
 | **Manage parts** | Lists, removes, edits, or discards parts | "what have I got so far?", "drop the second one", "change part 1's note to …", "start over" |
 | **Find clips** | Searches saved clips (see Clip index) | "what did I save about Cowork?", "show my clips from this week", "anything on view transitions?" |
@@ -78,7 +78,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 - A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**. If you had just answered a question, mention in the confirmation that "save that answer" saves the answer instead.
 - A request pointing at something you said ("that answer", "that explanation", "those steps", "what you just told me") is **Save answer**, and "add that answer" or "add those steps too" is **Add part** with the answer as the part. A bare "save that", "keep that", or "add that" right after you answered a question means the answer, even with text highlighted. That highlight is passed over: don't add it at "done" unless the user adds it. Say in the confirmation that you took the answer: "Saved my answer — say 'save the page' if you meant the whole page" when it saved, or the Added part line (which names it as your answer) while collecting.
 - A request to explain or answer something and save it ("explain the auth flow and save it") is **Save answer**: answer first, then save that answer. This holds even when it also says "this page" or "save them".
-- "Done", "that's all", or "save them" with parts collected is **Save clip**. With nothing collected, say there's nothing to save and offer to save the page.
+- "Done", "that's all", or "save them" with parts collected is **Save clip**. With nothing collected, say there's nothing new to save, naming the clip saved from this page this session if there is one; otherwise offer to save the page.
 - A follow-up like "and this one" or "this too" right after adding a part is another **Add part**.
 - If parts are collected and the user asks to save the page, ask once: save the page on its own (keeping the parts), or include the parts?
 
@@ -140,6 +140,21 @@ To add a part:
 5. **Nothing usable** (no highlight, no topic, or the highlight couldn't be read, as in embedded frames, Chrome's PDF viewer, or Google Docs): say so in one line and suggest highlighting again (except where highlights can't be read, such as ChatGPT's connected tabs), describing the part, or pasting it. Don't add anything.
 6. **Confirm briefly:** `Added part 2: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.` For an answer: `Added part 3: how to rotate API keys (my answer, "1. Open Settings…").`
 
+### Clips saved this session
+
+A page gets one clip per session. Once a clip of a page is saved, later saves and adds from that page in this conversation go into that clip, updating it where it was saved (see Updating a clip saved this session, in step 6), instead of creating another doc, file, page, or artifact.
+
+- **Keep track** of every clip saved in this conversation: its title, Source URLs, destination, and where it lives (the file path, the Drive file ID and folder, the Notion page, or the artifact link and its scratch file).
+- **Same page** means the same URL once tracking parameters (such as `utm_*`), a section anchor after a `#`, and a trailing slash are dropped. Keep a fragment that routes to a page, one starting with a slash or an exclamation mark after the `#` (as in `#/docs/2`), since it names a different page. Other pages on the same site are different pages. If several clips from this session have the page as a Source, use the one saved or updated most recently.
+- **Add part:** with nothing being collected, a part from a page that has a clip from this session goes straight into that clip, which is saved again right away. Confirm with the clip's title: `Added part 2 to "Motion timing guidelines": animation lengths ("Keep most UI transitions…").` While parts are being collected, add to the collection as usual.
+- **Save answer:** with nothing being collected, an answer about a page that has a clip from this session is added to that clip as a part.
+- **Save page:** for a page whose clip was saved this session, read the page again and refresh that clip's summary, keeping its parts and adding any new note or tags. Don't run the duplicate check in step 2; it is for clips from earlier sessions.
+- **Save clip:** when every part to save (the collected parts, plus a highlight not yet added) comes from pages that one clip from this session already has as Sources, add them to that clip. Parts that bring in a new page make a new clip.
+- **Destination:** the update goes wherever that clip was saved, even when that isn't this surface's default. A request that names a different destination (a `--to` flag or words) makes a new clip there instead.
+- **Managing parts** with nothing being collected ("drop the last part", "change part 2's note") works on the parts of the page's clip from this session, and saves it again.
+- **A new clip on request:** "as a new clip", "separately", or "on its own" skips all this and makes a new clip.
+- **Clips from earlier sessions** are never updated. Adding to one means saving an updated copy (see step 2) or a new clip.
+
 ## Steps
 
 1. **Gather the content.**
@@ -148,6 +163,7 @@ To add a part:
    - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
 2. **Pick the destination.**
+   - **Adding to a clip saved this session** (see Clips saved this session): use that clip's destination and skip the duplicate check below. A request that names a different destination makes a new clip, picked by the rules below.
    - A `--to` flag decides the destination (see Destination flag).
    - "Save to Notion" or "put it in Notion" in words means the Notion destination, the same as `--to notion`.
    - "Save it as an artifact", "make it an artifact", or "save to my artifacts" means the Artifact destination, the same as `--to artifact`.
@@ -156,7 +172,7 @@ To add a part:
    - **In Claude Code, the default is This project** (the folder the session is working in). Use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research").
    - Everywhere else, default to Google Drive in a folder named `Browser Research`.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
-     - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders.
+     - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders, and skip trashed files.
      - Cowork project or This project: search `browser-research/` for the URL.
      - Notion: query the destination database for pages whose **Source** property equals the URL. Use a structured rows query with a property filter rather than SQL, which is rate-limited on some Notion plans.
      - Artifact: list the user's artifacts and read the ones titled like this page (clips are named after it). A match is a Gleaner clip (its page has the `Gleaner clip` generator line) whose Source row is the URL.
@@ -229,6 +245,11 @@ To add a part:
      - On the **Scope:** line, count answers apart from other parts: `2 parts, 1 answer from 1 page`, or `1 answer from 1 page`, or `1 answer, no page` when no part has a page. Only when no part has a page, also leave out the Source line and use `other` as the Type; an answer about a page keeps that page as its Source and the page's Type.
      - A clip whose only part is one answer leaves out the TL;DR, since the question and answer already are the summary.
      - For an answer about a YouTube video, see the youtube skill's part clip rule for its heading, source link, and timestamps.
+   - **A clip that grows** (see Clips saved this session) is written out in full again with the new content in it:
+     - Keep its title, file name, Saved date, category, and any Supersedes line unless the user asks to change them; a new category moves the clip to that category's folder. New tags join the old ones, still 3–6 in all, and a new clip-level note joins the old one after a semicolon.
+     - New parts go in the `## Parts` section, numbered on from those already there. A page clip gets that section just before its `## Takeaways`, and the whole page's Key points and Notable details go just before `## Parts` when a part clip gains them.
+     - Update the **Scope:** line. A clip that holds the whole page as well as parts puts "whole page +" before the count, as in `whole page + 2 parts` or `whole page + 1 part, 1 answer`.
+     - Rewrite the TL;DR and Takeaways so they cover everything now in the clip. A single-answer clip that gains a part gets a TL;DR.
 
 4. **Categorize it** so clips are easy to find later.
    - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.
@@ -277,7 +298,7 @@ To add a part:
      | Note | text | the user's note, if any |
      | Source | URL | the page URL (first one for multi-page part clips) |
      | Saved | date | today |
-     | Scope | text | `selection` or `N parts from M pages`, if any |
+     | Scope | text | `selection`, `N parts from M pages`, or `whole page + N parts`, if any |
      | Supersedes | URL | link to the older clip, if any |
 
      With the Notion connector's `create-database`, pass the schema as SQL DDL, for example `CREATE TABLE ("Name" TITLE, "Category" SELECT('AI & Agents':purple, …), "Type" SELECT(…), "Tags" MULTI_SELECT(), "Note" RICH_TEXT, "Source" URL, "Saved" DATE, "Scope" RICH_TEXT, "Supersedes" URL)`.
@@ -286,13 +307,13 @@ To add a part:
    - **Add new tags before saving.** Notion rejects a multi-select value that isn't already an option. If any of the clip's tags are new, update the Tags property with `ALTER COLUMN "Tags" SET MULTI_SELECT(…)` listing **every existing option plus the new ones**, since options left out of the list are deleted. Then create the page.
    - **Property values:** Tags without the `#`; Saved as `date:Saved:start` (YYYY-MM-DD) with `date:Saved:is_datetime` 0; leave empty properties out rather than sending blank strings.
    - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down, or from `## Parts` when there is no TL;DR) in the page content using Notion-flavored Markdown: outside code, put a backslash before any of these characters: \\ * ~ $ [ ] < > { } | ^ and the backtick, and keep code (such as TypeScript generics) in code spans or blocks. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
-   - **Duplicates:** never edit or delete an existing page. An updated copy is a new page with **Supersedes** set.
+   - **Duplicates:** never edit or delete a page from an earlier session. An updated copy is a new page with **Supersedes** set.
    - Confirm with the page link and the database name.
 
    **Artifact**
    - **Needs the Artifact tool**, which publishes HTML pages to claude.ai. If this session doesn't have it, say so in one line and use the fallback below.
-   - **One artifact per clip.** Every save, updated copies included, is a new artifact. Never publish with an existing artifact's `url`, since that replaces the page.
-   - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so never reuse a path.
+   - **One artifact per clip.** Every new clip, updated copies of earlier clips included, is a new artifact. Never publish with an existing artifact's `url`, since that replaces the page.
+   - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so reuse a path only to update that same clip (see Updating a clip saved this session).
    - **Fill the template below** from the summary in step 3, replacing each `[[…]]` placeholder, so every clip looks like one set:
      - Each of the clip's bold header lines, from Source down (Supersedes and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
      - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as Key points in a part clip or the TL;DR of a single-answer clip. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. Keep every link, timestamped video links included.
@@ -350,9 +371,16 @@ To add a part:
    - Artifacts have no folders; the Category row does that job. They stay private until the user shares them.
    - Confirm with the artifact's link.
 
+   **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced.
+   - **Local folders** (Cowork project, This project, or a path): overwrite that file at the same path. After a category change, write it to the new category's folder and delete the old file.
+   - **Notion:** add any new tags to the Tags options first (as above), update the page's properties, then replace the page's content with the updated body, written as above (with the Notion connector's `update-page`, the `replace_content` command).
+   - **Artifact:** write the updated page to the same scratch file and publish that path again without a `url`, which updates the same artifact at the same link.
+   - **Google Drive:** the connector can't change a file's content, so upload the updated clip to its category folder under the same title (no `-2`), then move the earlier version to the trash with `trash_file`, where it can be restored for 30 days. Trash it only after the upload succeeds, and only the version this session saved. If your connector can replace a file's content, do that instead. If trashing fails, say the earlier version is still there.
+   - **If the update fails,** say so, then save the updated clip as a new clip with a **Supersedes:** line pointing to the earlier version, or use the fallback below if that fails too.
+
    **Fallback:** give the user the Markdown file and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
-7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; or the artifact's link), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Don't repeat the full summary. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
+7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; or the artifact's link), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Don't repeat the full summary. For an update, start with `Updated "<title>"` and say what was added; on Drive, give the new link and say the earlier version went to the trash. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
 
 ## Clip index (on demand)
 
@@ -361,13 +389,13 @@ The clips themselves are the index: each one carries its source URL, date, categ
 When the user asks to find or list clips ("show my clip index", "what did I save about Cowork?", "list my #prompting clips", "clips from this week"):
 
 1. **Gather.**
-   - Drive: find the `Browser Research` folder and its category subfolders, then search inside them. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes, and `createdTime` for date ranges. Page through all results.
+   - Drive: find the `Browser Research` folder and its category subfolders, then search inside them, skipping trashed files. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes. For date ranges, use the **Saved:** line: a clip updated later in its session is a newer file, so `createdTime` can only rule out files created before the range starts. Page through all results.
    - Cowork project or This project: search `browser-research/` recursively.
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
-   - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date, but clips are never republished, so an artifact's last-updated time is when it was saved: for a date range, skip artifacts updated outside it without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
+   - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date. A clip can be republished later in the session that saved it, so for a date range use its Saved row; only artifacts last updated before the range starts can be skipped without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
    - Search wherever this surface saves by default (in Claude Code, the project's `browser-research/` folder; elsewhere, Drive). Include the other locations when the user asks for them or names one.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
-3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)" or "(2 parts, 1 answer)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
+3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)", "(2 parts, 1 answer)", or "(whole page + 2 parts)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
 
 ### Snapshot sheet
