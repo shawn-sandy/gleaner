@@ -572,8 +572,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
-- Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to keep getting Docs. Notion and artifact clips keep their own formats without asking. First-save setup leaves the format unset unless you pick one, and "save it as a Google Doc" in Claude Code saves to Drive.
+**2.3.0** (2026-10-18)
+- Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Notion and artifact clips keep their own formats without asking.
+- Say "save it as a Google Doc" for one Doc (in Claude Code, this saves to Drive), or set your default format to `auto` to keep getting Docs. First-save setup leaves the format unset unless you pick one.
 
 **2.2.0** (2026-10-18)
 - Added `/gleaner:preferences` for shared, versioned save destinations and formats, local-first storage, project/session overrides, and optional invocation-time Google Drive sync.
