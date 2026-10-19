@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner`, with four skills, `glean`, `youtube`, `preferences`, and `follow-up`. There is no application runtime or build; static validator fixture tests are available: the product is the prose in `plugins/gleaner/skills/glean/SKILL.md`, which the model reads raw at runtime.
+A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner`, with four skills, `glean`, `youtube`, `preferences`, and `follow-up`. There is no application runtime or build; static validator and release-script tests are available: the product is the prose in the four `SKILL.md` files under `plugins/gleaner/skills/` (mostly `glean/SKILL.md`), which the model reads raw at runtime.
 
 ## Validate
 
@@ -29,8 +29,9 @@ Local validation parses all four Skills' frontmatter and ChatGPT metadata, check
 
 ## Editing rules
 
-- The list of destinations and surfaces appears in four places: the `marketplace.json` plugin description, the `plugin.json` description, the SKILL.md frontmatter `description`, and the README intro paragraph. When destinations or surfaces change, update all four in the same commit.
-- The README "Customizing" section refers to SKILL.md by step number (steps 2, 3, 4 of `## Steps`). Renumbering or reordering steps means updating those references.
+- The list of destinations and surfaces appears in four places: the `marketplace.json` plugin description, the `plugin.json` description, the glean SKILL.md frontmatter `description`, and the README intro paragraph. When destinations or surfaces change, update all four in the same commit.
+- The README "Customizing" section refers to the glean SKILL.md by step number (steps 2, 3, 4 of `## Steps`). Renumbering or reordering steps means updating those references.
+- Each skill's `agents/openai.yaml` holds its ChatGPT display metadata. Glean's icons live in `plugins/gleaner/skills/glean/assets/`, and validation fails if the paths in its `openai.yaml` stop resolving.
 - Because SKILL.md is read as raw text, avoid literal backticks inside code spans and be deliberate with backslashes: describe awkward characters in words (see commit 4d6800d, where a backtick-in-code-span attempt produced a garbled escape list).
 
 ## Git
