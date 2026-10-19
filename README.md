@@ -67,19 +67,20 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 
 ## Skills
 
-Gleaner includes three skills: two share the clip format and saving workflow, and one manages reusable preferences:
+Gleaner includes four skills: two share the clip format and saving workflow, one suggests what to do next with a saved clip, and one manages reusable preferences:
 
 | Skill | Claude Code command | Use it for |
 | --- | --- | --- |
 | [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
 | [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
 | **preferences** | `/gleaner:preferences` | Shared destinations, formats, setup, and sync |
+| [follow-up](plugins/gleaner/skills/follow-up/SKILL.md) | `/gleaner:follow-up` | Suggest three follow-ups for a saved clip, or ask what you want to do next |
 
 Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
 
 ## ChatGPT marketplace
 
-Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers all three skills (`glean`, `youtube`, and `preferences`) through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
+Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers all four skills (`glean`, `youtube`, `preferences`, and `follow-up`) through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
 
 See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) for installation, supported browser surfaces, limitations, and a manual test checklist. ChatGPT marketplace import requires verification in an eligible workspace.
 
@@ -413,6 +414,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
 | Find clips | "what did I save about X?" · "clips from this week" |
+| Plan next steps | "what should I follow up on?" · "suggest follow-ups for that clip" |
 | Spreadsheet | "make me an index sheet" |
 
 ## What a clip looks like
@@ -513,7 +515,10 @@ gleaner/
 │       ├── .claude-plugin/
 │       │   └── plugin.json     # plugin manifest (version lives here)
 │       └── skills/
-│           ├── README.md       # usage guide for all three skills
+│           ├── README.md       # usage guide for all four skills
+│           ├── follow-up/
+│           │   ├── agents/openai.yaml
+│           │   └── SKILL.md      # three follow-ups for a saved clip
 │           ├── glean/
 │           │   ├── agents/
 │           │   │   └── openai.yaml  # skill name shown in ChatGPT
@@ -541,7 +546,7 @@ npm ci
 npm run validate
 ```
 
-Run `npm run validate` before pushing. It checks all three Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, preference example schemas and destination references, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
+Run `npm run validate` before pushing. It checks all four Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, preference example schemas and destination references, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
 
 When `claude` is on `PATH`, validation also runs both existing strict checks:
 
@@ -571,6 +576,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Added `/gleaner:follow-up`, which reads a saved clip (its link, TL;DR, note, content, and links) and suggests three specific follow-ups, or asks what you want to do next when the clip gives too little to go on.
 
 **2.3.0** (2026-10-18)
 - Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Notion and artifact clips keep their own formats without asking.

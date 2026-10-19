@@ -1,0 +1,4 @@
+interface:
+  display_name: Gleaner Follow-up
+  short_description: Suggest three next steps from a saved Gleaner clip
+  default_prompt: Suggest three follow-ups for the clip I saved most recently.

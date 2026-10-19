@@ -1,12 +1,13 @@
 # Gleaner skills
 
-Gleaner ships three skills. You don't have to pick one: describe what you want, and Claude loads the right skill from your words and the page you're on. In Claude Code you can also call each one directly.
+Gleaner ships four skills. You don't have to pick one: describe what you want, and Claude loads the right skill from your words and the page you're on. In Claude Code you can also call each one directly.
 
 | Skill | Claude Code command | Use it for |
 | --- | --- | --- |
 | [glean](glean/SKILL.md) | `/gleaner:glean` | Web pages, parts of pages, Claude's answers about them, and finding saved clips |
 | [preferences](preferences/SKILL.md) | `/gleaner:preferences` | Shared destinations, formats, setup, show, update, reset, and sync |
 | [youtube](youtube/SKILL.md) | `/gleaner:youtube` | YouTube videos and moments from them |
+| [follow-up](follow-up/SKILL.md) | `/gleaner:follow-up` | Three suggested next steps for a saved clip |
 
 The youtube skill handles only what's different about video: reading the transcript and writing a summary with timestamped links. Everything else (notes, parts, destinations, categories, saving, and search) comes from glean. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
 
@@ -155,6 +156,18 @@ To copy a transcript on YouTube, open **…more** under the video, then **Show t
 - **Ads:** if an ad is playing, Gleaner skips it or waits for it to end before reading the transcript.
 - **Auto-captions:** Gleaner checks names and code terms against the title and description, since auto-captions often mishear them.
 - **Private, members-only, or age-restricted videos:** sign in to YouTube in the browser Gleaner is using. The Claude Code Browser pane has its own sign-ins, separate from Chrome.
+
+## follow-up: what to do next with a clip
+
+Ask right after a save, or point at any saved clip by link, path, or topic:
+
+```text
+what should I follow up on?
+suggest follow-ups for my view transitions clip
+/gleaner:follow-up ./browser-research/design-engineering/2026-10-18-motion-timing.md
+```
+
+Gleaner reads the clip's link, TL;DR, note, content, and the links inside it, then suggests three follow-ups, each tied to something in the clip, such as reading a linked page, moving the post your note mentions forward, or comparing it with clips that share its tags. Pick one, or say what you'd rather do. When the clip has no note, takeaways, or links to work from, Gleaner asks what you want instead of guessing. Suggestions are never written into the clip, and nothing is saved unless you ask.
 
 ## More help
 
