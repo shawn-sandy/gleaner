@@ -113,7 +113,7 @@ claude plugin marketplace add shawn-sandy/gleaner
 claude plugin install gleaner@shawn-sandy --scope user
 ```
 
-In Claude Code the skills are also available as `/gleaner:glean`, `/gleaner:youtube`, and `/gleaner:preferences`.
+In Claude Code the skills are also available as `/gleaner:glean`, `/gleaner:youtube`, `/gleaner:preferences`, and `/gleaner:follow-up`.
 
 ### Claude Code desktop
 

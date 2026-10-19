@@ -21,6 +21,9 @@ Use the first that applies:
 
 Read the clip with the tool its destination uses in the glean skill: the Drive connector, the Notion connector, the Artifact tool's `read` action, or a local file read. If it can't be read, say so in one line and stop. Never rebuild a clip from memory.
 
+- **Check it's a Gleaner clip:** it has the **Source:** and **Saved:** header lines, it's an artifact with the `Gleaner clip` generator line, or it sits in a Gleaner clip location (`browser-research/`, Drive's `Browser Research`, the `Browser Research` Notion database, or the configured destination). If it isn't one, say so, suggest follow-ups without saving them, and offer to save it as a clip through glean first. Never save a copy of something that isn't a clip.
+- **Use the newest copy:** when several matches are copies of one clip, linked by **Supersedes:** lines, use the newest one, which no other clip supersedes. Before saving follow-ups to a clip from an earlier session, search its destination for its link; if a newer copy supersedes it, review that copy instead and say so.
+
 ## Review it
 
 Collect these before suggesting anything:
@@ -69,10 +72,10 @@ Add the follow-ups to the clip as its last section, after Takeaways:
 
 If the clip already has a Follow-ups section, add the new dated list below the earlier ones. Never remove or reword earlier follow-ups, and leave the rest of the clip as it is.
 
-Save through the glean skill, in the reviewed clip's own destination (its folder, its Notion database, or its artifacts), whatever the default destination is:
+Save through the glean skill. The reviewed clip's destination, category folder, and format are session overrides for this save, the way glean step 2 treats a clip saved this session, whatever the defaults are. Skip first-save setup and the duplicate check.
 
 - **A clip saved or updated in this conversation** is updated in place, as in glean's "Updating a clip saved this session".
-- **A clip from an earlier session** is never edited. Save an updated copy that has the Follow-ups section and a **Supersedes:** line pointing to the reviewed clip, as in glean step 2, without asking first. Name it in the reply as a new copy. More follow-ups in this conversation update that copy.
+- **A clip from an earlier session** is never edited. Save an updated copy that has the Follow-ups section and one **Supersedes:** line pointing to the reviewed clip, replacing any Supersedes line the reviewed clip had, as in glean step 2, without asking first. Name it in the reply as a new copy. More follow-ups in this conversation update that copy.
 
 Link only what the save returned. If the save fails, still show the follow-ups, say plainly that they weren't saved, and use glean's fallback.
 

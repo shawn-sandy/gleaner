@@ -257,7 +257,6 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      - New parts go in the `## Parts` section, numbered on from those already there. A page clip gets that section just before its `## Takeaways`, and the whole page's Key points and Notable details go just before `## Parts` when a part clip gains them.
      - Update the **Scope:** line. A clip that holds the whole page as well as parts puts "whole page +" before the count, as in `whole page + 2 parts` or `whole page + 1 part, 1 answer`.
      - Rewrite the TL;DR and Takeaways so they cover everything now in the clip. A single-answer clip that gains a part gets a TL;DR.
-   - **Follow-ups:** a `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, unchanged, whenever a clip saved this session is rewritten. This applies to video clips too.
 
 4. **Categorize it** so clips are easy to find later.
    - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.
@@ -379,7 +378,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - Artifacts have no folders; the Category row does that job. They stay private until the user shares them.
    - Confirm with the artifact's link.
 
-   **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced.
+   **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced. A `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, unchanged; this applies to video clips too.
    - **Local folders** (Cowork project, This project, or a path): overwrite that file at the same path. After a category change, write it to the new category's folder and delete the old file.
    - **Notion:** add any new tags to the Tags options first (as above), update the page's properties, then replace the page's content with the updated body, written as above (with the Notion connector's `update-page`, the `replace_content` command).
    - **Artifact:** write the updated page to the same scratch file and publish that path again without a `url`, which updates the same artifact at the same link.
