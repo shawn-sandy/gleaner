@@ -274,7 +274,9 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      ```
      ````
 
-     - **Local folders** (Cowork project, This project, or a path): name the clip by its saved path instead of its title, relative to the project folder for This project and a Cowork project: `Suggest follow-ups for my Gleaner clip at browser-research/<category-folder>/<name>.md`. Use the path step 6 settles on, after any `-2`, and fill it in again whenever the clip is written to a new path, such as an updated copy or a category move.
+     - **Local folders** (Cowork project, This project, or a path): name the clip by its saved path instead of its title, relative to the project folder for This project and a Cowork project: `Suggest follow-ups for my Gleaner clip at browser-research/<category-folder>/<name>.md`. Use the path step 6 settles on, after any `-2`.
+     - **This conversation:** the clip isn't stored, so neither a title nor a path finds it in a later session. Introduce the prompt with "To get follow-ups later, attach or paste this file into Claude and say:" and make the prompt `Suggest follow-ups for this Gleaner clip`.
+     - **Fill the prompt in again** whenever the clip is saved somewhere new, such as an updated copy, a category move, or a chat clip stored elsewhere, so it always fits where that copy lives.
      - **This project** also gets a terminal command after the prompt, which opens Claude Code with the prompt already typed. The single quotes stop the shell from changing the prompt, so leave the command out when the path has a single quote in it:
 
        ````markdown

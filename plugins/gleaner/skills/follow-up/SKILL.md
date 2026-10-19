@@ -14,7 +14,7 @@ Clips, their destinations, and the clip format come from Gleaner's glean skill (
 
 Use the first that applies:
 
-1. **A link or path** in the request (a Drive file, a Notion page, a claude.ai artifact, or a local file): read that clip.
+1. **A link or path** in the request (a Drive file, a Notion page, a claude.ai artifact, or a local file), or a clip file attached or pasted into it: read that clip.
 2. **A clip saved or updated in this conversation:** use the most recent one, unless the request names another.
 3. **A clip described in words** ("my clip about view transitions"): search as in the glean skill's Clip index. If several match, list them and ask which one.
 4. **Nothing to go on:** ask which clip, and offer to search.
@@ -72,7 +72,7 @@ Add the follow-ups to the clip as its last section, after Takeaways:
 3. **<action>**: <why>
 ```
 
-If the clip already has a Follow-ups section, add the new dated list below the earlier ones. Never remove or reword earlier follow-ups, and leave the rest of the clip as it is, except that an updated copy in a local folder gets its own path in the follow-up prompt (glean step 3 Rules).
+If the clip already has a Follow-ups section, add the new dated list below the earlier ones. Never remove or reword earlier follow-ups, and leave the rest of the clip as it is, except that an updated copy's follow-up prompt is filled in for where that copy lives (glean step 3 Rules).
 
 Save through the glean skill. The reviewed clip's destination, category folder, and format are session overrides for this save, the way glean step 2 treats a clip saved this session, whatever the defaults are. Skip first-save setup and the duplicate check.
 
