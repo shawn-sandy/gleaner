@@ -139,8 +139,8 @@ If you installed the earlier **page-to-project** skill, remove it so the two don
 
 1. Open any article in Chrome.
 2. Open the Claude side panel and say **"save this page."**
-3. Gleaner replies with the clip as a Markdown file, its tags, and a one-line summary.
-4. Download or copy the file to keep it. To store a copy, say "save to Drive". To store every clip somewhere, set a default with `/gleaner:preferences setup`.
+3. Gleaner replies with the clip as a Markdown file, its tags, and a one-line summary. Where the chat can't attach files, the clip comes as one Markdown code block instead.
+4. Download the file, or copy the code block, to keep it. To store a copy, say "save to Drive". To store every clip somewhere, set a default with `/gleaner:preferences setup`.
 
 That's it. Everything below is optional.
 
