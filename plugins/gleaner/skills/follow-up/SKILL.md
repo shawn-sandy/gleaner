@@ -21,7 +21,7 @@ Use the first that applies:
 
 Read the clip with the tool its destination uses in the glean skill: the Drive connector, the Notion connector, the Artifact tool's `read` action, or a local file read. If it can't be read, say so in one line and stop. Never rebuild a clip from memory.
 
-- **Check it's a Gleaner clip:** it has the **Source:** and **Saved:** header lines, it's an artifact with the `Gleaner clip` generator line, or it sits in a Gleaner clip location (`browser-research/`, Drive's `Browser Research`, the `Browser Research` Notion database, or the configured destination). If it isn't one, say so, suggest follow-ups without saving them, and offer to save it as a clip through glean first. Never save a copy of something that isn't a clip.
+- **Check it's a Gleaner clip:** a file has the **Saved:** and **Category:** header lines, a Notion page has Saved and Category properties, and an artifact has the `Gleaner clip` generator line. Where it's stored doesn't count: a file in a clip folder without these lines may be a clip saved before categories existed, so treat it as not a clip here and offer glean's updated copy with categories (see its Clip index). If it isn't a clip, say so, suggest follow-ups without saving them, and offer to save it as a clip through glean first. Never save a copy of something that isn't a clip.
 - **Use the newest copy:** when several matches are copies of one clip, linked by **Supersedes:** lines, use the newest one, which no other clip supersedes. Before saving follow-ups to a clip from an earlier session, search its destination for its link; if a newer copy supersedes it, review that copy instead and say so.
 
 ## Review it
