@@ -378,7 +378,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - Artifacts have no folders; the Category row does that job. They stay private until the user shares them.
    - Confirm with the artifact's link.
 
-   **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced.
+   **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced. A `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, unchanged; this applies to video clips too.
    - **Local folders** (Cowork project, This project, or a path): overwrite that file at the same path. After a category change, write it to the new category's folder and delete the old file.
    - **Notion:** add any new tags to the Tags options first (as above), update the page's properties, then replace the page's content with the updated body, written as above (with the Notion connector's `update-page`, the `replace_content` command).
    - **Artifact:** write the updated page to the same scratch file and publish that path again without a `url`, which updates the same artifact at the same link.
