@@ -437,7 +437,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 - **One highlight at a time.** Chrome doesn't support multiple simultaneous selections; collect parts one by one instead.
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
-- **No highlights or playback position in ChatGPT.** Connected Chrome tabs, and a Work browser without a JavaScript tool, can't read either. Name the part or paste it, and give a video part a time range or topic instead of "this part."
+- **ChatGPT without a JavaScript tool.** Connected Chrome tabs, and a Work browser without one, can't read highlights or the playback position. Name the part or paste it, and give a video part a time range or topic instead of "this part."
 - **Drive files can't be edited.** The Drive connector can create and read files but not change their content. Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive's trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
