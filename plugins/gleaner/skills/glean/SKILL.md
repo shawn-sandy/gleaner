@@ -347,7 +347,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so reuse a path only to update that same clip (see Updating a clip saved this session).
    - **Fill the template below** from the summary in step 3, replacing each `[[…]]` placeholder, so every clip looks like one set:
      - Each of the clip's bold header lines, from Source down (Supersedes and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
-     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as Key points in a part clip or the TL;DR of a single-answer clip. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. Keep every link, timestamped video links included.
+     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as Key points in a part clip or the TL;DR of a single-answer clip. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. The follow-up prompt's pre block gets `class="prompt"`, so it wraps on narrow screens instead of running off the edge. Keep every link, timestamped video links included.
      - The page title is the clip title, shortened to a short name if it runs long: keep the specific words, drop site names and taglines. The h1 keeps the full title.
      - Escape page text: write an ampersand as `&amp;`, angle brackets as `&lt;` and `&gt;`, and a double quote inside an attribute (such as a link address) as `&quot;`.
      - The page is the user's summary, not a copy of the source: link the source, but don't reproduce its logo, styling, or byline.
@@ -376,6 +376,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
        code { font-family: var(--mono); font-size: 0.875em; background: var(--code); border-radius: 4px; padding: 0.1em 0.3em }
        pre { overflow-x: auto; background: var(--code); border-radius: 6px; padding: 0.75rem 1rem }
        pre code { background: none; padding: 0 }
+       pre.prompt { white-space: pre-wrap; overflow-wrap: anywhere }
      </style>
      <main>
        <h1>[[clip title]]</h1>
