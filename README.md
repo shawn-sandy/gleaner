@@ -182,7 +182,7 @@ Mention the page, article, or doc, or just say "save this" with nothing highligh
 > keep this article for later
 > bookmark this doc
 
-Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, a short explanation of how the main idea works, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters.
+Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it, and a tutorial gets numbered **Steps** in place of key points.
 
 ### Saving parts of pages
 
@@ -471,7 +471,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 To get follow-ups, paste this into a new chat: …
 ```
 
-Clips are written for a smart reader who is new to the topic: short sentences, technical terms explained the first time they appear, and key points as full sentences that start with a bold claim. **How it works** is one short paragraph on the main idea, left out when there isn't one, such as for release notes.
+Clips are written for a smart reader who is new to the topic: short sentences, technical terms explained the first time they appear, and key points as full sentences that start with a bold claim. **How it works** is optional: one short paragraph, added only when the TL;DR can't explain the main idea on its own. A tutorial gets a numbered **Steps** section in place of Key points, one action per step.
 
 **Part clip** adds a `**Scope:** 2 parts from 1 page` line, and its body is a **Parts** section with one heading per part (titled by your note or topic), a link to its source, its own note, and 2–4 bullets.
 
@@ -636,7 +636,8 @@ MIT © Shawn Sandy
 
 **Unreleased**
 - Clips are now written in plain language for a reader new to the topic: short sentences, technical terms explained the first time they appear, a TL;DR that says what the page says, and key points and takeaways as full sentences that start with a bold claim. Page clips have 3–5 key points, down from 5–8.
-- Page and video clips have a new **How it works** section after the TL;DR: one short paragraph explaining the main idea, left out when there isn't one, such as for release notes.
+- Page and video clips can have a new **How it works** section after the TL;DR: one short paragraph, added only when the TL;DR can't explain the page's main idea on its own.
+- Tutorial pages get a numbered **Steps** section in place of Key points, with one action per step in the source's order. Tutorial videos keep Key moments.
 - Clips now end with a copy-and-paste prompt for getting follow-ups later, set apart below a divider. It names the clip and where it's stored, gives the path for local folders, or asks you to attach the file for a clip given in the conversation. Clips saved inside the Claude Code project also get a `claude` terminal command that starts Claude Code and sends the prompt.
 
 **2.6.0** (2026-10-19)

@@ -53,7 +53,7 @@ keep this article for later, good intro to view transitions
 save https://example.com/article
 ```
 
-Gleaner reads the page, skips navigation and ads, and saves a plain-language clip of up to ~400 words: a TL;DR, a short explanation of how the main idea works, key points, notable details, and takeaways. Technical terms are explained the first time they appear. Anything you add after the request ("good intro to view transitions") is saved as the clip's note.
+Gleaner reads the page, skips navigation and ads, and saves a plain-language clip of up to ~400 words: a TL;DR, key points (numbered steps for a tutorial), notable details, and takeaways, plus a short explanation of how the main idea works when the TL;DR can't cover it. Technical terms are explained the first time they appear. Anything you add after the request ("good intro to view transitions") is saved as the clip's note.
 
 ### Collect parts, then save once
 

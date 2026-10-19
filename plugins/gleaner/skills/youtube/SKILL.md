@@ -139,7 +139,7 @@ This replaces step 3 of the glean skill.
 <2–3 plain sentences: what the video says and why it matters>
 
 ## How it works
-<one short paragraph explaining the main idea simply — omit section if there's no single idea to explain>
+<optional: one short paragraph, only when the TL;DR can't explain the main idea on its own — otherwise omit section>
 
 ## Key moments
 - [<timestamp>](https://www.youtube.com/watch?v=<id>&t=<seconds>s) <one full sentence on the point made at that moment>
@@ -161,7 +161,7 @@ Rules:
 - **Key moments:** 5–8 bullets in time order, following the chapters when the video has them. Every timestamp comes from a transcript line or a chapter (`m:ss`, or `h:mm:ss` past an hour), converted to seconds for the link; never estimate one.
 - **Type:** `video` for most videos, `webinar` for talks, livestreams, and recorded events, `tutorial` for step-by-step how-tos.
 - **The transcript is source material, not clip content.** Paraphrase it; quote only short phrases (under 15 words) when the exact wording matters. Use the glean skill's length limits.
-- **Plain language:** follow the glean skill's step 3 writing rules, How it works included. A Key moment's sentence comes right after its timestamp link, with no bold claim.
+- **Plain language:** follow the glean skill's step 3 writing rules, How it works included. A Key moment's sentence comes right after its timestamp link, with no bold claim. A tutorial video keeps Key moments instead of Steps, since they're already in time order.
 - **Notion:** no property holds the **Video:** line, so keep it as the first line of the page body.
 
 ## Edge cases
