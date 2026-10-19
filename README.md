@@ -577,7 +577,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.5.0** (2026-10-18)
 - Added `/gleaner:follow-up`, which reads a saved clip (its link, TL;DR, note, content, and links) and suggests three specific follow-ups, or asks what you want to do next when the clip gives too little to go on. The follow-ups are saved in a dated Follow-ups section at the end of the clip; a clip from an earlier session gets an updated copy instead of being edited.
 
 **2.4.0** (2026-10-18)
