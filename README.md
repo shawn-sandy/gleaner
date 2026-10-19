@@ -392,6 +392,12 @@ Gleaner reads the clip's TL;DR, note, content, and the links inside it, then sug
 
 The follow-ups are saved at the end of the clip under a dated **Follow-ups** heading. A clip from an earlier session isn't edited: you get an updated copy that links to the original. Pick a follow-up and Gleaner starts on it; nothing else is saved unless you ask.
 
+Every clip also ends its Takeaways with a ready-made prompt, so you can come back to it later: copy the line into Claude to get follow-ups. It names the clip by title, or by file path for clips saved to a local folder. Clips saved to your Claude Code project add a terminal command that opens Claude Code with the prompt already typed:
+
+```bash
+claude 'Suggest follow-ups for my Gleaner clip at browser-research/frontend-dev/2026-10-19-view-transitions.md'
+```
+
 ---
 
 ### Using Gleaner in Claude Code desktop
@@ -454,6 +460,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 …
 ## Takeaways
 …
+To get follow-ups, paste this into Claude: …
 ```
 
 **Part clip** adds a `**Scope:** 2 parts from 1 page` line, and its body is a **Parts** section with one heading per part (titled by your note or topic), a link to its source, its own note, and 2–4 bullets.
@@ -614,6 +621,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Clips now end their Takeaways with a copy-and-paste prompt for getting follow-ups later. It names the clip by title, or by path for local folders, and clips saved to the Claude Code project also get a `claude` terminal command that opens Claude Code with the prompt typed in.
 
 **2.5.0** (2026-10-18)
 - Added `/gleaner:follow-up`, which reads a saved clip (its link, TL;DR, note, content, and links) and suggests three specific follow-ups, or asks what you want to do next when the clip gives too little to go on. The follow-ups are saved in a dated Follow-ups section at the end of the clip; a clip from an earlier session gets an updated copy instead of being edited.

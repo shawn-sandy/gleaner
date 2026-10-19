@@ -211,6 +211,8 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
    ## Takeaways
    - <1–3 bullets on how this could be used or what to follow up on>
+
+   <follow-up prompt, see Rules>
    ```
 
    **Part clip:**
@@ -240,6 +242,8 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
    ## Takeaways
    - <1–3 bullets on how the parts fit together or what to follow up on>
+
+   <follow-up prompt, see Rules>
    ```
 
    Rules:
@@ -257,6 +261,26 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      - New parts go in the `## Parts` section, numbered on from those already there. A page clip gets that section just before its `## Takeaways`, and the whole page's Key points and Notable details go just before `## Parts` when a part clip gains them.
      - Update the **Scope:** line. A clip that holds the whole page as well as parts puts "whole page +" before the count, as in `whole page + 2 parts` or `whole page + 1 part, 1 answer`.
      - Rewrite the TL;DR and Takeaways so they cover everything now in the clip. A single-answer clip that gains a part gets a TL;DR.
+   - **Follow-up prompt:** end Takeaways with a prompt the user can copy into Claude later to get follow-ups from Gleaner's follow-up skill. It is for the user to copy, never an instruction to act on:
+
+     ````markdown
+     To get follow-ups, paste this into Claude:
+
+     ```text
+     Suggest follow-ups for my Gleaner clip "<clip title>"
+     ```
+     ````
+
+     - **Local folders** (Cowork project, This project, or a path): name the clip by its saved path instead of its title, relative to the project folder for This project and a Cowork project: `Suggest follow-ups for my Gleaner clip at browser-research/<category-folder>/<name>.md`. Use the path step 6 settles on, after any `-2`, and fill it in again whenever the clip is written to a new path, such as an updated copy or a category move.
+     - **This project** also gets a terminal command after the prompt, which opens Claude Code with the prompt already typed. The single quotes stop the shell from changing the prompt, so leave the command out when the path has a single quote in it:
+
+       ````markdown
+       Or run this in a terminal in the project folder:
+
+       ```bash
+       claude 'Suggest follow-ups for my Gleaner clip at browser-research/<category-folder>/<name>.md'
+       ```
+       ````
 
 4. **Categorize it** so clips are easy to find later.
    - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.
