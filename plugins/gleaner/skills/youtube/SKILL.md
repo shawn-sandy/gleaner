@@ -161,7 +161,7 @@ Rules:
 - **Key moments:** 5–8 bullets in time order, following the chapters when the video has them. Every timestamp comes from a transcript line or a chapter (`m:ss`, or `h:mm:ss` past an hour), converted to seconds for the link; never estimate one.
 - **Type:** `video` for most videos, `webinar` for talks, livestreams, and recorded events, `tutorial` for step-by-step how-tos.
 - **The transcript is source material, not clip content.** Paraphrase it; quote only short phrases (under 15 words) when the exact wording matters. Use the glean skill's length limits.
-- **Plain language:** follow the glean skill's step 3 writing rules: plain words, terms explained the first time, a TL;DR that says what the video says, full-sentence bullets, and a How it works paragraph when the video explains one main idea. A Key moment's sentence comes right after its timestamp link, with no bold claim.
+- **Plain language:** follow the glean skill's step 3 writing rules, How it works included. A Key moment's sentence comes right after its timestamp link, with no bold claim.
 - **Notion:** no property holds the **Video:** line, so keep it as the first line of the page body.
 
 ## Edge cases
