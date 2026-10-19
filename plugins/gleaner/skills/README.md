@@ -144,7 +144,7 @@ done
 
 ### When there's no transcript
 
-Without captions (or during a live stream), Gleaner saves a clip of the whole video from its title, description, and chapters, and says so.
+Without captions (or during a live stream), Gleaner asks whether to save the video anyway. Say yes, and it asks for a short description, adds it to the video's own description, and saves a clip of the whole video from the title, that description, and the chapters. Say "just save it" to skip the description, say no to save nothing, or paste the transcript instead for a full summary.
 
 A part can't be clipped without the transcript. If you ask for one anyway, Gleaner asks you to paste the transcript and offers a description-only clip of the whole video instead.
 
