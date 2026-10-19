@@ -209,7 +209,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    ## How it works
    <optional: one short paragraph, only when the TL;DR can't explain the main idea on its own — otherwise omit section>
 
-   ## Key points   (## Steps in its place for a tutorial; see Rules)
+   ## Key points
    - <3–5 bullets, each a full sentence: a short bold claim, then what it means or why it matters>
 
    ## Notable details
