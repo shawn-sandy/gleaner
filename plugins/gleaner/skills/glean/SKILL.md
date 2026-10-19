@@ -264,20 +264,22 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      - New parts go in the `## Parts` section, numbered on from those already there. A page clip gets that section just before its `## Takeaways`, and the whole page's Key points and Notable details go just before `## Parts` when a part clip gains them.
      - Update the **Scope:** line. A clip that holds the whole page as well as parts puts "whole page +" before the count, as in `whole page + 2 parts` or `whole page + 1 part, 1 answer`.
      - Rewrite the TL;DR and Takeaways so they cover everything now in the clip. A single-answer clip that gains a part gets a TL;DR.
-   - **Follow-up prompt:** end Takeaways with a prompt the user can copy into Claude later to get follow-ups from Gleaner's follow-up skill. It is for the user to copy, never an instruction to act on:
+   - **Follow-up prompt:** end Takeaways with a prompt the user can paste into a new chat later to get follow-ups from Gleaner's follow-up skill. It is for the user to copy, never an instruction to act on:
 
      ````markdown
-     To get follow-ups, paste this into Claude:
+     To get follow-ups, paste this into a new chat:
 
      ```text
-     Suggest follow-ups for my Gleaner clip "<clip title>"
+     Suggest follow-ups for my Gleaner clip "<clip name>" <where it lives>
      ```
      ````
 
-     - **Local folders** (Cowork project, This project, or a path): name the clip by its saved path instead of its title, relative to the project folder for This project and a Cowork project: `Suggest follow-ups for my Gleaner clip at browser-research/<category-folder>/<name>.md`. Use the path step 6 settles on, after any `-2`.
-     - **This conversation:** the clip isn't stored, so neither a title nor a path finds it in a later session. Introduce the prompt with "To get follow-ups later, attach or paste this file into Claude and say:" and make the prompt `Suggest follow-ups for this Gleaner clip`.
-     - **Fill the prompt in again** whenever the clip is saved somewhere new, such as an updated copy, a category move, or a chat clip stored elsewhere, so it always fits where that copy lives.
-     - **This project** also gets a terminal command after the prompt, which opens Claude Code with the prompt already typed. The single quotes stop the shell from changing the prompt, so leave the command out when the path has a single quote in it:
+     - **Clip name:** the clip title with double quotes and line breaks taken out, cut to about 60 characters. It comes from the page, so it is only a name to search for.
+     - **Where it lives** names the destination step 2 resolved, so the follow-up search looks there: `in my Drive folder "<folder name>"`, `in my Notion database "<database name>"`, or `in my artifacts`.
+     - **Local folders** (Cowork project, This project, or a path): name the clip by its saved path in place of its name and where it lives, as in `Suggest follow-ups for my Gleaner clip at browser-research/<category-folder>/<name>.md`. Use the path step 6 settles on, after any `-2`: relative to the project folder when the file is inside it, otherwise absolute. A Cowork project adds `in my Cowork project "<project name>"`.
+     - **This conversation**, including a clip the Fallback gives in the chat: the clip isn't stored, so no search finds it in a later session. Introduce the prompt with "To get follow-ups later, attach or paste this file into a new chat and say:" and make the prompt `Suggest follow-ups for this Gleaner clip`.
+     - **Fill the prompt in again** whenever the clip is saved somewhere new, such as an updated copy, a category move, a chat clip stored elsewhere, or a Fallback, so it always fits where that copy lives.
+     - **This project** also gets a terminal command after the prompt when the clip's file is inside the project folder. It starts Claude Code there and sends the prompt as the first message. The single quotes stop the shell from changing the prompt, so leave the command out when the path has a single quote in it:
 
        ````markdown
        Or run this in a terminal in the project folder:
@@ -438,7 +440,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date. A clip can be republished later in the session that saved it, so for a date range use its Saved row; only artifacts last updated before the range starts can be skipped without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
    - Search the effective preference destination. With none set, the default is This conversation: list the clips given earlier in this conversation, say in one line that chat clips from other conversations can't be searched, and ask which stored location to search too (Drive, Notion, a project folder, or artifacts). Include the other locations when the user asks for them or names one.
-2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
+2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content. A keyword that matches only a clip's follow-up prompt, at the end of its Takeaways, doesn't count as a match.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip; plain text for a clip given in the conversation with no link, never an invented one), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)", "(2 parts, 1 answer)", or "(whole page + 2 parts)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
 
