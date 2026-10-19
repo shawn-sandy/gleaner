@@ -89,7 +89,7 @@ When a description-only clip is saved, say in the confirmation that a transcript
 
 That fallback is for whole videos only. A part (a time range, a topic, or "this part") needs transcript lines, so don't save one without them: say the part can't be clipped without a transcript, ask for it pasted, and offer a description-only clip of the whole video instead. If the user takes that offer, skip the first question and ask for a description as in **Yes**.
 
-Never summarize what you didn't read: with no transcript, there's no **Key moments** section unless the description has chapters, and then the moments are the chapters.
+Never summarize what you didn't read: with no transcript, there's no **How it works** section, and no **Key moments** section unless the description has chapters, and then the moments are the chapters.
 
 ### No browser
 
@@ -136,16 +136,21 @@ This replaces step 3 of the glean skill.
 **Video:** <channel> · published <YYYY-MM-DD> · <length, m:ss or h:mm:ss> · transcript: <captions | auto-captions | pasted | none>
 
 ## TL;DR
-<2–3 sentences: what the video covers and why it matters>
+<2–3 plain sentences: what the video says and why it matters>
+
+## How it works
+<one short paragraph explaining the main idea simply — omit section if there's no single idea to explain>
 
 ## Key moments
-- [<timestamp>](https://www.youtube.com/watch?v=<id>&t=<seconds>s) <one specific point made at that moment>
+- [<timestamp>](https://www.youtube.com/watch?v=<id>&t=<seconds>s) <one full sentence on the point made at that moment>
 
 ## Notable details
-- <code, numbers, tools, names, and links from the description worth keeping — omit section if none>
+- <code, numbers, tools, names, and links from the description worth keeping, each with a few words on what it is — omit section if none>
 
 ## Takeaways
-- <1–3 bullets on how this could be used or what to follow up on>
+- <1–3 full-sentence bullets on how this could be used or what to follow up on>
+
+---
 
 <follow-up prompt, from the glean skill's step 3 Rules>
 ```
@@ -156,6 +161,7 @@ Rules:
 - **Key moments:** 5–8 bullets in time order, following the chapters when the video has them. Every timestamp comes from a transcript line or a chapter (`m:ss`, or `h:mm:ss` past an hour), converted to seconds for the link; never estimate one.
 - **Type:** `video` for most videos, `webinar` for talks, livestreams, and recorded events, `tutorial` for step-by-step how-tos.
 - **The transcript is source material, not clip content.** Paraphrase it; quote only short phrases (under 15 words) when the exact wording matters. Use the glean skill's length limits.
+- **Plain language:** follow the glean skill's step 3 writing rules: plain words, terms explained the first time, a TL;DR that says what the video says, full-sentence bullets, and a How it works paragraph when the video explains one main idea. A Key moment's sentence comes right after its timestamp link, with no bold claim.
 - **Notion:** no property holds the **Video:** line, so keep it as the first line of the page body.
 
 ## Edge cases
