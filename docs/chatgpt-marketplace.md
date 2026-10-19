@@ -34,6 +34,7 @@ For YouTube, use timestamped transcript text only if it is actually available fr
 - [ ] URL clipping works without browser access
 - [ ] Accessible Chrome tab clipping works where the connector exposes tabs
 - [ ] Work browser clipping works in Work mode
+- [ ] With no preferences set, `save this page` returns a Markdown file in the conversation and stores nothing
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
 - [ ] Missing transcript asks before saving, then produces a clearly labeled description-only clip
 - [ ] Claude marketplace validation and existing workflows still work

@@ -19,7 +19,7 @@ Use the first that applies:
 3. **A clip described in words** ("my clip about view transitions"): search as in the glean skill's Clip index. If several match, list them and ask which one.
 4. **Nothing to go on:** ask which clip, and offer to search.
 
-Read the clip with the tool its destination uses in the glean skill: the Drive connector, the Notion connector, the Artifact tool's `read` action, or a local file read. If it can't be read, say so in one line and stop. Never rebuild a clip from memory.
+Read the clip with the tool its destination uses in the glean skill: the Drive connector, the Notion connector, the Artifact tool's `read` action, or a local file read; a clip given in this conversation is read from the conversation. If it can't be read, say so in one line and stop. Never rebuild a clip from memory.
 
 - **Check it's a Gleaner clip:** a file has the **Saved:** and **Category:** header lines, a Notion page has Saved and Category properties, and an artifact has the `Gleaner clip` generator line. Where it's stored doesn't count: a file in a clip folder without these lines may be a clip saved before categories existed, so treat it as not a clip here and offer glean's updated copy with categories (see its Clip index). If it isn't a clip, say so, suggest follow-ups without saving them, and offer to save it as a clip through glean first. Never save a copy of something that isn't a clip.
 - **Use the newest copy:** when several matches are copies of one clip, linked by **Supersedes:** lines, use the newest one, which no other clip supersedes. Before saving follow-ups to a clip from an earlier session, search its destination for its link; if a newer copy supersedes it, review that copy instead and say so.

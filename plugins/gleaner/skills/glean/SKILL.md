@@ -1,18 +1,19 @@
 ---
 name: glean
-description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged gleans in Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the glean", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find or index saved gleans. Shared local-first preferences manage destinations and formats with optional Google Drive sync.
-argument-hint: '[--to drive | notion | artifact | local | cowork:"Project" | <path>]'
+description: Save web pages, parts of them, or Claude's answers about them as summarized, tagged gleans, given as a Markdown file in the conversation by default or saved to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from plain-language requests in the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, stash, or file what they are reading, a URL, or an answer Claude just gave about a page, such as "save this page", "keep this article for later", "grab the part about animation lengths", "add this bit too", "save that answer", "add those steps to the glean", "done, save them", "file this under design", "save this as an artifact", or "save https://example.com to this project", with or without a reason. Also use to find or index saved gleans. Shared local-first preferences manage destinations and formats with optional Google Drive sync.
+argument-hint: '[--to chat | drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
 # Gleaner
 
 Gather the best of what you read into tagged, searchable clips. Use shared local-first preferences with optional Google Drive sync for save destinations and formats.
 
-Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of five places:
+Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of six places:
 
-- **Google Drive** (default in the Chrome side panel, ChatGPT, and Cowork): uses the Google Drive connector.
+- **This conversation** (default on every surface): a Markdown file given to the user in the chat. Nothing is stored, so it can't be searched later.
+- **Google Drive:** uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
-- **This project** (default in Claude Code): the folder the Claude Code session is working in.
+- **This project** (Claude Code): the folder the Claude Code session is working in.
 - **Notion** (on request): a page per clip in a Notion database, using the Notion connector.
 - **Artifact** (on request): a private claude.ai web page per clip, published with the Artifact tool.
 
@@ -88,7 +89,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 | --- | --- | --- |
 | **Topic** of a part | "about", "on", "covering", "the bit where" | "the part about animation lengths" → `animation lengths` |
 | **Note** (why they're saving it) | "for", "because", "so I can", "good example of", or any comment after the request | "keep this, great example of scroll-driven animation" → `great example of scroll-driven animation` |
-| **Destination** | "to/in my … folder", "in Drive", "to my … project", "as an artifact" | "save to my Serve513 project" → Cowork project `Serve513`; "save it to this project/repo" → This project; "save it as an artifact" → Artifact |
+| **Destination** | "to/in my … folder", "in Drive", "to my … project", "as an artifact", "in the chat" | "save to my Serve513 project" → Cowork project `Serve513`; "save it to this project/repo" → This project; "save it as an artifact" → Artifact; "just give me the file" → This conversation |
 | **Category** | "file under", "put in", "as" plus a category name | "file this under design" → `Design Engineering` |
 | **Tags** | "tag it", hashtags, "label it" | "tag it motion and css" → `#motion #css` |
 
@@ -103,6 +104,7 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 
 | Flag | Saves to |
 | --- | --- |
+| `--to chat` | This conversation → a Markdown file in the chat, not stored anywhere |
 | `--to drive` | Google Drive → `Browser Research/<Category>/` |
 | `--to notion` | Notion → the `Browser Research` database |
 | `--to notion:"Database Name"` | Notion → that database |
@@ -148,7 +150,7 @@ To add a part:
 
 A page gets one clip per session. Once a clip of a page is saved, later saves and adds from that page in this conversation go into that clip, updating it where it was saved (see Updating a clip saved this session, in step 6), instead of creating another doc, file, page, or artifact.
 
-- **Keep track** of every clip saved in this conversation: its title, Source URLs, destination, output format, and where it lives (the file path, the Drive file ID and folder, the Notion page, or the artifact link and its scratch file).
+- **Keep track** of every clip saved in this conversation: its title, Source URLs, destination, output format, and where it lives (the file path, the Drive file ID and folder, the Notion page, the artifact link and its scratch file, or this conversation).
 - **Same page** means the same URL once tracking parameters (such as `utm_*`), a section anchor after a `#`, and a trailing slash are dropped. Keep a fragment that routes to a page, one starting with a slash or an exclamation mark after the `#` (as in `#/docs/2`), since it names a different page. Other pages on the same site are different pages. If several clips from this session have the page as a Source, use the one saved or updated most recently.
 - **Add part:** with nothing being collected, a part from a page that has a clip from this session goes straight into that clip, which is saved again right away. Confirm with the clip's title: `Added part 2 to "Motion timing guidelines": animation lengths ("Keep most UI transitions…").` While parts are being collected, add to the collection as usual.
 - **Save answer:** with nothing being collected, an answer about a page that has a clip from this session is added to that clip as a part.
@@ -174,11 +176,11 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - A `--to` flag decides the destination (see Destination flag).
    - "Save to Notion" or "put it in Notion" in words means the Notion destination, the same as `--to notion`.
    - "Save it as an artifact", "make it an artifact", or "save to my artifacts" means the Artifact destination, the same as `--to artifact`.
+   - "Just give me the file", "in the chat", or "don't save it anywhere" means This conversation, the same as `--to chat`. "Save it as a Google Doc" or "put it in Browser Research" means Drive.
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
-   - If the session is already running inside a Cowork project and the user didn't mention Drive, use that project.
-   - **In Claude Code, the default is This project** (the folder the session is working in). With no saved preference, use Drive there only when the user asks for it ("save to Drive", "put it in Browser Research", "save it as a Google Doc").
-   - Everywhere else, default to Google Drive in a folder named `Browser Research`.
+   - **Otherwise the default is This conversation** on every surface: the Chrome side panel, ChatGPT, Claude Code, and Cowork. With no saved preference, store the clip somewhere only when the user names a destination.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
+     - This conversation: skip the check, since nothing is stored to search.
      - Drive: search for `fullText contains '<page URL>'` (strip tracking parameters such as `utm_*` first, and escape single quotes). Keep only results inside the destination folder or its category subfolders, and skip trashed files.
      - Cowork project or This project: search the resolved clip base path for the URL (the environment default is `browser-research/`).
      - Notion: query the destination database for pages whose **Source** property equals the URL. Use a structured rows query with a property filter rather than SQL, which is rate-limited on some Notion plans.
@@ -275,6 +277,11 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 5. **Name the file** `<yyyy-mm-dd>-<short-kebab-title>` (kebab-case, max ~60 characters). For a part clip, base the name on the topic tying the parts together.
 
 6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`). Use the destination and format already resolved in step 2. The name-based discovery and default paths below apply only to an unconfigured or explicit destination without a verified locator. For configured Drive/Notion destinations use the retained ID; for configured local/Cowork destinations use the retained base path and append only the category folder. Recheck access, never substitute a same-named resource.
+
+   **This conversation** (the default)
+   - Nothing is stored and there are no folders; the clip's **Category:** line does that job. The clip is always Markdown, whatever the format setting.
+   - If this session can hand the user a file (a file-sending or file-creation tool), write `<name>.md` outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and send it that way.
+   - Otherwise put the whole clip in one Markdown code block, with `<name>.md` on the line above it. Use a longer fence than any code block inside the clip, so the clip's own code doesn't cut it short.
 
    **Google Drive**
    - **Other Drive connectors** (such as ChatGPT's): the Drive queries and parameters in this skill, here and in step 2 and the Clip index, are the Claude connector's. Use your connector's equivalents by the names this session shows. If it has no equivalent for a check, such as the duplicate search, say so in one line and skip that check. If it can't convert an upload to a Google Doc or Sheet, or the conversion fails, upload the raw file with `.md` (or `.csv` for a snapshot sheet) added to the title; use the fallback below only if that upload also fails.
@@ -379,15 +386,16 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - Confirm with the artifact's link.
 
    **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced. A `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, unchanged; this applies to video clips too.
+   - **This conversation:** give the whole updated clip again the same way, under the same file name, and say it replaces the earlier copy above.
    - **Local folders** (Cowork project, This project, or a path): overwrite that file at the same path. After a category change, write it to the new category's folder and delete the old file.
    - **Notion:** add any new tags to the Tags options first (as above), update the page's properties, then replace the page's content with the updated body, written as above (with the Notion connector's `update-page`, the `replace_content` command).
    - **Artifact:** write the updated page to the same scratch file and publish that path again without a `url`, which updates the same artifact at the same link.
    - **Google Drive:** the connector can't change a file's content, so upload the updated clip to its category folder under the same title (no `-2`), then move the earlier version to the trash with `trash_file`, where it can be restored for 30 days. Trash it only after the upload succeeds, and only the version this session saved. If your connector can replace a file's content, do that instead. If trashing fails, say the earlier version is still there.
    - **If the update fails,** say so, then save the updated clip as a new clip with a **Supersedes:** line pointing to the earlier version, or use the fallback below if that fails too.
 
-   **Fallback:** give the user the Markdown file and say plainly where it was *not* saved. Never claim a save that didn't happen.
+   **Fallback:** give the clip in this conversation (see This conversation above) and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
-7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; or the artifact's link), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Don't repeat the full summary. For an update, start with `Updated "<title>"` and say what was added; on Drive, give the new link and say the earlier version went to the trash. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
+7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; the artifact's link; or, for This conversation, that it lives only in this chat, so the user should download or copy it, and that "save to Drive" or "save it to this project" stores a copy), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Don't repeat the full summary. For an update, start with `Updated "<title>"` and say what was added; on Drive, give the new link and say the earlier version went to the trash. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
 
 ## Clip index (on demand)
 
@@ -401,7 +409,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Cowork project or This project: search `browser-research/` recursively.
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date. A clip can be republished later in the session that saved it, so for a date range use its Saved row; only artifacts last updated before the range starts can be skipped without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
-   - Search the effective preference destination, or the existing surface default when unconfigured. Include the other locations when the user asks for them or names one.
+   - Search the effective preference destination. With none set, the default is This conversation, which stores nothing to search: say so in one line and ask which location to search (Drive, Notion, a project folder, or artifacts). Include the other locations when the user asks for them or names one.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)", "(2 parts, 1 answer)", or "(whole page + 2 parts)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
