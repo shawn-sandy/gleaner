@@ -16,7 +16,7 @@ Cut a Gleaner release. Bump type: `$ARGUMENTS` (if empty, ask: patch, minor, or 
    ```
 
    Describe what changed for the user, not the implementation.
-3. **Check the four descriptions.** If this release changes destinations or surfaces, confirm the `marketplace.json` plugin description, the `plugin.json` description, the SKILL.md frontmatter `description`, and the README intro paragraph all name the same set. Fix any that drift.
+3. **Check the four descriptions.** If this release changes destinations or surfaces, confirm the `marketplace.json` plugin description, the `plugin.json` description, the glean SKILL.md frontmatter `description`, and the README intro paragraph all name the same set. Fix any that drift.
 4. **Write the commit body** to a file outside the repository, such as your scratchpad: dash bullets wrapped near 70 columns, one per change; end with a `README: ...` bullet naming the README sections touched, including the changelog. The script uses the file verbatim, so end it with any trailers you add to commits.
 5. **Run the release.** Claude Code CLI must be on `PATH`; the script refuses to run without it so both strict Claude checks run rather than skip:
 

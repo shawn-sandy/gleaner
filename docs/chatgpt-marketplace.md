@@ -30,6 +30,7 @@ For YouTube, use timestamped transcript text only if it is actually available fr
 
 - [ ] Import succeeds in an eligible ChatGPT workspace
 - [ ] All three skills (`glean`, `youtube`, `preferences`) are discoverable
+- [ ] The glean skill shows its Gleaner icon
 - [ ] URL clipping works without browser access
 - [ ] Accessible Chrome tab clipping works where the connector exposes tabs
 - [ ] Work browser clipping works in Work mode

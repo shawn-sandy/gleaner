@@ -7,9 +7,12 @@ Gleaner is a Claude plugin marketplace whose runtime behavior is defined primari
 - `plugins/gleaner/skills/glean/SKILL.md` defines clipping, destinations, duplicate checks, and search.
 - `plugins/gleaner/skills/preferences/SKILL.md` manages shared settings; `references/contract.md` under that skill defines storage, schema, and sync.
 - `plugins/gleaner/skills/youtube/SKILL.md` adds transcript handling and timestamped summaries; reuse `glean` for shared behavior.
-- `plugins/gleaner/skills/glean/agents/openai.yaml` supplies ChatGPT display metadata.
+- Each skill's `agents/openai.yaml` supplies ChatGPT display metadata; glean's points to icons in `plugins/gleaner/skills/glean/assets/`.
 - `.claude-plugin/marketplace.json` registers the plugin; `plugins/gleaner/.claude-plugin/plugin.json` holds its manifest and version.
 - `README.md` contains installation, usage, and the changelog; `plugins/gleaner/skills/README.md` provides skill examples.
+- `docs/chatgpt-marketplace.md` covers ChatGPT import and its manual checklist; `docs/preferences-testing.md` lists maintainer-run preference scenarios.
+- `scripts/validate-skills.mjs` runs local validation; `scripts/release.mjs`, `scripts/changelog.mjs`, and `scripts/release-notes.mjs` cut releases; the `*.test.mjs` files beside them are their tests.
+- `.claude/skills/release/SKILL.md` is the `/release` workflow, and `.claude/settings.json` holds a hook that reruns strict Claude validation after edits under `.claude-plugin/` or `plugins/`.
 - `docs/plans/` holds planning notes, `docs/artifacts/` holds HTML artifacts, and `gleaner-symbol.svg` is the branding asset.
 
 ## Build, Test, and Development Commands
@@ -30,7 +33,7 @@ Write direct, actionable skill instructions. Keep each paragraph or list item on
 
 ## Testing Guidelines
 
-Run `npm run validate` and `npm test` before pushing. The fixture tests exercise validator failures; there is no automated Skill runtime test suite. Frontmatter is parsed with `yaml`; Claude plugin validation alone can miss malformed quotes. Live browser and connector testing is maintainer-run; distinguish static validation from live testing in reports.
+Run `npm run validate` and `npm test` before pushing. The tests exercise validator failures and the release script; there is no automated Skill runtime test suite. Frontmatter is parsed with `yaml`; Claude plugin validation alone can miss malformed quotes. Live browser and connector testing is maintainer-run; distinguish static validation from live testing in reports.
 
 ## Commit & Pull Request Guidelines
 

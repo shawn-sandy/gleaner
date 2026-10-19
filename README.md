@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its glean skill also works from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it. Shared local-first preferences manage save destinations and formats with optional Google Drive sync.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its skills also work from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved and it finds it. Shared local-first preferences manage save destinations and formats with optional Google Drive sync.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -22,8 +22,6 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [Skills](#skills)
 - [ChatGPT marketplace](#chatgpt-marketplace)
 - [Install](#install)
-- [Local development and validation](#local-development-and-validation)
-  - [Releasing](#releasing)
 - [Quick start](#quick-start)
 - [Shared preferences](#shared-preferences)
 - [Usage guide](#usage-guide)
@@ -47,6 +45,8 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - [Troubleshooting](#troubleshooting)
 - [Customizing](#customizing)
 - [Repository layout](#repository-layout)
+- [Local development and validation](#local-development-and-validation)
+  - [Releasing](#releasing)
 - [License](#license)
 - [Changelog](#changelog)
 
@@ -63,6 +63,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **One clip per page.** In a session, saving or adding more from a page you've already clipped updates that clip instead of starting a new doc. A page clipped in an earlier session gets an updated copy that links to the original; clips from earlier sessions are never changed or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
 - **Drive, Notion, artifacts, or local.** Saves to Google Drive by default, to a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
+- **Your defaults, remembered.** Pick a destination and format on your first save, override them for a project or a single save, and optionally sync them across devices through Google Drive.
 - **Works where you browse.** The Chrome side panel, the built-in browser in Claude Code desktop, or ChatGPT's connected Chrome tabs and Work browser. Hand it a URL and it opens or fetches the page for you.
 
 ## Skills
@@ -73,7 +74,7 @@ Gleaner includes three skills: two share the clip format and saving workflow, an
 | --- | --- | --- |
 | [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
 | [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
-| **preferences** | `/gleaner:preferences` | Shared destinations, formats, setup, and sync |
+| [preferences](plugins/gleaner/skills/preferences/SKILL.md) | `/gleaner:preferences` | Shared destinations, formats, setup, and sync |
 
 Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
 
@@ -135,8 +136,9 @@ If you installed the earlier **page-to-project** skill, remove it so the two don
 
 1. Open any article in Chrome.
 2. Open the Claude side panel and say **"save this page."**
-3. Gleaner replies with where it saved the clip, its tags, and a one-line summary.
-4. Open Google Drive: your clip is in **Browser Research → *category***.
+3. The first time, Gleaner offers to set a default destination and format. Accept its suggestion, or say "just this save" to skip setup for now.
+4. Gleaner replies with where it saved the clip, its tags, and a one-line summary.
+5. Open Google Drive: your clip is in **Browser Research → *category***.
 
 That's it. Everything below is optional.
 
@@ -247,7 +249,7 @@ Collect moments as parts by time or topic:
 > grab the part about generics
 > add this part *(the chapter you're watching, or the last minute or so)*
 
-If a video has no captions, Gleaner asks whether to save it anyway. Say yes, and it asks for a short description, adds it to the video's own, and saves a clip from the title, description, and chapters. Paste the transcript (**…more → Show transcript** on YouTube) to get a full summary as an updated copy. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
+If a video has no captions, Gleaner asks whether to save it anyway; say no and nothing is saved. Say yes, and it asks for a short description, adds it to the video's own, and saves a clip from the title, description, and chapters; say "just save it" to skip the description. Paste the transcript (**…more → Show transcript** on YouTube) instead to get a full summary, or paste it after a description-only save to get one as an updated copy. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
 
 Any link to a video (`youtu.be`, Shorts, a share link) is saved with the same **Source**, `youtube.com/watch?v=…`, so the duplicate check catches a video you've already clipped. A link with a timestamp opens the player at that time, so "add this part" uses that position.
 
@@ -467,7 +469,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **Drive capabilities vary.** Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive’s trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots. Preference sync needs a connector that can read and update the selected document; create-only connectors leave sync pending.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
-- **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), the clip comes from the title, description, and chapters, plus a short description if you add one, and parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
+- **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), Gleaner asks before saving a clip from the title, description, and chapters, plus a short description if you add one. Parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **Paywalls and sign-ins.** Only visible content is summarized, and the clip says so.
 
 ## Troubleshooting
@@ -490,43 +492,63 @@ Gleaner's behavior lives in [`plugins/gleaner/skills/glean/SKILL.md`](plugins/gl
 - **Categories:** edit the list in step 4 (names double as folder names).
 - **Summary length:** adjust the word limits in step 3.
 
-Fork this repo, make your edits in `plugins/gleaner/skills/glean/SKILL.md`, bump `version` in `plugins/gleaner/.claude-plugin/plugin.json`, and add your fork as a marketplace.
+Fork this repo, make your edits in `plugins/gleaner/skills/glean/SKILL.md`, bump `version` in `plugins/gleaner/.claude-plugin/plugin.json`, run the [local checks](#local-development-and-validation), and add your fork as a marketplace.
 
 ## Repository layout
 
 ```text
 gleaner/
+├── .claude/
+│   ├── settings.json               # hook: strict Claude validation after manifest or plugin edits
+│   └── skills/
+│       └── release/
+│           └── SKILL.md            # /release: write the changelog entry, then npm run release
 ├── .claude-plugin/
-│   └── marketplace.json        # marketplace "shawn-sandy"
+│   └── marketplace.json            # marketplace "shawn-sandy"
 ├── .github/
 │   └── workflows/
-│       └── release.yml         # tags and publishes a GitHub Release when the version changes on main
-├── package.json              # local validation and release commands, dev dependencies
-├── package-lock.json         # reproducible dependency versions
-├── scripts/
-│   ├── changelog.mjs          # changelog parsing shared by the release scripts
-│   ├── release.mjs            # npm run release: bump, date the changelog, validate, commit
-│   ├── release-notes.mjs      # prints one version's changelog entry for the GitHub Release
-│   └── validate-skills.mjs    # Skill, metadata, manifest, and reference checks
+│       └── release.yml             # tags and publishes a GitHub Release when the version changes on main
+├── docs/
+│   ├── artifacts/                  # HTML artifacts
+│   ├── chatgpt-marketplace.md      # ChatGPT import, compatibility, and manual checklist
+│   ├── plans/                      # planning notes
+│   └── preferences-testing.md      # maintainer-run preference scenarios
 ├── plugins/
 │   └── gleaner/
 │       ├── .claude-plugin/
-│       │   └── plugin.json     # plugin manifest (version lives here)
+│       │   └── plugin.json         # plugin manifest (version lives here)
 │       └── skills/
-│           ├── README.md       # usage guide for all three skills
+│           ├── README.md           # usage guide for all three skills
 │           ├── glean/
 │           │   ├── agents/
-│           │   │   └── openai.yaml  # skill name shown in ChatGPT
-│           │   └── SKILL.md    # pages, parts, answers, and search
+│           │   │   └── openai.yaml # skill name and icons shown in ChatGPT
+│           │   ├── assets/         # icon-small.png and icon-large.png
+│           │   └── SKILL.md        # pages, parts, answers, and search
 │           ├── preferences/
-│           │   ├── agents/openai.yaml
-│           │   ├── references/   # shared contract and YAML examples
-│           │   └── SKILL.md      # setup, show, update, reset, sync
+│           │   ├── agents/
+│           │   │   └── openai.yaml # preferences skill display metadata
+│           │   ├── references/
+│           │   │   ├── contract.md # shared schema, resolution, storage, and sync
+│           │   │   └── examples/   # user.yaml and project.yaml
+│           │   └── SKILL.md        # setup, show, update, reset, sync
 │           └── youtube/
 │               ├── agents/
-│               │   └── openai.yaml  # YouTube skill display metadata
-│               └── SKILL.md    # YouTube videos (uses glean for saving)
+│               │   └── openai.yaml # YouTube skill display metadata
+│               └── SKILL.md        # YouTube videos (uses glean for saving)
+├── scripts/
+│   ├── changelog.mjs               # changelog parsing shared by the release scripts
+│   ├── release.mjs                 # npm run release: bump, date the changelog, validate, commit
+│   ├── release.test.mjs            # release script tests
+│   ├── release-notes.mjs           # prints one version's changelog entry for the GitHub Release
+│   ├── validate-skills.mjs         # Skill, metadata, manifest, and reference checks
+│   └── validate-skills.test.mjs    # validator fixture tests
+├── .markdownlint-cli2.jsonc        # Markdown lint globs and house-style rule overrides
+├── AGENTS.md                       # contributor guide for coding agents
+├── CLAUDE.md                       # Claude Code guidance for this repository
+├── gleaner-symbol.svg              # logo
 ├── LICENSE
+├── package.json                    # local validation and release commands, dev dependencies
+├── package-lock.json               # reproducible dependency versions
 └── README.md
 ```
 
@@ -550,7 +572,7 @@ claude plugin validate . --strict
 claude plugin validate ./plugins/gleaner --strict
 ```
 
-Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests.
+Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests and the release script's tests.
 
 Validation runs locally without GitHub Actions or a build step. After dependencies are installed, the static checks need no network access. These checks do not establish live ChatGPT marketplace, browser, or connector compatibility; use the [manual checklist](docs/chatgpt-marketplace.md#validation-checklist) for that.
 

@@ -38,7 +38,7 @@ Preferences use local user storage and optional project overrides. Drive sync ru
 ## Before you start
 
 - **A page Claude can see.** Use the Claude side panel in Chrome, or the Browser pane in Claude Code desktop (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows). In ChatGPT, use connected Chrome tabs or the Work browser. Or skip browsing and put a URL in the request.
-- **A destination.** The default is Google Drive in the Chrome side panel and ChatGPT, and the project folder in Claude Code. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
+- **A destination.** Until you set your own with preferences, the default is Google Drive in the Chrome side panel and ChatGPT, and the project folder in Claude Code. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
 
 ## glean: pages, parts, answers, and search
 
@@ -144,7 +144,7 @@ done
 
 ### When there's no transcript
 
-Without captions (or during a live stream), Gleaner asks whether to save the video anyway. Say yes, and it asks for a short description, adds it to the video's own description, and saves a clip of the whole video from the title, that description, and the chapters. Say "just save it" to skip the description, say no to save nothing, or paste the transcript instead for a full summary.
+Without captions (or during a live stream), Gleaner asks whether to save the video anyway; say no and nothing is saved. Say yes, and it asks for a short description, adds it to the video's own description, and saves a clip of the whole video from the title, that description, and the chapters. Say "just save it" to skip the description, or paste the transcript instead for a full summary.
 
 A part can't be clipped without the transcript. If you ask for one anyway, Gleaner asks you to paste the transcript and offers a description-only clip of the whole video instead.
 
