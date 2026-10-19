@@ -572,8 +572,8 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
-- When a YouTube video has no transcript, the youtube skill asks whether to save it anyway. If you say yes, it asks for a short description and adds it to the video's own description. Say "just save it" to skip the description, or paste the transcript for a full summary.
+**2.4.0** (2026-10-18)
+- When a YouTube video has no transcript, the youtube skill asks whether to save it anyway, and saying no saves nothing. If you say yes, it asks for a short description and adds it to the video's own description. Say "just save it" to skip the description, or paste the transcript for a full summary.
 
 **2.3.0** (2026-10-18)
 - Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Notion and artifact clips keep their own formats without asking.
