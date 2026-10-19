@@ -619,7 +619,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.6.0** (2026-10-19)
 - With no saved preference, clips now come back as a Markdown file in the conversation on every surface: the Chrome side panel, ChatGPT, Claude Code, and Cowork. Nothing is stored unless you name a destination ("save to Drive", "save it to this project", `--to notion`) or set one with `/gleaner:preferences`.
 - Added `--to chat` (or "just give me the file") to pick the conversation explicitly, such as when your saved default is somewhere else.
 - Cowork no longer saves into the open project on its own; say "this project" to save there. "Save it as a Google Doc" now saves to Drive on every surface.
