@@ -24,7 +24,7 @@ Do not assume the ChatGPT Chrome extension exposes the current tab. Ask for a UR
 
 Google Drive requires a connected Drive app with permission to create files in the target folder. If a save fails, return the generated Markdown and explicitly say it was **not** saved.
 
-For YouTube, use timestamped transcript text only if it is actually available from the connected browser or supplied by the user. Otherwise create a description-only clip with `transcript: none`; do not invent quotes or key moments.
+For YouTube, use timestamped transcript text only if it is actually available from the connected browser or supplied by the user. Otherwise ask whether to save a description-only clip with `transcript: none`, and on yes ask for a short description to add to the video's own; do not invent quotes or key moments.
 
 ## Validation checklist
 
@@ -34,7 +34,7 @@ For YouTube, use timestamped transcript text only if it is actually available fr
 - [ ] Accessible Chrome tab clipping works where the connector exposes tabs
 - [ ] Work browser clipping works in Work mode
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
-- [ ] Missing transcript produces a clearly labeled description-only clip
+- [ ] Missing transcript asks before saving, then produces a clearly labeled description-only clip
 - [ ] Claude marketplace validation and existing workflows still work
 
 Marketplace import, browser, and Drive behavior require live manual testing. Repository validation alone does not establish runtime compatibility.
