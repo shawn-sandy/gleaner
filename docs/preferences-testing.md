@@ -6,7 +6,7 @@ These are maintainer-run scenarios, not claims of live testing. Use disposable l
 
 | Scenario | Action and expected evidence |
 | --- | --- |
-| First save | Start unconfigured; save a page. Setup offers destination, format left unset (with `auto` and `markdown` as choices), sync opt-in, and skip. Accepting the format suggestion writes no `default_format`. Verify the selected resource before local persistence; no clip moves or database creation during setup. |
+| First save | Start unconfigured; save a page. Gleaner gives the clip in the chat with no setup prompt and mentions setup once per session. Run `/gleaner:preferences setup`: setup offers destination, format left unset (with `auto` and `markdown` as choices), sync opt-in, and skip. Accepting the format suggestion writes no `default_format`. Verify the selected resource before local persistence; no clip moves or database creation during setup. |
 | Skip | Choose “just this save”; use the environment default or chosen session value, without creating preferences. Another save in the session does not repeat setup. |
 | Precedence | Give all scopes different destinations and formats. Remove explicit, session, project, then user settings in turn; verify each next scope wins. `--to` beats conflicting words. Show includes alias and record provenance when different. |
 | Permanent/temporary | “Always save here” updates user preferences; “save this here” and flags leave them unchanged. Explicit project/session updates touch only that scope. |
