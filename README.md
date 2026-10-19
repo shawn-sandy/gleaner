@@ -64,8 +64,8 @@ Gleaner: Here's "Motion timing guidelines" as a Markdown file, filed under Desig
 - **One clip per page.** In a session, saving or adding more from a page you've already clipped updates that clip instead of starting a new doc. A page clipped in an earlier session gets an updated copy that links to the original; clips from earlier sessions are never changed or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
 - **Next steps, suggested.** Ask "what should I follow up on?" and Gleaner suggests three next steps drawn from a clip's note, takeaways, and links, then saves them to the clip.
-- **In the chat, or stored where you choose.** Gives you each clip as a Markdown file in the conversation by default, or saves it to Google Drive, a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
-- **Your defaults, remembered.** Pick a destination and format on your first save, override them for a project or a single save, and optionally sync them across devices through Google Drive.
+- **In the chat, or stored where you choose.** Gives you each clip as a Markdown file in the conversation by default, or saves it to Google Drive, a Notion database, a private claude.ai artifact, a Cowork project folder, or, in Claude Code, straight into the project you're working on.
+- **Your defaults, remembered.** Pick a destination and format once with `/gleaner:preferences setup`, override them for a project or a single save, and optionally sync them across devices through Google Drive.
 - **Works where you browse.** The Chrome side panel, the built-in browser in Claude Code desktop, or ChatGPT's connected Chrome tabs and Work browser. Hand it a URL and it opens or fetches the page for you.
 
 ## Skills
@@ -139,9 +139,8 @@ If you installed the earlier **page-to-project** skill, remove it so the two don
 
 1. Open any article in Chrome.
 2. Open the Claude side panel and say **"save this page."**
-3. The first time, Gleaner offers to set a default destination and format. Accept its suggestion, or say "just this save" to skip setup for now.
-4. Gleaner replies with the clip as a Markdown file, its tags, and a one-line summary.
-5. Download or copy the file to keep it. To store clips instead, say "save to Drive" or "save it to this project", or set a default with `/gleaner:preferences`.
+3. Gleaner replies with the clip as a Markdown file, its tags, and a one-line summary.
+4. Download or copy the file to keep it. To store a copy, say "save to Drive". To store every clip somewhere, set a default with `/gleaner:preferences setup`.
 
 That's it. Everything below is optional.
 
@@ -161,7 +160,7 @@ sync my preferences
 save this page here
 ```
 
-On your first unconfigured save, Gleaner offers a default destination, format (left unset by default, so clips are Markdown wherever the destination supports it), and optional Drive sync. Choose “just this save” to continue with session settings and the existing environment defaults. Setup verifies an existing destination; it does not move clips or create research databases. “Always save here” persists at user scope; “save this here” and `--to` apply to that save only. Explicit project or session requests use that scope. Reset removes an override so the next default applies.
+Gleaner doesn't stop your first save to ask about setup, because its default, the chat, needs nothing stored; it mentions setup once instead. Run `/gleaner:preferences setup` to choose a default destination, format (left unset by default, so clips are Markdown wherever the destination supports it), and optional Drive sync. Choose “just this save” to continue with session settings and the existing environment defaults. Setup verifies an existing destination; it does not move clips or create research databases. “Always save here” persists at user scope; “save this here” and `--to` apply to that save only. Explicit project or session requests use that scope. Reset removes an override so the next default applies.
 
 User preferences live at `$XDG_CONFIG_HOME/agent-preferences/preferences.yaml`, falling back to `~/.config/agent-preferences/preferences.yaml`. Project overrides live at `.agent-preferences/preferences.yaml` under the session project root. Resolution is explicit request (`--to` beats words), session, project, user, then existing skill defaults. Show reports each effective value and its scope, persistence location, and sync status. Page and YouTube saves use the same resolved preferences.
 
@@ -411,7 +410,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 **Things to know:**
 - **Separate sign-ins.** The pane has its own browser profile, apart from your Chrome. Sign in to paywalled or members-only sites in the pane once, and the login sticks.
 - **Site approvals.** The first time Gleaner reads a new site, you'll be asked to allow it.
-- **Clips land in your project folder.** In Claude Code, clips are saved to `browser-research/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `browser-research/` to `.gitignore`, your call.
+- **Clips come back in the chat.** In Claude Code, clips come back as a Markdown file in the conversation. Say "save it to this project" (or add `--to local`) to save them to `browser-research/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `browser-research/` to `.gitignore`, your call.
 - **Want Drive instead?** Say "save to Drive." Your claude.ai connectors carry over when you're signed in to Claude Code with your Claude account.
 
 ## Phrase cheat sheet
@@ -429,7 +428,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Clip a link | "save https://…" |
 | Save a YouTube video | "save this video" · "save https://youtu.be/…" |
 | Save part of a video | "keep 3:10 to 5:40" · "grab the part about X" · "add this part" |
-| Force a destination | add `--to drive`, `--to notion`, `--to artifact`, `--to local`, or `--to ./path` |
+| Force a destination | add `--to chat`, `--to drive`, `--to notion`, `--to artifact`, `--to local`, or `--to ./path` |
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
 | Find clips | "what did I save about X?" · "clips from this week" |
@@ -479,9 +478,9 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **A plain "save this"** → saves your highlight or collected parts if there are any, otherwise the whole page.
 - **"Save that" right after an answer** → takes the answer, even with text highlighted, and says so: it saves the answer, or adds it as the next part while you're collecting. "Save this page" still saves the page.
 - **Highlights under ~40 characters** (a stray word) are ignored.
-- **It acts when intent is clear**, with prompts for first-save setup, sync conflicts, and unsupported formats, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
+- **It acts when intent is clear**, with prompts for sync conflicts and unsupported formats, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
 - **Same page, same session** → saves and parts from a page you've already clipped this session go into that clip, wherever it was saved, unless you name another destination or say "as a new clip". The URL decides: other pages on the same site get their own clips.
-- **Duplicate check:** saving a page you clipped in an earlier session shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check.
+- **Duplicate check:** saving a page you clipped in an earlier session shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check, and so do clips given in the chat, since nothing is stored to check.
 
 ## Limitations
 
@@ -501,7 +500,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 | Clip is cut off at a login or paywall (Claude Code) | Sign in to the site inside the Browser pane once; it has its own logins, separate from Chrome. |
 | Gleaner doesn't respond to "save this" | Check you're on the new side panel (not classic) and that Gleaner is enabled in your skills. |
 | It saved the whole page instead of my highlight | Highlight again right before asking, or name the part: "grab the part about X." Some sites clear highlights when you click away. |
-| Clip wasn't saved to Drive or my project | The default is a Markdown file in the conversation. Say "save to Drive" or "save it to this project", or set a default destination with `/gleaner:preferences`. |
+| Clip wasn't saved to Drive or my project | The default is a Markdown file in the conversation. Say "save to Drive" (or "save it to this project" in Claude Code and Cowork) to store that clip, or set a default destination with `/gleaner:preferences setup`. |
 | "Couldn't reach the project folder" | Open the Claude desktop app and make sure it's connected, then ask again. |
 | Clip saved as a `.md` file, not a formatted Doc | Markdown is the default. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to get Docs whenever Drive can convert them. |
 | Similar tags like `#ai-design` and `#ai-designs` | Name the tag you want in the request ("tag it ai-design"). Gleaner reuses existing spellings by default, so this gets rarer as your library grows. |
@@ -624,6 +623,8 @@ MIT © Shawn Sandy
 - With no saved preference, clips now come back as a Markdown file in the conversation on every surface: the Chrome side panel, ChatGPT, Claude Code, and Cowork. Nothing is stored unless you name a destination ("save to Drive", "save it to this project", `--to notion`) or set one with `/gleaner:preferences`.
 - Added `--to chat` (or "just give me the file") to pick the conversation explicitly, such as when your saved default is somewhere else.
 - Cowork no longer saves into the open project on its own; say "this project" to save there. "Save it as a Google Doc" now saves to Drive on every surface.
+- Right after a clip comes back in the chat, "save it to Drive" (or "save it to this project" in Claude Code and Cowork) stores that same clip, parts included.
+- Gleaner no longer asks about setup on your first save, since the chat default needs nothing stored; it mentions `/gleaner:preferences setup` once per session instead.
 - A clip in the conversation can't be found by a search or a follow-up in a later session, so download or copy it to keep it.
 
 **2.5.0** (2026-10-18)

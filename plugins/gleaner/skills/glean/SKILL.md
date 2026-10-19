@@ -158,6 +158,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 - **Save clip:** when every part to save (the collected parts, plus a highlight not yet added) comes from pages that one clip from this session already has as Sources, add them to that clip. Parts that bring in a new page make a new clip.
 - **Destination:** the update goes wherever that clip was saved, even when that isn't this surface's default. A request that names a different destination (a `--to` flag or words) makes a new clip there instead.
 - **Managing parts** with nothing being collected ("drop the last part", "change part 2's note") works on the parts of the page's clip from this session, and saves it again.
+- **Storing a chat clip:** right after a clip is given in this conversation, a request that only names a stored destination ("save it to Drive", "put that in this project", or just a `--to` flag) saves that same clip there, parts and answers included, as a new clip. Don't re-read the page or treat it as Save answer.
 - **A new clip on request:** "as a new clip", "separately", or "on its own" skips all this and makes a new clip.
 - **Clips from earlier sessions** are never updated. Adding to one means saving an updated copy (see step 2) or a new clip.
 
@@ -169,7 +170,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
 2. **Resolve preferences, then pick the destination.**
-   - Read the shared preferences contract, load valid stores, run enabled sync, and offer first-save setup when unconfigured. Resolve destination and format with their scopes before any duplicate check. Invalid configuration stays untouched; offer explicit session settings to continue.
+   - Read the shared preferences contract, load valid stores, run enabled sync, and follow its first-save setup rule when unconfigured (it skips the prompt while the default is This conversation). Resolve destination and format with their scopes before any duplicate check. Invalid configuration stays untouched; offer explicit session settings to continue.
    - The following environment defaults apply only when no higher-precedence setting exists or setup is skipped. A configured destination uses its verified ID/path throughout this save, never a fresh lookup by label. Check format support before proceeding; `markdown` means raw Markdown, not Notion content or HTML.
    - Keep the resolved clip base path or remote ID for duplicate checks, recent-tag reads, category organization, and the final save. A temporary alternative requires the user's choice and a fresh duplicate check; never modify the permanent default because it is unreachable.
    - **Adding to a clip saved this session** (see Clips saved this session): after preference sync, retain that clip’s verified destination and format as the session override and skip the duplicate check below. Changed persistent defaults do not move an existing clip. An explicit different destination makes a new clip using the rules below; an incompatible format change requires a choice before updating.
@@ -280,7 +281,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
    **This conversation** (the default)
    - Nothing is stored and there are no folders; the clip's **Category:** line does that job. The clip is always Markdown, whatever the format setting.
-   - If this session can hand the user a file (a file-sending or file-creation tool), write `<name>.md` outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and send it that way.
+   - If this session can attach a file to its reply for the user to download (a file-sending tool, or file creation that shows the file in the chat), write `<name>.md` outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and attach it. A file written somewhere the user can't see from the chat doesn't count.
    - Otherwise put the whole clip in one Markdown code block, with `<name>.md` on the line above it. Use a longer fence than any code block inside the clip, so the clip's own code doesn't cut it short.
 
    **Google Drive**
@@ -395,7 +396,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
    **Fallback:** give the clip in this conversation (see This conversation above) and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
-7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; the artifact's link; or, for This conversation, that it lives only in this chat, so the user should download or copy it, and that "save to Drive" or "save it to this project" stores a copy), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Don't repeat the full summary. For an update, start with `Updated "<title>"` and say what was added; on Drive, give the new link and say the earlier version went to the trash. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
+7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; the artifact's link; or, for This conversation, that it lives only in this chat, so the user should download or copy it, and that "save to Drive" stores a copy, or "save it to this project" in Claude Code and Cowork), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Don't repeat the full summary. For an update, start with `Updated "<title>"` and say what was added; on Drive, give the new link and say the earlier version went to the trash. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
 
 ## Clip index (on demand)
 
@@ -409,7 +410,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Cowork project or This project: search `browser-research/` recursively.
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date. A clip can be republished later in the session that saved it, so for a date range use its Saved row; only artifacts last updated before the range starts can be skipped without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
-   - Search the effective preference destination. With none set, the default is This conversation, which stores nothing to search: say so in one line and ask which location to search (Drive, Notion, a project folder, or artifacts). Include the other locations when the user asks for them or names one.
+   - Search the effective preference destination. With none set, the default is This conversation: list the clips given earlier in this conversation, say in one line that chat clips from other conversations can't be searched, and ask which stored location to search too (Drive, Notion, a project folder, or artifacts). Include the other locations when the user asks for them or names one.
 2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)", "(2 parts, 1 answer)", or "(whole page + 2 parts)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
