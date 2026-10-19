@@ -78,15 +78,16 @@ Before any video save, run glean step 2 including its shared preferences contrac
 
 ### No transcript
 
-Before saving, ask in one line whether to continue, such as `This video has no transcript. Save it from the title and description anyway?` Then follow the reply:
+Before saving, ask in one line whether to continue, such as `This video has no transcript. Save it from the title and description anyway, or paste the transcript for a full summary?` Then follow the reply:
 
-- **Yes:** ask for a short description, such as `Add a short description of the video, and I'll add it to the one from YouTube.` Add the user's words, lightly trimmed, to the description already read, then save a description-only clip from the title, that description, and the chapters, with `none` as its transcript source. With no description given ("just save it"), save it from the video's description alone.
-- **No**, or a reply about something else: save nothing.
-- **A pasted transcript** at either question (on YouTube: "…more" under the video, then "Show transcript", then copy): use it as the snippet's transcript, with `pasted` as its source. Its timestamps work the same as the snippet's.
+- **Yes:** ask for a short description, such as `Add a short description of the video, and I'll add it to the one from YouTube.` Add the user's words, lightly trimmed, to the description already read, then save a description-only clip from the title, that description, and the chapters, with `none` as its transcript source. Any reply to this question that gives no description ("no", "skip", "just save it") saves it from the video's description alone.
+- **No** to the first question, or a reply to it about something else: save nothing.
 
-When a description-only clip is saved, say in the confirmation that a transcript wasn't available. Pasting the transcript later gets a full summary as an updated copy.
+A transcript the user pastes at any point (on YouTube: "…more" under the video, then "Show transcript", then copy) is the snippet's transcript, with `pasted` as its source. Its timestamps work the same as the snippet's.
 
-That fallback is for whole videos only. A part (a time range, a topic, or "this part") needs transcript lines, so don't save one without them: say the part can't be clipped without a transcript, ask for it pasted, and offer a description-only clip of the whole video instead.
+When a description-only clip is saved, say in the confirmation that a transcript wasn't available, and mention that pasting it later gets a full summary as an updated copy.
+
+That fallback is for whole videos only. A part (a time range, a topic, or "this part") needs transcript lines, so don't save one without them: say the part can't be clipped without a transcript, ask for it pasted, and offer a description-only clip of the whole video instead. If the user takes that offer, skip the first question and ask for a description as in **Yes**.
 
 Never summarize what you didn't read: with no transcript, there's no **Key moments** section unless the description has chapters, and then the moments are the chapters.
 
