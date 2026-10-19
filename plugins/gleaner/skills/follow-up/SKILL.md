@@ -56,7 +56,7 @@ Follow-ups for "<clip title>":
 Saved to <clip link or path>. Pick one, or tell me what you'd like to follow up on.
 ```
 
-For a clip given in this conversation, replace "Saved to …" with "Added to the clip file above; it isn't stored anywhere."
+For a clip given in this conversation, replace "Saved to …" with "Added to the clip file above; it isn't stored anywhere." For an attached or pasted clip, which is never changed, use "Added to an updated copy in this reply; it isn't stored anywhere." instead.
 
 **Ask instead of suggesting** when you can't write three follow-ups that each name something specific in the clip, such as a clip with no note, no links besides the Source, and only general takeaways. Ask one short question, such as "What do you want to do with this clip: go deeper, use it in something, or find related clips?" Never pad to three with generic ideas. When the user answers, save what they want to follow up on as a one-item list; if they don't answer, save nothing.
 
