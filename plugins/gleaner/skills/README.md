@@ -7,7 +7,7 @@ Gleaner ships four skills. You don't have to pick one: describe what you want, a
 | [glean](glean/SKILL.md) | `/gleaner:glean` | Web pages, parts of pages, Claude's answers about them, and finding saved clips |
 | [preferences](preferences/SKILL.md) | `/gleaner:preferences` | Shared destinations, formats, setup, show, update, reset, and sync |
 | [youtube](youtube/SKILL.md) | `/gleaner:youtube` | YouTube videos and moments from them |
-| [follow-up](follow-up/SKILL.md) | `/gleaner:follow-up` | Three suggested next steps for a saved clip |
+| [follow-up](follow-up/SKILL.md) | `/gleaner:follow-up` | Three suggested next steps for a saved clip, saved into it |
 
 The youtube skill handles only what's different about video: reading the transcript and writing a summary with timestamped links. Everything else (notes, parts, destinations, categories, saving, and search) comes from glean. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
 
@@ -167,7 +167,7 @@ suggest follow-ups for my view transitions clip
 /gleaner:follow-up ./browser-research/design-engineering/2026-10-18-motion-timing.md
 ```
 
-Gleaner reads the clip's link, TL;DR, note, content, and the links inside it, then suggests three follow-ups, each tied to something in the clip, such as reading a linked page, moving the post your note mentions forward, or comparing it with clips that share its tags. Pick one, or say what you'd rather do. When the clip has no note, takeaways, or links to work from, Gleaner asks what you want instead of guessing. Suggestions are never written into the clip, and nothing is saved unless you ask.
+Gleaner reads the clip's link, TL;DR, note, content, and the links inside it, then suggests three follow-ups, each tied to something in the clip, such as reading a linked page, moving the post your note mentions forward, or comparing it with clips that share its tags. Pick one, or say what you'd rather do. When the clip has no note, takeaways, or links to work from, Gleaner asks what you want instead of guessing. The follow-ups are saved at the end of the clip, under a dated Follow-ups heading. A clip from an earlier session is never edited: you get an updated copy that links to the original. Nothing else is saved unless you ask.
 
 ## More help
 

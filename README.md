@@ -74,7 +74,7 @@ Gleaner includes four skills: two share the clip format and saving workflow, one
 | [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
 | [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
 | **preferences** | `/gleaner:preferences` | Shared destinations, formats, setup, and sync |
-| [follow-up](plugins/gleaner/skills/follow-up/SKILL.md) | `/gleaner:follow-up` | Suggest three follow-ups for a saved clip, or ask what you want to do next |
+| [follow-up](plugins/gleaner/skills/follow-up/SKILL.md) | `/gleaner:follow-up` | Suggest three follow-ups for a saved clip and save them to it, or ask what you want to do next |
 
 Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
 
@@ -578,7 +578,7 @@ MIT © Shawn Sandy
 ## Changelog
 
 **Unreleased**
-- Added `/gleaner:follow-up`, which reads a saved clip (its link, TL;DR, note, content, and links) and suggests three specific follow-ups, or asks what you want to do next when the clip gives too little to go on.
+- Added `/gleaner:follow-up`, which reads a saved clip (its link, TL;DR, note, content, and links) and suggests three specific follow-ups, or asks what you want to do next when the clip gives too little to go on. The follow-ups are saved in a dated Follow-ups section at the end of the clip; a clip from an earlier session gets an updated copy instead of being edited.
 
 **2.3.0** (2026-10-18)
 - Clips are saved as Markdown (`.md`) files by default, in Google Drive too, instead of being converted to Google Docs. Notion and artifact clips keep their own formats without asking.

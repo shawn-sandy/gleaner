@@ -257,6 +257,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      - New parts go in the `## Parts` section, numbered on from those already there. A page clip gets that section just before its `## Takeaways`, and the whole page's Key points and Notable details go just before `## Parts` when a part clip gains them.
      - Update the **Scope:** line. A clip that holds the whole page as well as parts puts "whole page +" before the count, as in `whole page + 2 parts` or `whole page + 1 part, 1 answer`.
      - Rewrite the TL;DR and Takeaways so they cover everything now in the clip. A single-answer clip that gains a part gets a TL;DR.
+   - **Follow-ups:** a `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, unchanged, whenever a clip saved this session is rewritten. This applies to video clips too.
 
 4. **Categorize it** so clips are easy to find later.
    - **Category:** pick exactly one from this list. Use the name exactly as written, since it's also the subfolder name.

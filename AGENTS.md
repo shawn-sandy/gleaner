@@ -7,7 +7,7 @@ Gleaner is a Claude plugin marketplace whose runtime behavior is defined primari
 - `plugins/gleaner/skills/glean/SKILL.md` defines clipping, destinations, duplicate checks, and search.
 - `plugins/gleaner/skills/preferences/SKILL.md` manages shared settings; `references/contract.md` under that skill defines storage, schema, and sync.
 - `plugins/gleaner/skills/youtube/SKILL.md` adds transcript handling and timestamped summaries; reuse `glean` for shared behavior.
-- `plugins/gleaner/skills/follow-up/SKILL.md` reads a saved clip and suggests three follow-ups; reuse `glean` to find, read, and save clips.
+- `plugins/gleaner/skills/follow-up/SKILL.md` reads a saved clip, suggests three follow-ups, and saves them to the clip; reuse `glean` to find, read, and save clips.
 - `plugins/gleaner/skills/glean/agents/openai.yaml` supplies ChatGPT display metadata.
 - `.claude-plugin/marketplace.json` registers the plugin; `plugins/gleaner/.claude-plugin/plugin.json` holds its manifest and version.
 - `README.md` contains installation, usage, and the changelog; `plugins/gleaner/skills/README.md` provides skill examples.

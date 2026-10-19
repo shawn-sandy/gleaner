@@ -1,12 +1,12 @@
 ---
 name: follow-up
-description: Suggest three follow-ups for a saved Gleaner clip, or ask what the user wants to follow up on, after reviewing the clip's link, TL;DR, note, saved content, and the links inside it. Use when the user asks what to do next with a clip they saved, such as "what should I follow up on?", "suggest follow-ups for that clip", "next steps for the glean I just saved", "follow up on my view transitions clip", or "what now with https://drive.google.com/…".
+description: Suggest three follow-ups for a saved Gleaner clip and save them to the clip, or ask what the user wants to follow up on, after reviewing the clip's link, TL;DR, note, saved content, and the links inside it. Use when the user asks what to do next with a clip they saved, such as "what should I follow up on?", "suggest follow-ups for that clip", "next steps for the glean I just saved", "follow up on my view transitions clip", or "what now with https://drive.google.com/…".
 argument-hint: '[<clip link, path, or title>]'
 ---
 
 # Gleaner follow-ups
 
-Read one saved Gleaner clip and suggest three follow-ups the user can start right away, or ask what they want when the clip gives too little to go on.
+Read one saved Gleaner clip, suggest three follow-ups the user can start right away, and save them to the clip. When the clip gives too little to go on, ask what they want instead, and save their answer.
 
 Clips, their destinations, and the clip format come from Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it when you need to find, read, or save a clip.
 
@@ -43,16 +43,39 @@ Write exactly three. Each one is:
 
 Put the saved note first: a clip saved "for the motion post" should get at least one follow-up that moves that post forward.
 
+Save them (see below) before replying, so the reply can say where they went:
+
 ```text
 Follow-ups for "<clip title>":
 1. **<action>**: <one line on why, naming what in the clip it comes from>
 2. **<action>**: <…>
 3. **<action>**: <…>
-Pick one, or tell me what you'd like to follow up on.
+Saved to <clip link or path>. Pick one, or tell me what you'd like to follow up on.
 ```
 
-**Ask instead of suggesting** when you can't write three follow-ups that each name something specific in the clip, such as a clip with no note, no links besides the Source, and only general takeaways. Ask one short question, such as "What do you want to do with this clip: go deeper, use it in something, or find related clips?" Never pad to three with generic ideas.
+**Ask instead of suggesting** when you can't write three follow-ups that each name something specific in the clip, such as a clip with no note, no links besides the Source, and only general takeaways. Ask one short question, such as "What do you want to do with this clip: go deeper, use it in something, or find related clips?" Never pad to three with generic ideas. When the user answers, save what they want to follow up on as a one-item list; if they don't answer, save nothing.
+
+## Save the follow-ups
+
+Add the follow-ups to the clip as its last section, after Takeaways:
+
+```markdown
+## Follow-ups
+*Suggested <today's date, YYYY-MM-DD>*
+1. **<action>**: <why>
+2. **<action>**: <why>
+3. **<action>**: <why>
+```
+
+If the clip already has a Follow-ups section, add the new dated list below the earlier ones. Never remove or reword earlier follow-ups, and leave the rest of the clip as it is.
+
+Save through the glean skill, in the reviewed clip's own destination (its folder, its Notion database, or its artifacts), whatever the default destination is:
+
+- **A clip saved or updated in this conversation** is updated in place, as in glean's "Updating a clip saved this session".
+- **A clip from an earlier session** is never edited. Save an updated copy that has the Follow-ups section and a **Supersedes:** line pointing to the reviewed clip, as in glean step 2, without asking first. Name it in the reply as a new copy. More follow-ups in this conversation update that copy.
+
+Link only what the save returned. If the save fails, still show the follow-ups, say plainly that they weren't saved, and use glean's fallback.
 
 ## When the user picks one
 
-Do it in this conversation. Anything saved (a linked page, an answer, a new part) goes through the glean skill, which picks the destination and decides whether it joins an existing clip. Don't save anything the user didn't ask to save, and never change the reviewed clip just because a follow-up was suggested or done.
+Do it in this conversation. Anything else saved (a linked page, an answer, a new part) goes through the glean skill like any other save. Don't save anything beyond the follow-ups unless the user asks.
