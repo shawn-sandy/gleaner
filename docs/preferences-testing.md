@@ -44,6 +44,6 @@ Use valid schema-1 documents. Establish B by a verified sync unless the case spe
 
 ## Static validation versus live execution
 
-Run `npm run validate` and `npm test`. Static checks cover all three skill definitions and metadata, direct shared-contract links, required examples, YAML syntax/schema/locators/alias references, and Markdown. Fixture tests include failure cases and CLI pass/fail behavior. Strict Claude validation runs when installed and reports a skip otherwise.
+Run `npm run validate` and `npm test`. Static checks cover all four skill definitions and metadata, direct shared-contract links, required examples, YAML syntax/schema/locators/alias references, and Markdown. Fixture tests include failure cases and CLI pass/fail behavior. Strict Claude validation runs when installed and reports a skip otherwise.
 
 Fixture tests do not execute these Markdown procedures or prove connector permissions, conditional writes, synchronization reliability, or page/video save behavior. Record the matrix results separately after live maintainer testing; leave unexecuted scenarios explicitly unverified.

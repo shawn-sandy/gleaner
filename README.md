@@ -37,6 +37,7 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
   - [Categories and tags](#categories-and-tags)
   - [Finding your clips](#finding-your-clips)
   - [Index spreadsheet](#index-spreadsheet)
+  - [Following up on a clip](#following-up-on-a-clip)
   - [Using Gleaner in Claude Code desktop](#using-gleaner-in-claude-code-desktop)
 - [Phrase cheat sheet](#phrase-cheat-sheet)
 - [What a clip looks like](#what-a-clip-looks-like)
@@ -62,25 +63,27 @@ Gleaner: Saved "Motion timing guidelines" to Browser Research / Design Engineeri
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
 - **One clip per page.** In a session, saving or adding more from a page you've already clipped updates that clip instead of starting a new doc. A page clipped in an earlier session gets an updated copy that links to the original; clips from earlier sessions are never changed or deleted.
 - **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
+- **Next steps, suggested.** Ask "what should I follow up on?" and Gleaner suggests three next steps drawn from a clip's note, takeaways, and links, then saves them to the clip.
 - **Drive, Notion, artifacts, or local.** Saves to Google Drive by default, to a Notion database, to a private claude.ai artifact, to a Cowork project folder, or, in Claude Code, straight into the project you're working on.
 - **Your defaults, remembered.** Pick a destination and format on your first save, override them for a project or a single save, and optionally sync them across devices through Google Drive.
 - **Works where you browse.** The Chrome side panel, the built-in browser in Claude Code desktop, or ChatGPT's connected Chrome tabs and Work browser. Hand it a URL and it opens or fetches the page for you.
 
 ## Skills
 
-Gleaner includes three skills: two share the clip format and saving workflow, and one manages reusable preferences:
+Gleaner includes four skills: two share the clip format and saving workflow, one suggests what to do next with a saved clip, and one manages reusable preferences:
 
 | Skill | Claude Code command | Use it for |
 | --- | --- | --- |
 | [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
 | [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
 | [preferences](plugins/gleaner/skills/preferences/SKILL.md) | `/gleaner:preferences` | Shared destinations, formats, setup, and sync |
+| [follow-up](plugins/gleaner/skills/follow-up/SKILL.md) | `/gleaner:follow-up` | Suggest three follow-ups for a saved clip and save them to it, or ask what you want to do next |
 
 Use plain-language requests or invoke a command directly in Claude Code. The `youtube` skill uses `glean` for destinations, tags, duplicate checks, and saving. See the [skills usage guide](plugins/gleaner/skills/README.md) for examples.
 
 ## ChatGPT marketplace
 
-Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers all three skills (`glean`, `youtube`, and `preferences`) through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
+Gleaner uses the same GitHub marketplace manifest for Claude and ChatGPT. In ChatGPT workspaces that support GitHub marketplace imports, import `https://github.com/shawn-sandy/gleaner` from the workspace's Plugins settings. The root manifest registers all four skills (`glean`, `youtube`, `preferences`, and `follow-up`) through the Gleaner plugin. Browser and Google Drive access must be connected separately; importing the plugin does not grant them.
 
 See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) for installation, supported browser surfaces, limitations, and a manual test checklist. ChatGPT marketplace import requires verification in an eligible workspace.
 
@@ -113,7 +116,7 @@ claude plugin marketplace add shawn-sandy/gleaner
 claude plugin install gleaner@shawn-sandy --scope user
 ```
 
-In Claude Code the skills are also available as `/gleaner:glean`, `/gleaner:youtube`, and `/gleaner:preferences`.
+In Claude Code the skills are also available as `/gleaner:glean`, `/gleaner:youtube`, `/gleaner:preferences`, and `/gleaner:follow-up`.
 
 ### Claude Code desktop
 
@@ -378,6 +381,17 @@ Clips saved as artifacts are searched only when you ask for them ("what did I sa
 
 Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every clip as a row. It's a **snapshot**: it won't update itself, so ask for a fresh one whenever you need it.
 
+### Following up on a clip
+
+Ask right after a save, or point at any saved clip by link, path, or topic:
+
+> what should I follow up on?
+> suggest follow-ups for my view transitions clip
+
+Gleaner reads the clip's TL;DR, note, content, and the links inside it, then suggests three follow-ups, each tied to something in the clip, such as reading a linked page, moving the post your note mentions forward, or comparing it with clips that share its tags. When the clip has too little to go on, it asks what you want instead of guessing.
+
+The follow-ups are saved at the end of the clip under a dated **Follow-ups** heading. A clip from an earlier session isn't edited: you get an updated copy that links to the original. Pick a follow-up and Gleaner starts on it; nothing else is saved unless you ask.
+
 ---
 
 ### Using Gleaner in Claude Code desktop
@@ -415,6 +429,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
 | Find clips | "what did I save about X?" · "clips from this week" |
+| Plan next steps | "what should I follow up on?" · "suggest follow-ups for that clip" |
 | Spreadsheet | "make me an index sheet" |
 
 ## What a clip looks like
@@ -448,6 +463,8 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 **A page clip you add to** in the same session keeps its summary and gains a Parts section before its Takeaways, with a Scope line such as `whole page + 2 parts`. Its TL;DR and Takeaways are rewritten to cover the new parts.
 
 **Video clip** adds a `**Video:**` line (channel, publish date, length, and transcript source) and swaps Key points for **Key moments**, each linking to its second in the video. A video part's heading links to where it starts, such as `3:10–5:40`.
+
+**A clip you follow up on** ends with a `## Follow-ups` section: a dated, numbered list for each round of suggestions, with earlier rounds kept as they were.
 
 Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`, `-3`, and so on.
 
@@ -518,7 +535,11 @@ gleaner/
 │       ├── .claude-plugin/
 │       │   └── plugin.json         # plugin manifest (version lives here)
 │       └── skills/
-│           ├── README.md           # usage guide for all three skills
+│           ├── README.md           # usage guide for all four skills
+│           ├── follow-up/
+│           │   ├── agents/
+│           │   │   └── openai.yaml # follow-up skill display metadata
+│           │   └── SKILL.md        # three follow-ups for a saved clip, saved into it
 │           ├── glean/
 │           │   ├── agents/
 │           │   │   └── openai.yaml # skill name and icons shown in ChatGPT
@@ -563,7 +584,7 @@ npm ci
 npm run validate
 ```
 
-Run `npm run validate` before pushing. It checks all three Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, preference example schemas and destination references, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
+Run `npm run validate` before pushing. It checks all four Skills' YAML frontmatter and nonempty bodies, their `agents/openai.yaml` display metadata, marketplace and plugin JSON, required files, preference example schemas and destination references, and local file references in the Skills and installation guides. References include Markdown inline links, reference definitions, relative file paths with extensions in inline code, and metadata icons; fenced examples, remote URLs, and heading anchors are excluded. Markdownlint then checks repository Markdown using `.markdownlint-cli2.jsonc`.
 
 When `claude` is on `PATH`, validation also runs both existing strict checks:
 
@@ -593,6 +614,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**2.5.0** (2026-10-18)
+- Added `/gleaner:follow-up`, which reads a saved clip (its link, TL;DR, note, content, and links) and suggests three specific follow-ups, or asks what you want to do next when the clip gives too little to go on. The follow-ups are saved in a dated Follow-ups section at the end of the clip; a clip from an earlier session gets an updated copy instead of being edited.
 
 **2.4.0** (2026-10-18)
 - When a YouTube video has no transcript, the youtube skill asks whether to save it anyway, and saying no saves nothing. If you say yes, it asks for a short description and adds it to the video's own description. Say "just save it" to skip the description, or paste the transcript for a full summary.

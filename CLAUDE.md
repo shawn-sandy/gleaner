@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner`, with three skills, `glean`, `youtube`, and `preferences`. There is no application runtime or build; static validator and release-script tests are available: the product is the prose in the three `SKILL.md` files under `plugins/gleaner/skills/` (mostly `glean/SKILL.md`), which the model reads raw at runtime.
+A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner`, with four skills, `glean`, `youtube`, `preferences`, and `follow-up`. There is no application runtime or build; static validator and release-script tests are available: the product is the prose in the four `SKILL.md` files under `plugins/gleaner/skills/` (mostly `glean/SKILL.md`), which the model reads raw at runtime.
 
 ## Validate
 
@@ -18,7 +18,7 @@ npm test
 
 Markdownlint takes its globs and rule overrides from `.markdownlint-cli2.jsonc`, where the disabled rules record house style; fix findings rather than disabling more rules. A PostToolUse hook in `.claude/settings.json` reruns both validates after a Write or Edit under `.claude-plugin/` or `plugins/`; shell edits (`sed`, heredocs) bypass it, and it does not run markdownlint.
 
-Local validation parses all three Skills' frontmatter and ChatGPT metadata, checks manifests, required files and local references, and lints Markdown. It runs both strict Claude validators when `claude` is on `PATH` and reports a skip otherwise. Live testing against Chrome, Drive, Notion, and Cowork is done by the maintainer; never report a change as live-tested.
+Local validation parses all four Skills' frontmatter and ChatGPT metadata, checks manifests, required files and local references, and lints Markdown. It runs both strict Claude validators when `claude` is on `PATH` and reports a skip otherwise. Live testing against Chrome, Drive, Notion, and Cowork is done by the maintainer; never report a change as live-tested.
 
 ## Versioning and changelog
 

@@ -6,7 +6,7 @@ import { parseDocument } from 'yaml';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const plugin = 'plugins/gleaner';
-const skills = ['glean', 'youtube', 'preferences'];
+const skills = ['glean', 'youtube', 'preferences', 'follow-up'];
 let failures = 0;
 
 function check(label, action) {
