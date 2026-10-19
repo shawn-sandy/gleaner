@@ -467,7 +467,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **Drive capabilities vary.** Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive’s trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots. Preference sync needs a connector that can read and update the selected document; create-only connectors leave sync pending.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
-- **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), the clip comes from the title, description, and chapters, plus a short description Gleaner asks you for, and parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
+- **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), the clip comes from the title, description, and chapters, plus a short description if you add one, and parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **Paywalls and sign-ins.** Only visible content is summarized, and the clip says so.
 
 ## Troubleshooting
