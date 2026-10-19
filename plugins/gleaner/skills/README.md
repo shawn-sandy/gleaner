@@ -137,7 +137,7 @@ To copy a transcript on YouTube, open **…more** under the video, then **Show t
 - **Ads:** if an ad is playing, Gleaner skips it or waits for it to end before reading the transcript.
 - **Auto-captions:** Gleaner checks names and code terms against the title and description, since auto-captions often mishear them.
 - **Private, members-only, or age-restricted videos:** sign in to YouTube in the browser Gleaner is using. The Claude Code Browser pane has its own sign-ins, separate from Chrome.
-- **ChatGPT without a JavaScript tool** (connected Chrome tabs, or a Work browser without one): Gleaner can use a transcript only when the video's tab shows one, and it can't read where you are in the video, so give "add this part" a time range or topic instead.
+- **ChatGPT without a JavaScript tool** (connected Chrome tabs, or a Work browser without one): Gleaner reads a transcript only when the video's tab shows one, so paste it if the tab doesn't (see [When there's no transcript](#when-theres-no-transcript)). It also can't read where you are in the video, so give "add this part" a time range or topic instead.
 
 ## More help
 
