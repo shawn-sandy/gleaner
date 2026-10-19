@@ -395,6 +395,12 @@ Gleaner reads the clip's TL;DR, note, content, and the links inside it, then sug
 
 The follow-ups are saved at the end of the clip under a dated **Follow-ups** heading. A clip from an earlier session isn't edited: you get an updated copy that links to the original. Pick a follow-up and Gleaner starts on it; nothing else is saved unless you ask.
 
+Every clip also ends its Takeaways with a ready-made prompt, so you can come back to it later: paste the line into a new chat to get follow-ups. It names the clip and where it's stored, or gives its file path for clips saved to a local folder. A clip given in the conversation isn't stored anywhere, so its prompt asks you to attach or paste the file instead. Clips saved inside your Claude Code project add a terminal command that starts Claude Code and sends the prompt:
+
+```bash
+claude 'Suggest follow-ups for my Gleaner clip at browser-research/frontend-dev/2026-10-19-view-transitions.md'
+```
+
 ---
 
 ### Using Gleaner in Claude Code desktop
@@ -457,6 +463,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 …
 ## Takeaways
 …
+To get follow-ups, paste this into a new chat: …
 ```
 
 **Part clip** adds a `**Scope:** 2 parts from 1 page` line, and its body is a **Parts** section with one heading per part (titled by your note or topic), a link to its source, its own note, and 2–4 bullets.
@@ -619,6 +626,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Clips now end their Takeaways with a copy-and-paste prompt for getting follow-ups later. It names the clip and where it's stored, gives the path for local folders, or asks you to attach the file for a clip given in the conversation. Clips saved inside the Claude Code project also get a `claude` terminal command that starts Claude Code and sends the prompt.
 
 **2.6.0** (2026-10-19)
 - With no saved preference, clips now come back as a Markdown file in the conversation on every surface: the Chrome side panel, ChatGPT, Claude Code, and Cowork. Nothing is stored unless you name a destination ("save to Drive", "save it to this project", `--to notion`) or set one with `/gleaner:preferences`.
