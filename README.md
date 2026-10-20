@@ -90,7 +90,8 @@ See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) f
 ## Install
 
 **Requirements**
-- A paid Claude plan with the new Chrome side panel (the Cowork-style panel; its three-dot menu shows "Switch back to classic").
+- A paid Claude plan with the new Chrome side panel (the Cowork-style panel; its three-dot menu shows "Switch back to classic") or Claude Code.
+- Using ChatGPT instead? See [ChatGPT marketplace](#chatgpt-marketplace).
 - *Optional:* the **Google Drive** connector, for saving to Drive and syncing preferences.
 - *Optional:* the Claude desktop app, open and connected, for saving to Cowork projects.
 - *Optional:* the **Notion** connector, for saving to Notion.
@@ -382,7 +383,7 @@ Clips saved as artifacts are searched only when you ask for them ("what did I sa
 
 > make me an index sheet
 
-Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every clip as a row. It's a **snapshot**: it won't update itself, so ask for a fresh one whenever you need it.
+Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every clip as a row. It's a **snapshot**: it won't update itself, so ask for a fresh one whenever you need it. If your session's Drive connector, such as ChatGPT's, can't convert it to a Sheet, the index is saved as a `.csv` file instead. If you use Notion, you get the database link first, since it's already a live index; ask again if you still want the sheet.
 
 ### Following up on a clip
 
