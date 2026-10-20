@@ -643,7 +643,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.7.0** (2026-10-19)
 - Clips are now written in plain language for a reader new to the topic: short sentences, technical terms explained the first time they appear, a TL;DR that says what the page says, and key points and takeaways as full sentences that start with a bold claim. Page clips have 3–5 key points, down from 5–8.
 - Page and video clips can have a new **How it works** section after the TL;DR: one short paragraph, added only when the TL;DR can't explain the page's main idea on its own.
 - Tutorial pages get a numbered **Steps** section in place of Key points, with one action per step in the source's order. Tutorial videos keep Key moments.
