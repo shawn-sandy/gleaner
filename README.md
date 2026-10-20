@@ -372,7 +372,7 @@ Ask in plain language:
 > anything on view transitions?
 > show my clip index
 
-You get a table, newest first: date, title (linked), category, type, tags, note, and source. Multi-part clips are marked with their count, such as "(3 parts)" or "(2 parts, 1 answer)." Keyword searches match titles, tags, notes, and summary text.
+You get a table, newest first: date, title (linked), category, type, tags, note, and source. Multi-part clips are marked with their count, such as "(3 parts)," "(2 parts, 1 answer)," or "(whole page + 2 parts)." Keyword searches match titles, tags, notes, and summary text.
 
 You can also search directly in Google Drive: type a tag like `#motion` or a note phrase into Drive's search bar.
 
@@ -428,6 +428,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Collect a part | "add this" · "grab the part about X" · "this table too" |
 | Save collected parts | "done" · "save them" · "wrap it up" |
 | Save an answer | "save that" · "save those steps" · "add that answer" |
+| Keep a separate clip | add "as a new clip" to any request |
 | Review or fix parts | "what have I got?" · "drop part 2" · "start over" |
 | Add a reason | add ", for …" or ", because …" to any request |
 | Pick a folder | "…to my Research folder" · "…to my Serve513 project" · "…to this project" |
@@ -502,6 +503,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
 - **Drive capabilities vary.** Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive’s trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots. Preference sync needs a connector that can read and update the selected document; create-only connectors leave sync pending.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
+- **ChatGPT without a JavaScript tool.** Connected Chrome tabs, and a Work browser without one, can't read highlights or the playback position. Name the part or paste it, and give a video part a time range or topic instead of "this part."
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
 - **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), Gleaner asks before saving a clip from the title, description, and chapters, plus a short description if you add one. Parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **In Claude, YouTube transcripts need a desktop browser, not a phone.** Gleaner gets a video's transcript by running a small script in the video's browser tab, through the Chrome side panel or the Claude Code desktop browser, and phones have neither. To get a full summary, save the video from Chrome or Claude Code desktop on your computer, or paste the transcript into the chat (**…more → Show transcript** on YouTube). In ChatGPT on a computer, the Work browser can capture transcripts when it has a JavaScript tool.
@@ -514,6 +516,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 | Claude Code says no page is open | Open the Browser pane (Cmd/Ctrl+Shift+B) and load the page, or include the URL in your request. |
 | Clip is cut off at a login or paywall (Claude Code) | Sign in to the site inside the Browser pane once; it has its own logins, separate from Chrome. |
 | Gleaner doesn't respond to "save this" | Check you're on the new side panel (not classic) and that Gleaner is enabled in your skills. |
+| ChatGPT can't see the page | Connect your browser in ChatGPT, or switch to Work mode for the Work browser. Or include the URL or paste the text. |
 | It saved the whole page instead of my highlight | Highlight again right before asking, or name the part: "grab the part about X." Some sites clear highlights when you click away. |
 | Clip wasn't saved to Drive or my project | The default is a Markdown file in the conversation. Say "save to Drive" (or "save it to this project" in Claude Code and Cowork) to store that clip, or set a default destination with `/gleaner:preferences setup`. |
 | "Couldn't reach the project folder" | Open the Claude desktop app and make sure it's connected, then ask again. |
@@ -615,6 +618,8 @@ claude plugin validate ./plugins/gleaner --strict
 Without the Claude CLI, those two checks print an explicit skip; all other local checks still run. An installed CLI that fails validation makes the command fail. Install Claude Code and rerun before claiming Claude validation passed. Run `npm test` for the validator's fixture tests and the release script's tests.
 
 Validation runs locally without GitHub Actions or a build step. After dependencies are installed, the static checks need no network access. These checks do not establish live ChatGPT marketplace, browser, or connector compatibility; use the [manual checklist](docs/chatgpt-marketplace.md#validation-checklist) for that.
+
+In Claude Code, a hook in `.claude/settings.json` reruns both strict checks after each Write or Edit under `.claude-plugin/` or `plugins/`. It doesn't see shell edits or run markdownlint, so still run `npm run validate` before pushing.
 
 ### Releasing
 
