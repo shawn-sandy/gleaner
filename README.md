@@ -252,7 +252,7 @@ Collect moments as parts by time or topic:
 > grab the part about generics
 > add this part *(the chapter you're watching, or the last minute or so)*
 
-If a video has no captions, Gleaner asks whether to save it anyway; say no and nothing is saved. Say yes, and it asks for a short description, adds it to the video's own, and saves a clip from the title, description, and chapters; say "just save it" to skip the description. Paste the transcript (**…more → Show transcript** on YouTube) instead to get a full summary, or paste it after a description-only save to get one as an updated copy. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
+If a video has no captions, Gleaner asks whether to save it anyway; say no and nothing is saved. Say yes, and it asks for a short description, adds it to the video's own description, and saves a clip from the title, description, and chapters; say "just save it" to skip the description. Paste the transcript (**…more → Show transcript** on YouTube) instead to get a full summary, or paste it after a description-only save to get one as an updated copy. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
 
 Any link to a video (`youtu.be`, Shorts, a share link) is saved with the same **Source**, `youtube.com/watch?v=…`, so the duplicate check catches a video you've already clipped. A link with a timestamp opens the player at that time, so "add this part" uses that position.
 
