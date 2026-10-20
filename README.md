@@ -1,4 +1,4 @@
-# Gleaner
+# Gleaner, a web clipper for Claude and ChatGPT
 
 **Gather the best of what you read into tagged, searchable clips.**
 
