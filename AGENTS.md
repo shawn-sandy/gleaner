@@ -26,7 +26,7 @@ npm run validate
 npm test
 ```
 
-Local validation checks all four Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. `.github/workflows/validate.yml` runs `npm run validate` and `npm test` with the Claude CLI installed on every pull request and every push to `main`; `.github/workflows/release.yml` only publishes releases, and `.github/workflows/cut-release.yml`, started by hand, only runs `npm run release` on `main` and pushes its `release/X.Y.Z` branch.
+Local validation checks all four Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. `.github/workflows/validate.yml` runs `npm run validate` and `npm test` with the Claude CLI installed on every pull request and every push to `main`; `.github/workflows/release.yml` publishes releases and then calls the Gleaner site's Netlify build hook (the `NETLIFY_BUILD_HOOK` secret) so the site's changelog picks up the release, and `.github/workflows/cut-release.yml`, started by hand, only runs `npm run release` on `main` and pushes its `release/X.Y.Z` branch.
 
 ## Coding Style & Naming Conventions
 
