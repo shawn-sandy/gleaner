@@ -644,7 +644,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.8.0** (2026-10-20)
 - Clips given in the conversation are now HTML files you can open in any browser, in the same clean, single-column style as artifact clips, with light and dark themes. Say "keep it as markdown", or set your default format to `markdown`, to get a `.md` file instead. Where the chat can't attach files, the clip still comes as one Markdown code block. Code blocks in HTML clips, artifacts included, can now be scrolled with the keyboard.
 
 **2.7.0** (2026-10-19)
