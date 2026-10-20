@@ -548,7 +548,8 @@ gleaner/
 ├── .github/
 │   └── workflows/
 │       ├── cut-release.yml         # run from the Actions tab: npm run release on main, then push release/X.Y.Z
-│       └── release.yml             # tags and publishes a GitHub Release when the version changes on main
+│       ├── release.yml             # tags and publishes a GitHub Release when the version changes on main
+│       └── validate.yml            # npm run validate and npm test on every pull request and push to main
 ├── docs/
 │   ├── artifacts/                  # HTML artifacts
 │   ├── chatgpt-marketplace.md      # ChatGPT import, compatibility, and manual checklist
