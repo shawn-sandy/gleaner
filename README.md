@@ -182,7 +182,7 @@ Mention the page, article, or doc, or just say "save this" with nothing highligh
 > keep this article for later
 > bookmark this doc
 
-Gleaner reads the whole page, skips navigation, ads, and comments, and writes a summary of up to ~400 words with a TL;DR, key points, notable details (code, numbers, names), and takeaways.
+Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it. A tutorial gets numbered **Steps** in place of key points.
 
 ### Saving parts of pages
 
@@ -243,7 +243,7 @@ On a YouTube video, ask the same way you would for a page, or pass a link:
 > clip this talk, for the motion post
 > save https://youtu.be/… to Notion
 
-Gleaner reads the video's transcript and writes a TL;DR, **key moments** that each link to the second they happen, notable details, and takeaways. A **Video** line records the channel, publish date, length, and whether the transcript came from captions or auto-captions.
+Gleaner reads the video's transcript and writes the same plain-language summary as a page clip, with **key moments** that each link to the second they happen in place of key points. A **Video** line records the channel, publish date, length, and whether the transcript came from captions or auto-captions.
 
 Collect moments as parts by time or topic:
 
@@ -393,9 +393,9 @@ Ask right after a save, or point at any saved clip by link, path, or topic:
 
 Gleaner reads the clip's TL;DR, note, content, and the links inside it, then suggests three follow-ups, each tied to something in the clip, such as reading a linked page, moving the post your note mentions forward, or comparing it with clips that share its tags. When the clip has too little to go on, it asks what you want instead of guessing.
 
-The follow-ups are saved at the end of the clip under a dated **Follow-ups** heading. A clip from an earlier session isn't edited: you get an updated copy that links to the original. Pick a follow-up and Gleaner starts on it; nothing else is saved unless you ask.
+The follow-ups are saved after the clip's Takeaways under a dated **Follow-ups** heading. A clip from an earlier session isn't edited: you get an updated copy that links to the original. Pick a follow-up and Gleaner starts on it; nothing else is saved unless you ask.
 
-Every clip also ends its Takeaways with a ready-made prompt, so you can come back to it later: paste the line into a new chat to get follow-ups. It names the clip and where it's stored, or gives its file path for clips saved to a local folder. A clip given in the conversation isn't stored anywhere, so its prompt asks you to attach or paste the file instead. Clips saved inside your Claude Code project add a terminal command that starts Claude Code and sends the prompt:
+Every clip also ends with a ready-made prompt below a divider, so you can come back to it later: paste the line into a new chat to get follow-ups. It names the clip and where it's stored, or gives its file path for clips saved to a local folder. A clip given in the conversation isn't stored anywhere, so its prompt asks you to attach or paste the file instead. Clips saved inside your Claude Code project add a terminal command that starts Claude Code and sends the prompt:
 
 ```bash
 claude 'Suggest follow-ups for my Gleaner clip at browser-research/frontend-dev/2026-10-19-view-transitions.md'
@@ -458,14 +458,21 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 
 ## TL;DR
 …
+## How it works
+…
 ## Key points
 …
 ## Notable details
 …
 ## Takeaways
 …
+
+---
+
 To get follow-ups, paste this into a new chat: …
 ```
+
+Clips are written for a smart reader who is new to the topic: short sentences, technical terms explained the first time they appear, and key points as full sentences that start with a bold claim. **How it works** is optional: one short paragraph, added only when the TL;DR can't explain the main idea on its own. A tutorial gets a numbered **Steps** section in place of Key points, one action per step.
 
 **Part clip** adds a `**Scope:** 2 parts from 1 page` line, and its body is a **Parts** section with one heading per part (titled by your note or topic), a link to its source, its own note, and 2–4 bullets.
 
@@ -475,7 +482,7 @@ To get follow-ups, paste this into a new chat: …
 
 **Video clip** adds a `**Video:**` line (channel, publish date, length, and transcript source) and swaps Key points for **Key moments**, each linking to its second in the video. A video part's heading links to where it starts, such as `3:10–5:40`.
 
-**A clip you follow up on** ends with a `## Follow-ups` section: a dated, numbered list for each round of suggestions, with earlier rounds kept as they were.
+**A clip you follow up on** gets a `## Follow-ups` section after its Takeaways: a dated, numbered list for each round of suggestions, with earlier rounds kept as they were.
 
 Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`, `-3`, and so on.
 
@@ -633,7 +640,10 @@ MIT © Shawn Sandy
 ## Changelog
 
 **Unreleased**
-- Clips now end their Takeaways with a copy-and-paste prompt for getting follow-ups later. It names the clip and where it's stored, gives the path for local folders, or asks you to attach the file for a clip given in the conversation. Clips saved inside the Claude Code project also get a `claude` terminal command that starts Claude Code and sends the prompt.
+- Clips are now written in plain language for a reader new to the topic: short sentences, technical terms explained the first time they appear, a TL;DR that says what the page says, and key points and takeaways as full sentences that start with a bold claim. Page clips have 3–5 key points, down from 5–8.
+- Page and video clips can have a new **How it works** section after the TL;DR: one short paragraph, added only when the TL;DR can't explain the page's main idea on its own.
+- Tutorial pages get a numbered **Steps** section in place of Key points, with one action per step in the source's order. Tutorial videos keep Key moments.
+- Clips now end with a copy-and-paste prompt for getting follow-ups later, set apart below a divider. It names the clip and where it's stored, gives the path for local folders, or asks you to attach the file for a clip given in the conversation. Clips saved inside the Claude Code project also get a `claude` terminal command that starts Claude Code and sends the prompt.
 
 **2.6.0** (2026-10-19)
 - With no saved preference, clips now come back as a Markdown file in the conversation on every surface: the Chrome side panel, ChatGPT, Claude Code, and Cowork. Nothing is stored unless you name a destination ("save to Drive", "save it to this project", `--to notion`) or set one with `/gleaner:preferences`.
