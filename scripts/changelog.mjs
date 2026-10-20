@@ -63,15 +63,16 @@ function body(lines, index, end) {
 }
 
 /**
- * The changelog entry for one version, without its heading.
+ * The changelog entry for one version, or for Unreleased, without its heading.
  * @param {string} readme
- * @param {string} version
+ * @param {string} version X.Y.Z, or Unreleased
  * @returns {string}
  */
 export function entry(readme, version) {
   const lines = readme.split('\n');
   const { start, end } = section(lines);
-  const index = lines.findIndex((line, i) => i >= start && i < end && line.match(entryHeading)?.[1] === version);
+  const matches = (/** @type {string} */ line) => version === 'Unreleased' ? line === unreleased : line.match(entryHeading)?.[1] === version;
+  const index = lines.findIndex((line, i) => i >= start && i < end && matches(line));
   if (index === -1) throw new Error(`README.md has no changelog entry for ${version}`);
   const text = body(lines, index, end);
   if (!text) throw new Error(`the ${version} changelog entry is empty`);

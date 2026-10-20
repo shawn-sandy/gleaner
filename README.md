@@ -546,6 +546,7 @@ gleaner/
 │   └── marketplace.json            # marketplace "shawn-sandy"
 ├── .github/
 │   └── workflows/
+│       ├── cut-release.yml         # run from the Actions tab: npm run release on main, then push release/X.Y.Z
 │       └── release.yml             # tags and publishes a GitHub Release when the version changes on main
 ├── docs/
 │   ├── artifacts/                  # HTML artifacts
@@ -582,7 +583,7 @@ gleaner/
 │   ├── changelog.mjs               # changelog parsing shared by the release scripts
 │   ├── release.mjs                 # npm run release: bump, date the changelog, validate, commit
 │   ├── release.test.mjs            # release script tests
-│   ├── release-notes.mjs           # prints one version's changelog entry for the GitHub Release
+│   ├── release-notes.mjs           # prints a version's changelog entry, or the Unreleased one, for the workflows
 │   ├── validate-skills.mjs         # Skill, metadata, manifest, and reference checks
 │   └── validate-skills.test.mjs    # validator fixture tests
 ├── .markdownlint-cli2.jsonc        # Markdown lint globs and house-style rule overrides
@@ -630,6 +631,8 @@ npm run release -- minor --summary "add a notion destination" --body ../release-
 ```
 
 The script bumps `version` in `plugins/gleaner/.claude-plugin/plugin.json`, replaces `**Unreleased**` with the new version and today's date, runs `npm run validate` and `npm test`, and commits every tracked change as `Gleaner X.Y.Z: <summary>`, on a new `release/X.Y.Z` branch when run on `main`. It needs the Claude CLI on `PATH` so both strict checks run, refuses untracked files, and restores both files if validation or the commit fails.
+
+To cut a release without a local checkout, run the [cut-release workflow](.github/workflows/cut-release.yml) from the Actions tab once the `**Unreleased**` entry is on `main`. Pick the bump, enter the summary, and it runs the same script on `main`, with the Unreleased bullets as the commit body and the date in New York time, then pushes the `release/X.Y.Z` branch and links to open its PR.
 
 When a merge to `main` changes the version, the [release workflow](.github/workflows/release.yml) tags `vX.Y.Z` and publishes a GitHub Release whose notes are that version's changelog entry. To publish a version that is on `main` but not released yet, run the workflow from the repository's Actions tab.
 

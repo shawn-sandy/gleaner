@@ -92,6 +92,12 @@ test('reads and stamps changelog entries', () => {
   assert.throws(() => stamp(readme.replace('**1.0.0**', '**Unreleased**\n- Older.\n\n**1.0.0**'), '1.2.0', '2026-01-03'), /merge the \*\*Unreleased\*\* entries/);
 });
 
+test('reads the Unreleased entry from the changelog, not from examples elsewhere in the README', () => {
+  const readme = '# Title\n\n## Releasing\n\n```markdown\n**Unreleased**\n- Example.\n```\n\n## Changelog\n\n**Unreleased**\n- New.\n- Also new.\n\n**1.0.0** (2026-01-01)\n- First.\n';
+  assert.equal(entry(readme, 'Unreleased'), '- New.\n- Also new.');
+  assert.throws(() => entry(readme.replace('**Unreleased**\n- New.\n- Also new.\n\n', ''), 'Unreleased'), /no changelog entry for Unreleased/);
+});
+
 test('the README has a changelog entry for the current plugin version', () => {
   const result = spawnSync(process.execPath, [join(root, 'scripts/release-notes.mjs'), version(root)], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);

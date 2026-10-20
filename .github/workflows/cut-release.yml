@@ -1,0 +1,59 @@
+# Cut a release from main by hand from the Actions tab: run npm run release and push its release/X.Y.Z branch.
+# Open a PR from that branch; merging it runs release.yml, which tags and publishes the version.
+name: Cut release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        type: choice
+        options: [patch, minor, major]
+        default: minor
+      summary:
+        description: One lowercase line for the commit subject, such as "add a notion destination"
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  cut:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      # The script dates the changelog entry with the local day; runners use UTC, which is a day ahead on US evenings.
+      TZ: America/New_York
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Only the push step gets the write token, so it is not saved in .git/config while npm packages install and run.
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm ci
+      # The release script refuses to run without the Claude CLI, so both strict checks run instead of skipping.
+      # Pinned so a new npm release can't run here unreviewed; bump it when the strict checks need a newer CLI.
+      - run: npm install --global @anthropic-ai/claude-code@2.1.304
+      - name: Commit the release
+        env:
+          BUMP: ${{ inputs.bump }}
+          SUMMARY: ${{ inputs.summary }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # ponytail: the commit body is the Unreleased bullets as written, not rewrapped to 70 columns.
+          {
+            node scripts/release-notes.mjs Unreleased
+            echo "- README: date the changelog entry"
+          } > "$RUNNER_TEMP/body.md"
+          npm run release -- "$BUMP" --summary "$SUMMARY" --body "$RUNNER_TEMP/body.md"
+      - name: Push the release branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch=$(git branch --show-current)
+          git push "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" "$branch"
+          echo "Pushed $branch. Open its PR: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/main...$branch?expand=1" | tee -a "$GITHUB_STEP_SUMMARY"
