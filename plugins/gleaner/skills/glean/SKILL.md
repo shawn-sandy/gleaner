@@ -1,6 +1,6 @@
 ---
 name: glean
-description: Save web pages, parts of them, or Claude's answers about them as tagged gleans. Gives each glean as a Markdown file in the conversation by default, or saves it to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, or file a page, a URL, part of a page, or an answer Claude gave about one, such as "save this page", "grab the part about animation lengths", "add this bit too", "save that answer", "done, save them", or "save this as an artifact", or to find or index saved gleans.
+description: Save web pages, parts of them, or Claude's answers about them as tagged gleans. Gives each glean as an HTML file in the conversation by default, or saves it to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, or file a page, a URL, part of a page, or an answer Claude gave about one, such as "save this page", "grab the part about animation lengths", "add this bit too", "save that answer", "done, save them", or "save this as an artifact", or to find or index saved gleans.
 argument-hint: '[--to chat | drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
@@ -10,7 +10,7 @@ Gather the best of what you read into tagged, searchable clips. Use shared local
 
 Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of six places:
 
-- **This conversation** (default on every surface): a Markdown file given to the user in the chat. Nothing is stored, so it can't be searched later.
+- **This conversation** (default on every surface): an HTML file given to the user in the chat, or a `.md` file when the resolved format is `markdown`. Nothing is stored, so it can't be searched later.
 - **Google Drive:** uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
 - **This project** (Claude Code): the folder the Claude Code session is working in.
@@ -104,7 +104,7 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 
 | Flag | Saves to |
 | --- | --- |
-| `--to chat` | This conversation → a Markdown file in the chat, not stored anywhere |
+| `--to chat` | This conversation → an HTML file in the chat (`.md` when the resolved format is `markdown`), not stored anywhere |
 | `--to drive` | Google Drive → `Browser Research/<Category>/` |
 | `--to notion` | Notion → the `Browser Research` database |
 | `--to notion:"Database Name"` | Notion → that database |
@@ -159,6 +159,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 - **Destination:** the update goes wherever that clip was saved, even when that isn't this surface's default. A request that names a different destination (a `--to` flag or words) makes a new clip there instead.
 - **Managing parts** with nothing being collected ("drop the last part", "change part 2's note") works on the parts of the page's clip from this session, and saves it again.
 - **Storing a chat clip:** right after a clip is given in this conversation, a request that only names a stored destination ("save it to Drive", "put that in this project", or just a `--to` flag) saves that same clip there, parts and answers included, as a new clip. Don't re-read the page or treat it as Save answer.
+- **Changing a chat clip's format:** right after a clip is given in this conversation, a request that only names a format ("keep it as markdown", "give me the .md", "make it HTML again") gives that same clip again in this conversation in that format, under the same name with the new extension, and says it replaces the earlier copy above. Don't re-read the page or treat it as Save page.
 - **A new clip on request:** "as a new clip", "separately", or "on its own" skips all this and makes a new clip.
 - **Clips from earlier sessions** are never updated. Adding to one means saving an updated copy (see step 2) or a new clip.
 
@@ -320,9 +321,10 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`). Use the destination and format already resolved in step 2. The name-based discovery and default paths below apply only to an unconfigured or explicit destination without a verified locator. For configured Drive/Notion destinations use the retained ID; for configured local/Cowork destinations use the retained base path and append only the category folder. Recheck access, never substitute a same-named resource.
 
    **This conversation** (the default)
-   - Nothing is stored and there are no folders; the clip's **Category:** line does that job. The clip is always Markdown, whatever the format setting.
-   - If this session can attach a file to its reply for the user to download (a file-sending tool, or file creation that shows the file in the chat), write `<name>.md` outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and attach it. A file written somewhere the user can't see from the chat doesn't count.
-   - Otherwise put the whole clip in one Markdown code block, with `<name>.md` on the line above it. Use a longer fence than any code block inside the clip, so the clip's own code doesn't cut it short.
+   - Nothing is stored and there are no folders; the clip's **Category:** line does that job. The save happens in this chat only: never publish the clip as an artifact or write it into the project for this destination.
+   - If this session can attach a file to its reply for the user to download (a file-sending tool, or file creation that shows the file in the chat), write `<name>.html` outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and attach it. When the resolved format is `markdown` (from any scope, such as "keep it as markdown" or a stored `default_format: markdown`, or kept from a destination that failed, as in the Fallback), write the step 3 Markdown as `<name>.md` instead. A file written somewhere the user can't see from the chat doesn't count.
+   - **For an HTML file, build the page** from the template under Artifact below, filled by the same rules. A downloaded file has no publisher to add the page basics, so put these four lines above its `<title>`, in this order: `<!doctype html>`, `<html lang="en">` (with the clip's language code if it isn't English), `<meta charset="utf-8">`, and `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`.
+   - Otherwise, when no file can be attached, put the whole clip in one Markdown code block, with `<name>.md` on the line above it, since a page of HTML can't be read in the chat. Use a longer fence than any code block inside the clip, so the clip's own code doesn't cut it short.
 
    **Google Drive**
    - **Other Drive connectors** (such as ChatGPT's): the Drive queries and parameters in this skill, here and in step 2 and the Clip index, are the Claude connector's. Use your connector's equivalents by the names this session shows. If it has no equivalent for a check, such as the duplicate search, say so in one line and skip that check. If it can't convert an upload to a Google Doc or Sheet, or the conversion fails, upload the raw file with `.md` (or `.csv` for a snapshot sheet) added to the title; use the fallback below only if that upload also fails.
@@ -371,7 +373,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so reuse a path only to update that same clip (see Updating a clip saved this session).
    - **Fill the template below** from the summary in step 3, replacing each `[[…]]` placeholder, so every clip looks like one set:
      - Each of the clip's bold header lines, from Source down (Supersedes and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
-     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as How it works or Key points in a part clip, or the TL;DR of a single-answer clip. A tutorial's Steps section takes the place of the Key points heading and list, with its own heading and a numbered list. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. The divider before the follow-up prompt becomes an `<hr>`, and the prompt's pre block gets `class="prompt"`, so it wraps on narrow screens instead of running off the edge. Keep every link, timestamped video links included.
+     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as How it works or Key points in a part clip, or the TL;DR of a single-answer clip. A tutorial's Steps section takes the place of the Key points heading and list, with its own heading and a numbered list. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block with `tabindex="0"`, so keyboard users can scroll it when it runs wide. The divider before the follow-up prompt becomes an `<hr>`, and the prompt's pre block gets `class="prompt"`, so it wraps on narrow screens instead of running off the edge. Keep every link, timestamped video links included.
      - The page title is the clip title, shortened to a short name if it runs long: keep the specific words, drop site names and taglines. The h1 keeps the full title.
      - Escape page text: write an ampersand as `&amp;`, angle brackets as `&lt;` and `&gt;`, and a double quote inside an attribute (such as a link address) as `&quot;`.
      - The page is the user's summary, not a copy of the source: link the source, but don't reproduce its logo, styling, or byline.
