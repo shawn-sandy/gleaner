@@ -26,7 +26,7 @@ npm run validate
 npm test
 ```
 
-Local validation checks all four Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow; `.github/workflows/release.yml` only publishes releases, and `.github/workflows/cut-release.yml` only runs `npm run release` on `main` when started by hand.
+Local validation checks all four Skills, ChatGPT metadata, manifests, required files, local references, and Markdown. When Claude Code CLI is on `PATH`, it also runs `claude plugin validate . --strict` and `claude plugin validate ./plugins/gleaner --strict`; otherwise it reports a skip. There is no GitHub Actions validation workflow; `.github/workflows/release.yml` only publishes releases, and `.github/workflows/cut-release.yml`, started by hand, only runs `npm run release` on `main` and pushes its `release/X.Y.Z` branch.
 
 ## Coding Style & Naming Conventions
 

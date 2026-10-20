@@ -583,7 +583,7 @@ gleaner/
 │   ├── changelog.mjs               # changelog parsing shared by the release scripts
 │   ├── release.mjs                 # npm run release: bump, date the changelog, validate, commit
 │   ├── release.test.mjs            # release script tests
-│   ├── release-notes.mjs           # prints one version's changelog entry for the GitHub Release
+│   ├── release-notes.mjs           # prints a version's changelog entry, or the Unreleased one, for the workflows
 │   ├── validate-skills.mjs         # Skill, metadata, manifest, and reference checks
 │   └── validate-skills.test.mjs    # validator fixture tests
 ├── .markdownlint-cli2.jsonc        # Markdown lint globs and house-style rule overrides
