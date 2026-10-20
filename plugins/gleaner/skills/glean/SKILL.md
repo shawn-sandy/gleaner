@@ -10,7 +10,7 @@ Gather the best of what you read into tagged, searchable clips. Use shared local
 
 Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of six places:
 
-- **This conversation** (default on every surface): an HTML file given to the user in the chat. Nothing is stored, so it can't be searched later.
+- **This conversation** (default on every surface): an HTML file given to the user in the chat, or a `.md` file when the resolved format is `markdown`. Nothing is stored, so it can't be searched later.
 - **Google Drive:** uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
 - **This project** (Claude Code): the folder the Claude Code session is working in.
@@ -104,7 +104,7 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 
 | Flag | Saves to |
 | --- | --- |
-| `--to chat` | This conversation → an HTML file in the chat, not stored anywhere |
+| `--to chat` | This conversation → an HTML file in the chat (`.md` when the resolved format is `markdown`), not stored anywhere |
 | `--to drive` | Google Drive → `Browser Research/<Category>/` |
 | `--to notion` | Notion → the `Browser Research` database |
 | `--to notion:"Database Name"` | Notion → that database |

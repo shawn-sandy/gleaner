@@ -273,7 +273,7 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 
 | Destination | How to choose it | Needs |
 | --- | --- | --- |
-| **This conversation** → an HTML file in the chat | Default everywhere; "just give me the file", or `--to chat` | Nothing |
+| **This conversation** → an HTML file in the chat (`.md` with the `markdown` format) | Default everywhere; "just give me the file", or `--to chat` | Nothing |
 | **Google Drive** → `Browser Research/<category>/` | "save to Drive", or `--to drive` | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or "this project" inside Cowork | Claude desktop app open and connected |
@@ -328,7 +328,7 @@ done --to cowork:Serve513
 
 | Flag | Saves to |
 | --- | --- |
-| `--to chat` | An HTML file in the conversation, not stored |
+| `--to chat` | An HTML file in the conversation (`.md` with the `markdown` format), not stored |
 | `--to drive` | Drive → `Browser Research/<Category>/` |
 | `--to drive:"Folder Name"` | Drive → `<Folder Name>/<Category>/` |
 | `--to notion` | Notion → `Browser Research` database |
