@@ -21,7 +21,7 @@ Use the first that applies:
 
 Read the clip with the tool its destination uses in the glean skill: the Drive connector, the Notion connector, the Artifact tool's `read` action, or a local file read; a clip given in this conversation is read from the conversation. If it can't be read, say so in one line and stop. Never rebuild a clip from memory.
 
-- **Check it's a Gleaner clip:** a file has the **Saved:** and **Category:** header lines, a Notion page has Saved and Category properties, and an artifact has the `Gleaner clip` generator line. Where it's stored doesn't count: a file in a clip folder without these lines may be a clip saved before categories existed, so treat it as not a clip here and offer glean's updated copy with categories (see its Clip index). If it isn't a clip, say so, suggest follow-ups without saving them, and offer to save it as a clip through glean first. Never save a copy of something that isn't a clip.
+- **Check it's a Gleaner clip:** a Markdown file has the **Saved:** and **Category:** header lines, a Notion page has Saved and Category properties, and an artifact or an HTML clip file has the `Gleaner clip` generator line. Where it's stored doesn't count: a file in a clip folder without these lines may be a clip saved before categories existed, so treat it as not a clip here and offer glean's updated copy with categories (see its Clip index). If it isn't a clip, say so, suggest follow-ups without saving them, and offer to save it as a clip through glean first. Never save a copy of something that isn't a clip.
 - **Use the newest copy:** when several matches are copies of one clip, linked by **Supersedes:** lines, use the newest one, which no other clip supersedes. Before saving follow-ups to a clip from an earlier session, search its destination for its link; if a newer copy supersedes it, review that copy instead and say so.
 
 ## Review it
@@ -72,7 +72,7 @@ Add the follow-ups to the clip as its last section, after Takeaways and just abo
 3. **<action>**: <why>
 ```
 
-If the clip already has a Follow-ups section, add the new dated list below the earlier ones. Never remove or reword earlier follow-ups, and leave the rest of the clip as it is, except that an updated copy's follow-up prompt is filled in for where that copy lives (glean step 3 Rules).
+In an HTML clip (an artifact, or an HTML file given in the chat), the section is an h2 with a dated paragraph and a numbered list, just above the `<hr>`, and the clip stays HTML. If the clip already has a Follow-ups section, add the new dated list below the earlier ones. Never remove or reword earlier follow-ups, and leave the rest of the clip as it is, except that an updated copy's follow-up prompt is filled in for where that copy lives (glean step 3 Rules).
 
 Save through the glean skill. The reviewed clip's destination, category folder, and format are session overrides for this save, the way glean step 2 treats a clip saved this session, whatever the defaults are. Skip first-save setup and the duplicate check.
 
