@@ -1,0 +1,51 @@
+# Cut a release from main by hand from the Actions tab: run npm run release and push its release/X.Y.Z branch.
+# Open a PR from that branch; merging it runs release.yml, which tags and publishes the version.
+name: Cut release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        type: choice
+        options: [patch, minor, major]
+        default: minor
+      summary:
+        description: One lowercase line for the commit subject, such as "add a notion destination"
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  cut:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      # The script dates the changelog entry with the local day; runners use UTC, which is a day ahead on US evenings.
+      TZ: America/New_York
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm ci
+      # The release script refuses to run without the Claude CLI, so both strict checks run instead of skipping.
+      - run: npm install --global @anthropic-ai/claude-code
+      - name: Commit the release and push its branch
+        env:
+          BUMP: ${{ inputs.bump }}
+          SUMMARY: ${{ inputs.summary }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # ponytail: the commit body is the Unreleased bullets as written, not rewrapped to 70 columns.
+          {
+            awk '/^\*\*Unreleased\*\*$/ { on = 1; next } /^\*\*[0-9]+\.[0-9]+\.[0-9]+\*\* \(/ { on = 0 } on' README.md | sed '/^$/d'
+            echo "- README: date the changelog entry"
+          } > "$RUNNER_TEMP/body.md"
+          npm run release -- "$BUMP" --summary "$SUMMARY" --body "$RUNNER_TEMP/body.md"
+          branch=$(git branch --show-current)
+          git push origin "$branch"
+          echo "Pushed $branch. Open its PR: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/main...$branch?expand=1" | tee -a "$GITHUB_STEP_SUMMARY"
