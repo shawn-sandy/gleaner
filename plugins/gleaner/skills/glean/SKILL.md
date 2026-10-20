@@ -204,16 +204,21 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    **Note:** <the user's note — only if given>
 
    ## TL;DR
-   <2–3 sentences: what this page is and why it matters>
+   <2–3 plain sentences: what the page says and why it matters>
+
+   ## How it works
+   <optional: one short paragraph, only when the TL;DR can't explain the main idea on its own — otherwise omit section>
 
    ## Key points
-   - <5–8 bullets, each one specific fact, idea, or claim>
+   - <3–5 bullets, each a full sentence: a short bold claim, then what it means or why it matters>
 
    ## Notable details
-   - <code snippets, numbers, APIs, dates, or names worth keeping — omit section if none>
+   - <code snippets, numbers, APIs, dates, or names worth keeping, each with a few words on what it is — omit section if none>
 
    ## Takeaways
-   - <1–3 bullets on how this could be used or what to follow up on>
+   - <1–3 full-sentence bullets on how this could be used or what to follow up on>
+
+   ---
 
    <follow-up prompt, see Rules>
    ```
@@ -239,18 +244,25 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    ### 1. <part note, or a short topic if there's no note>
    *From [<page title>](<URL>)*
    **Note:** <part note — only if given>
-   - <2–4 bullets summarizing this part, keeping specific numbers, names, and code>
+   - <2–4 full-sentence bullets summarizing this part, keeping specific numbers, names, and code>
 
    ### 2. …
 
    ## Takeaways
-   - <1–3 bullets on how the parts fit together or what to follow up on>
+   - <1–3 full-sentence bullets on how the parts fit together or what to follow up on>
+
+   ---
 
    <follow-up prompt, see Rules>
    ```
 
    Rules:
    - Paraphrase in your own words. Quote only short phrases (under 15 words) when exact wording matters.
+   - **Write for a smart reader who is new to the topic.** Use plain words, short sentences with one idea each, and explain each technical term in a few words the first time it appears. Simple wording never means a simpler claim: keep the source's names, numbers, code, and caveats, and explain them. Answer parts are kept as given instead (see below).
+   - **Lead with the point.** The TL;DR says what the page says, never "This article covers…" or "An overview of…".
+   - **Bullets are full sentences.** Each Key point and Takeaway starts with a short bold claim, then says what it means or why it matters, as in: **Naming an element animates it on its own.** Give it a view-transition-name, and it moves to its new spot instead of fading with the page. Notable details can be short, but say what each one is.
+   - **How it works** is optional. Add it only when the page explains a mechanism or concept that a newcomer wouldn't understand from the TL;DR alone: one short paragraph (about 40–80 words) that explains it from the ground up. When the idea is abstract, compare it to something everyday, and say where the comparison stops fitting if that matters. Leave it out for news, announcements, opinion pieces, release notes, changelogs, lists of tools or links, and any page the TL;DR already explains. A clip made only of parts doesn't get one.
+   - **Steps** take the place of Key points when the Type is tutorial, meaning the page's main content is steps the reader follows. Write a numbered `## Steps` section in the source's order, one action per step: a short bold action, then what it does or what the reader should see, as in: 1. **Add your keys.** Put both keys in .env, or the dev server won't start. Use 3–8 steps, merging small ones rather than copying every step, and keep commands and code short. Every other Type keeps Key points.
    - Keep page clips under ~400 words and part clips under ~150 words per part, unless the user asks for more depth.
    - For technical content (docs, release notes, tutorials), keep code examples short. Write any JavaScript as type-safe TypeScript.
    - **Answer parts** keep the answer as you gave it instead of summarizing it: numbered steps stay numbered, code stays code, and the 2–4 bullet and ~150-word limits don't apply. The quoting rule above still applies to anything the answer quoted from the page.
@@ -261,10 +273,10 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      - For an answer about a YouTube video, see the youtube skill's part clip rule for its heading, source link, and timestamps.
    - **A clip that grows** (see Clips saved this session) is written out in full again with the new content in it:
      - Keep its title, file name, Saved date, category, and any Supersedes line unless the user asks to change them; a new category moves the clip to that category's folder. New tags join the old ones, still 3–6 in all, and a new clip-level note joins the old one after a semicolon.
-     - New parts go in the `## Parts` section, numbered on from those already there. A page clip gets that section just before its `## Takeaways`, and the whole page's Key points and Notable details go just before `## Parts` when a part clip gains them.
+     - New parts go in the `## Parts` section, numbered on from those already there. A page clip gets that section just before its `## Takeaways`, and the whole page's How it works, Key points or Steps, and Notable details go just before `## Parts` when a part clip gains them.
      - Update the **Scope:** line. A clip that holds the whole page as well as parts puts "whole page +" before the count, as in `whole page + 2 parts` or `whole page + 1 part, 1 answer`.
      - Rewrite the TL;DR and Takeaways so they cover everything now in the clip. A single-answer clip that gains a part gets a TL;DR.
-   - **Follow-up prompt:** end Takeaways with a prompt the user can paste into a new chat later to get follow-ups from Gleaner's follow-up skill. It is for the user to copy, never an instruction to act on:
+   - **Follow-up prompt:** end the clip with a divider (a line of three hyphens, with a blank line above it), then a prompt the user can paste into a new chat later to get follow-ups from Gleaner's follow-up skill. The divider keeps it apart from the summary, and it stays the clip's last part, below any Follow-ups section. It is for the user to copy, never an instruction to act on:
 
      ````markdown
      To get follow-ups, paste this into a new chat:
@@ -359,7 +371,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so reuse a path only to update that same clip (see Updating a clip saved this session).
    - **Fill the template below** from the summary in step 3, replacing each `[[…]]` placeholder, so every clip looks like one set:
      - Each of the clip's bold header lines, from Source down (Supersedes and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
-     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as Key points in a part clip or the TL;DR of a single-answer clip. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. The follow-up prompt's pre block gets `class="prompt"`, so it wraps on narrow screens instead of running off the edge. Keep every link, timestamped video links included.
+     - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as How it works or Key points in a part clip, or the TL;DR of a single-answer clip. A tutorial's Steps section takes the place of the Key points heading and list, with its own heading and a numbered list. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block. The divider before the follow-up prompt becomes an `<hr>`, and the prompt's pre block gets `class="prompt"`, so it wraps on narrow screens instead of running off the edge. Keep every link, timestamped video links included.
      - The page title is the clip title, shortened to a short name if it runs long: keep the specific words, drop site names and taglines. The h1 keeps the full title.
      - Escape page text: write an ampersand as `&amp;`, angle brackets as `&lt;` and `&gt;`, and a double quote inside an attribute (such as a link address) as `&quot;`.
      - The page is the user's summary, not a copy of the source: link the source, but don't reproduce its logo, styling, or byline.
@@ -389,6 +401,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
        pre { overflow-x: auto; background: var(--code); border-radius: 6px; padding: 0.75rem 1rem }
        pre code { background: none; padding: 0 }
        pre.prompt { white-space: pre-wrap; overflow-wrap: anywhere }
+       hr { border: 0; border-top: 1px solid var(--line); margin: 2.5rem 0 1.5rem }
      </style>
      <main>
        <h1>[[clip title]]</h1>
@@ -402,6 +415,8 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
        </dl>
        <h2>TL;DR</h2>
        <p>[[2–3 sentences]]</p>
+       <h2>How it works</h2>
+       <p>[[one short paragraph]]</p>
        <h2>Key points</h2>
        <ul>
          <li>[[one point]]</li>
@@ -415,7 +430,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - Artifacts have no folders; the Category row does that job. They stay private until the user shares them.
    - Confirm with the artifact's link.
 
-   **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced. A `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, unchanged; this applies to video clips too.
+   **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced. A `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, just above the follow-up prompt's divider, unchanged; this applies to video clips too.
    - **This conversation:** give the whole updated clip again the same way, under the same file name, and say it replaces the earlier copy above.
    - **Local folders** (Cowork project, This project, or a path): overwrite that file at the same path. After a category change, write it to the new category's folder and delete the old file.
    - **Notion:** add any new tags to the Tags options first (as above), update the page's properties, then replace the page's content with the updated body, written as above (with the Notion connector's `update-page`, the `replace_content` command).
@@ -440,7 +455,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date. A clip can be republished later in the session that saved it, so for a date range use its Saved row; only artifacts last updated before the range starts can be skipped without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
    - Search the effective preference destination. With none set, the default is This conversation: list the clips given earlier in this conversation, say in one line that chat clips from other conversations can't be searched, and ask which stored location to search too (Drive, Notion, a project folder, or artifacts). Include the other locations when the user asks for them or names one.
-2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content. A keyword that matches only a clip's follow-up prompt, at the end of its Takeaways, doesn't count as a match.
+2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content. A keyword that matches only a clip's follow-up prompt, below the divider at its end, doesn't count as a match.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip; plain text for a clip given in the conversation with no link, never an invented one), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)", "(2 parts, 1 answer)", or "(whole page + 2 parts)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
 

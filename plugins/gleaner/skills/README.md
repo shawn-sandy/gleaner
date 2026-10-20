@@ -53,7 +53,7 @@ keep this article for later, good intro to view transitions
 save https://example.com/article
 ```
 
-Gleaner reads the page, skips navigation and ads, and saves a clip of up to ~400 words: a TL;DR, key points, notable details, and takeaways. Anything you add after the request ("good intro to view transitions") is saved as the clip's note.
+Gleaner reads the page, skips navigation and ads, and saves a plain-language clip of up to ~400 words: a TL;DR, key points (or a numbered Steps section for a tutorial), notable details, and takeaways, plus a short explanation of how the main idea works when the TL;DR can't cover it. Technical terms are explained the first time they appear. Anything you add after the request ("good intro to view transitions") is saved as the clip's note.
 
 ### Collect parts, then save once
 
@@ -128,7 +128,7 @@ clip this talk, for the motion post
 save https://youtu.be/<video-id> --to notion
 ```
 
-Gleaner reads the transcript and saves a clip with a TL;DR, **key moments** that each link to the second they happen, notable details, and takeaways. A **Video** line records the channel, publish date, length, and whether the transcript came from captions or auto-captions. Every link to a video is saved as its canonical watch URL, so saving it again from a different link is still caught as a duplicate.
+Gleaner reads the transcript and saves the same plain-language clip as for a page, with **key moments** that each link to the second they happen in place of key points. A **Video** line records the channel, publish date, length, and whether the transcript came from captions or auto-captions. Every link to a video is saved as its canonical watch URL, so saving it again from a different link is still caught as a duplicate.
 
 ### Collect moments
 
@@ -167,7 +167,7 @@ suggest follow-ups for my view transitions clip
 /gleaner:follow-up ./browser-research/design-engineering/2026-10-18-motion-timing.md
 ```
 
-Gleaner reads the clip's link, TL;DR, note, content, and the links inside it, then suggests three follow-ups, each tied to something in the clip, such as reading a linked page, moving the post your note mentions forward, or comparing it with clips that share its tags. Pick one, or say what you'd rather do. When the clip has no note, takeaways, or links to work from, Gleaner asks what you want instead of guessing. The follow-ups are saved at the end of the clip, under a dated Follow-ups heading. A clip from an earlier session is never edited: you get an updated copy that links to the original. Nothing else is saved unless you ask.
+Gleaner reads the clip's link, TL;DR, note, content, and the links inside it, then suggests three follow-ups, each tied to something in the clip, such as reading a linked page, moving the post your note mentions forward, or comparing it with clips that share its tags. Pick one, or say what you'd rather do. When the clip has no note, takeaways, or links to work from, Gleaner asks what you want instead of guessing. The follow-ups are saved after the clip's takeaways, under a dated Follow-ups heading. A clip from an earlier session is never edited: you get an updated copy that links to the original. Nothing else is saved unless you ask.
 
 ## More help
 
