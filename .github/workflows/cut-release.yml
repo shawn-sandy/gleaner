@@ -35,7 +35,7 @@ jobs:
           node-version: 22
       - run: npm ci
       # The release script refuses to run without the Claude CLI, so both strict checks run instead of skipping.
-      # Pinned so a new npm release can't run here unreviewed; bump it when the strict checks need a newer CLI.
+      # Pinned so a new npm release can't run here unreviewed; bump it when the strict checks need a newer CLI, together with validate.yml.
       - run: npm install --global @anthropic-ai/claude-code@2.1.304
       - name: Commit the release
         env:
