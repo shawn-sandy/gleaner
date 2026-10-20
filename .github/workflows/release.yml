@@ -19,6 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Publish the plugin.json version
+        id: publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -29,3 +30,19 @@ jobs:
           fi
           node scripts/release-notes.mjs "$version" > "$RUNNER_TEMP/notes.md"
           gh release create "v$version" --target "$GITHUB_SHA" --title "Gleaner $version" --notes-file "$RUNNER_TEMP/notes.md"
+          echo "released=true" >> "$GITHUB_OUTPUT"
+      # The Gleaner site reads its changelog from these releases at build time, so a new release rebuilds it.
+      - name: Rebuild the Gleaner site
+        if: steps.publish.outputs.released == 'true'
+        env:
+          NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+        run: |
+          if [ -z "$NETLIFY_BUILD_HOOK" ]; then
+            echo "::notice::NETLIFY_BUILD_HOOK is not set, so the site was not rebuilt."
+            exit 0
+          fi
+          # A re-run skips this step once the release exists, so retry here instead.
+          curl --fail-with-body --silent --show-error --retry 3 --request POST --data '{}' "$NETLIFY_BUILD_HOOK" || {
+            echo "::error::The site was not rebuilt. Re-running this job will not retry it, because the release already exists; trigger a deploy in Netlify instead."
+            exit 1
+          }
