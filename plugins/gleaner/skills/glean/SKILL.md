@@ -434,7 +434,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **One artifact per clip.** Every new clip, updated copies of earlier clips included, is a new artifact. Never publish with an existing artifact's `url`, since that replaces the page.
    - **Write the page** as `<name>.html` in a scratch folder: the session's scratchpad directory if it has one, otherwise a temporary folder outside the project, never `browser-research/`. If the file already exists, add `-2`, `-3`, and so on. Publishing a path that was already published in this session republishes over that artifact, so reuse a path only to update that same clip (see Updating a clip saved this session).
    - **Fill the template below** from the summary in step 3, replacing each `[[…]]` placeholder, so every clip looks like one set:
-     - Each of the clip's bold header lines, from Source down (Supersedes and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
+     - Each of the clip's bold header lines, from Source down (Supersedes, Channel, and Video included when present), becomes a row in the header list, in the same order. Leave out lines the clip doesn't have. Several sources share one Source row, one link per line.
      - Each section heading becomes an h2 and each part heading an h3. Leave out sections the clip doesn't have, such as How it works or Key points in a part clip, or the TL;DR of a single-answer clip. A tutorial's Steps section takes the place of the Key points heading and list, with its own heading and a numbered list. Bullets become a list, numbered steps a numbered list, a part's *From* or *Answer about* line a paragraph with its link, and code a pre block with `tabindex="0"`, so keyboard users can scroll it when it runs wide. The divider before the follow-up prompt becomes an `<hr>`, and the prompt's pre block gets `class="prompt"`, so it wraps on narrow screens instead of running off the edge. Keep every link, timestamped video links included.
      - The page title is the clip title, shortened to a short name if it runs long: keep the specific words, drop site names and taglines. The h1 keeps the full title.
      - Escape page text: write an ampersand as `&amp;`, angle brackets as `&lt;` and `&gt;`, and a double quote inside an attribute (such as a link address) as `&quot;`.
@@ -530,7 +530,7 @@ Notion users already have a live index in the database; offer its link first. If
 ## Edge cases
 
 - **Paywalled or sign-in pages:** summarize only what's visible and say so.
-- **YouTube videos:** use Gleaner's youtube skill (`../youtube/SKILL.md`), which reads the transcript and links key moments.
+- **YouTube videos:** use Gleaner's youtube skill (`../youtube/SKILL.md`), which reads the video's description and channel and links its chapters.
 - **PDFs or other videos in the tab:** summarize the text or transcript if readable; otherwise tell the user what couldn't be read.
 - **Several tabs at once:** if the user groups tabs and says "save these pages", write one page clip per tab, or one combined clip if they ask for it.
 - **Session ended mid-collection:** collected parts exist only in the conversation. If the user comes back in a new session asking about unsaved parts, say they weren't saved and offer to start again.
