@@ -36,6 +36,8 @@ Everything below comes from `plugins/gleaner/skills/glean/SKILL.md` and `plugins
 
 ## Phase 0: richer reads with no new parts
 
+**Status:** shipped in Gleaner 2.9.0 as the Page facts section of `plugins/gleaner/skills/glean/SKILL.md`. The shipped script is trimmed to what that release uses (`canonical`, `next`, `updated`, `schemaType`, `outline`), reads `rel="next"` from links in the page as well as the head, and returns a next page only when it continues the current one. It was type-checked with `tsc --checkJs --strict` and run against routed fixture pages, not live sites. The sketch below is the first version, kept for the 0b fields.
+
 Before adding agents or servers, one script run through the browser's JavaScript tool (`javascript_tool` with `javascript_exec`, the same tool that reads highlights) can return the facts that page text leaves out. This is the sketch tested against local fixtures (a schema.org graph with two authors and a broken JSON-LD block, and a page with only meta tags):
 
 ```js
@@ -85,7 +87,7 @@ What each field would change in the skill:
 - **`canonical`:** the duplicate check (step 2) and "Same page" in "Clips saved this session" also match the canonical URL, so a page reached through an AMP link, a mirror, or `?ref=` is caught. The page supplies this value, so use it only when it is on the same site as the page; a canonical pointing to another site is ignored.
 - **`next`:** turns "if the page is long or paginated, read all of it" into a rule: follow `rel="next"` on the same site, up to a set number of pages, and say how many were read.
 - **`words` and `outline`:** decide when a page is long enough to hand to a reader subagent (see below), and let "grab the part about X" match a heading before searching the full text.
-- **`author`, `published`, `modified`, `lang`:** optional new header lines, such as `**By:** Ada Lovelace · published 2026-10-01 · updated 2026-10-12`. This is a clip format change: it touches step 3's templates, the artifact and chat HTML template, the Notion property table, and "What a clip looks like" in the README. `lang` also fills the HTML clip's `<html lang>`, which step 6 already asks for.
+- **`author`, `published`, `modified`, `lang`:** optional new header lines, such as `**By:** Ada Lovelace · published 2026-10-01 · updated 2026-10-12`. This is a clip format change: it touches step 3's templates, the artifact and chat HTML template, the Notion property table, and "What a clip looks like" in the README. `lang` doesn't belong in the HTML clip's `<html lang>`, though: a clip is written in the user's language, which may not be the page's.
 - **`schemaType`:** a hint for **Type** (`HowTo` suggests tutorial, `VideoObject` suggests video).
 
 Surfaces: the side panel, the Claude Code desktop browser, Claude in Chrome, and the ChatGPT Work browser when it shows a JavaScript tool. ChatGPT's connected tabs have no JavaScript tool, so they keep today's behavior.
