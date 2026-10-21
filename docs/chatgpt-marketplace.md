@@ -24,7 +24,7 @@ Do not assume the ChatGPT Chrome extension exposes the current tab. Ask for a UR
 
 Google Drive requires a connected Drive app with permission to create files in the target folder. If a save fails, return the generated Markdown and explicitly say it was **not** saved.
 
-For YouTube, use timestamped transcript text only if it is actually available from the connected browser or supplied by the user. Otherwise ask whether to save a description-only clip with `transcript: none`, and on yes ask for a short description to add to the video's own; do not invent quotes or key moments.
+For YouTube, write the clip from the video's description and chapters, and use timestamped transcript text only if the connected browser shows it or the user supplies it. When the video has no description, ask for an optional short one; do not invent quotes or key moments.
 
 ## Validation checklist
 
@@ -36,7 +36,7 @@ For YouTube, use timestamped transcript text only if it is actually available fr
 - [ ] Work browser clipping works in Work mode
 - [ ] With no preferences set, `save this page` returns the clip in the conversation, as an attached `.html` file (`.md` when the format is `markdown`) or, when attachments aren't available, the whole clip in one code block, and stores nothing
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
-- [ ] Missing transcript asks before saving, then produces a clearly labeled description-only clip
+- [ ] A video saves from its description with a **Channel** line, and one with no description asks for an optional short one
 - [ ] Claude marketplace validation and existing workflows still work
 
 Marketplace import, browser, and Drive behavior require live manual testing. Repository validation alone does not establish runtime compatibility.

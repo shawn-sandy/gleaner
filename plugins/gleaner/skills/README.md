@@ -9,7 +9,7 @@ Gleaner ships four skills. You don't have to pick one: describe what you want, a
 | [youtube](youtube/SKILL.md) | `/gleaner:youtube` | YouTube videos and moments from them |
 | [follow-up](follow-up/SKILL.md) | `/gleaner:follow-up` | Three suggested next steps for a saved clip, saved into it |
 
-The youtube skill handles only what's different about video: reading the transcript and writing a summary with timestamped links. Everything else (notes, parts, destinations, categories, saving, and search) comes from glean. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
+The youtube skill handles only what's different about video: reading the video's description and channel and writing a summary with timestamped chapter links. Everything else (notes, parts, destinations, categories, saving, and search) comes from glean. A video clip lands in the same folder, with the same categories and tags, as a page clip, and "what did I save about X?" finds both.
 
 For installation and the full feature guide, see the [main README](../../../README.md).
 
@@ -128,11 +128,11 @@ clip this talk, for the motion post
 save https://youtu.be/<video-id> --to notion
 ```
 
-Gleaner reads the transcript and saves the same plain-language clip as for a page, with **key moments** that each link to the second they happen in place of key points. A **Video** line records the channel, publish date, length, and whether the transcript came from captions or auto-captions. Every link to a video is saved as its canonical watch URL, so saving it again from a different link is still caught as a duplicate.
+Gleaner reads the video's description and saves the same plain-language clip as for a page, with the video's chapters as **key moments** that each link to the second they start, in place of key points. A **Channel** line names and links the channel, and a **Video** line records the publish date, length, and what the summary was written from. A **Links** section keeps the description's useful links, such as docs and repos, and leaves out sponsor, social, subscribe, merch, and shortened links. Every link to a video is saved as its canonical watch URL, so saving it again from a different link is still caught as a duplicate.
 
 ### Collect moments
 
-Pick parts by time, by topic, or by where you are in the video:
+Once you've pasted the transcript (see [Transcripts and missing descriptions](#transcripts-and-missing-descriptions)), pick parts by time, by topic, or by where you are in the video:
 
 ```text
 keep 3:10 to 5:40
@@ -143,20 +143,19 @@ done
 
 "Add this part" takes the chapter you're watching, or the last minute or so if the video has no chapters.
 
-### When there's no transcript
+### Transcripts and missing descriptions
 
-Without captions (or during a live stream), Gleaner asks whether to save the video anyway; say no and nothing is saved. Say yes, and it asks for a short description, adds it to the video's own description, and saves a clip of the whole video from the title, that description, and the chapters. Say "just save it" to skip the description, or paste the transcript instead for a full summary.
+Gleaner can't capture a video's transcript itself, so a clip is written from the video's description and chapters. If the video has no description, Gleaner asks for a short one, which is optional; say "skip" to save it from the title alone.
 
-A part can't be clipped without the transcript. If you ask for one anyway, Gleaner asks you to paste the transcript and offers a description-only clip of the whole video instead.
+A part can't be clipped without the transcript. If you ask for one anyway, Gleaner asks you to paste the transcript and offers a clip of the whole video instead.
 
-To copy a transcript on YouTube, open **…more** under the video, then **Show transcript**. Paste it after a description-only save, and Gleaner saves a full summary as an updated copy.
+To copy a transcript on YouTube, open **…more** under the video, then **Show transcript**. Paste it before saving, or after, to get a fuller summary: a clip saved this session is refreshed, and one from an earlier session gets an updated copy.
 
 ### Things to know
 
-- **Ads:** if an ad is playing, Gleaner skips it or waits for it to end before reading the transcript.
-- **Auto-captions:** Gleaner checks names and code terms against the title and description, since auto-captions often mishear them.
+- **Pasted transcripts:** Gleaner checks names and code terms against the title and description, since transcripts from auto-captions often mishear them.
 - **Private, members-only, or age-restricted videos:** sign in to YouTube in the browser Gleaner is using. The Claude Code Browser pane has its own sign-ins, separate from Chrome.
-- **ChatGPT without a JavaScript tool** (connected Chrome tabs, or a Work browser without one): Gleaner reads a transcript only when the video's tab shows one, so paste it if the tab doesn't (see [When there's no transcript](#when-theres-no-transcript)). It also can't read where you are in the video, so give "add this part" a time range or topic instead.
+- **ChatGPT without a JavaScript tool** (connected Chrome tabs, or a Work browser without one): Gleaner uses a transcript when the video's tab shows one; otherwise paste it (see [Transcripts and missing descriptions](#transcripts-and-missing-descriptions)). It also can't read where you are in the video, so give "add this part" a time range or topic instead.
 
 ## follow-up: what to do next with a clip
 

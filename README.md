@@ -58,7 +58,7 @@ Gleaner: Here's "Motion timing guidelines" as an HTML file, filed under Design E
 - **Plain-language requests.** "Keep this article," "grab the bit about easing," "done": no commands to memorize.
 - **Whole pages or just the good parts.** Highlight text, or describe a section and Gleaner finds it. Collect parts across tabs and sites, then save them as one clip.
 - **Answers too.** Ask Claude about what you're reading, then say "save that" to keep the answer, with its steps and code intact, on its own or alongside parts.
-- **YouTube videos too.** Save a video, or just the moments that matter, as a summary built from its transcript, with key moments that link to the exact second.
+- **YouTube videos too.** Save a video as a summary built from its description, with its channel, its useful links, and chapters that link to the exact second. Paste the transcript to clip just the moments that matter.
 - **Your reasons, kept.** Add a note to any request ("…for the motion post") and it's saved with the clip. Gleaner never invents notes.
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
 - **One clip per page.** In a session, saving or adding more from a page you've already clipped updates that clip instead of starting a new doc. A page clipped in an earlier session gets an updated copy that links to the original; clips from earlier sessions are never changed or deleted.
@@ -75,7 +75,7 @@ Gleaner includes four skills: two share the clip format and saving workflow, one
 | Skill | Claude Code command | Use it for |
 | --- | --- | --- |
 | [glean](plugins/gleaner/skills/glean/SKILL.md) | `/gleaner:glean` | Save pages, collect passages, keep answers, and find saved clips |
-| [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos and moments using transcripts and timestamped summaries |
+| [youtube](plugins/gleaner/skills/youtube/SKILL.md) | `/gleaner:youtube` | Save videos from their description, channel, and timestamped chapters |
 | [preferences](plugins/gleaner/skills/preferences/SKILL.md) | `/gleaner:preferences` | Shared destinations, formats, setup, and sync |
 | [follow-up](plugins/gleaner/skills/follow-up/SKILL.md) | `/gleaner:follow-up` | Suggest three follow-ups for a saved clip and save them to it, or ask what you want to do next |
 
@@ -246,15 +246,15 @@ On a YouTube video, ask the same way you would for a page, or pass a link:
 > clip this talk, for the motion post
 > save https://youtu.be/… to Notion
 
-Gleaner reads the video's transcript and writes the same plain-language summary as a page clip, with **key moments** that each link to the second they happen in place of key points. A **Video** line records the channel, publish date, length, and whether the transcript came from captions or auto-captions.
+Gleaner reads the video's description and writes the same plain-language summary as a page clip, with the video's chapters as **key moments** that each link to the second they start, in place of key points. A **Channel** line names and links the channel, and a **Video** line records the publish date, length, and what the summary was written from. A **Links** section keeps the description's useful links, such as docs and repos, and leaves out sponsor, social, subscribe, merch, and shortened links.
 
-Collect moments as parts by time or topic:
+Once you've pasted the transcript, collect moments as parts by time or topic:
 
 > keep 3:10 to 5:40
 > grab the part about generics
 > add this part *(the chapter you're watching, or the last minute or so)*
 
-If a video has no captions, Gleaner asks whether to save it anyway; say no and nothing is saved. Say yes, and it asks for a short description, adds it to the video's own description, and saves a clip from the title, description, and chapters; say "just save it" to skip the description. Paste the transcript (**…more → Show transcript** on YouTube) instead to get a full summary, or paste it after a description-only save to get one as an updated copy. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
+Gleaner can't capture a video's transcript itself. If a video has no description, it asks for a short one, which is optional; say "skip" to save it from the title alone. Paste the transcript (**…more → Show transcript** on YouTube), before or after saving, for a fuller summary with moments from the whole video. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
 
 Any link to a video (`youtu.be`, Shorts, a share link) is saved with the same **Source**, `youtube.com/watch?v=…`, so the duplicate check catches a video you've already clipped. A link with a timestamp opens the player at that time, so "add this part" uses that position.
 
@@ -483,7 +483,7 @@ Clips are written for a smart reader who is new to the topic: short sentences, t
 
 **A page clip you add to** in the same session keeps its summary and gains a Parts section before its Takeaways, with a Scope line such as `whole page + 2 parts`. Its TL;DR and Takeaways are rewritten to cover the new parts.
 
-**Video clip** adds a `**Video:**` line (channel, publish date, length, and transcript source) and swaps Key points for **Key moments**, each linking to its second in the video. A video part's heading links to where it starts, such as `3:10–5:40`.
+**Video clip** adds a `**Channel:**` line that links the channel and a `**Video:**` line (publish date, length, and what it was written from), and swaps Key points for **Key moments**, the video's chapters, each linking to its second in the video, and adds a **Links** section with the description's useful links. A video part's heading links to where it starts, such as `3:10–5:40`.
 
 **A clip you follow up on** gets a `## Follow-ups` section after its Takeaways: a dated, numbered list for each round of suggestions, with earlier rounds kept as they were.
 
@@ -508,8 +508,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **ChatGPT without a JavaScript tool.** Connected Chrome tabs, and a Work browser without one, can't read highlights, the playback position, or the page facts Gleaner uses to follow an article's later pages and match its canonical URL. Name the part or paste it, and give a video part a time range or topic instead of "this part."
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
-- **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), Gleaner asks before saving a clip from the title, description, and chapters, plus a short description if you add one. Parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
-- **In Claude, YouTube transcripts need a desktop browser, not a phone.** Gleaner gets a video's transcript by running a small script in the video's browser tab, through the Chrome side panel or the Claude Code desktop browser, and phones have neither. To get a full summary, save the video from Chrome or Claude Code desktop on your computer, or paste the transcript into the chat (**…more → Show transcript** on YouTube). In ChatGPT on a computer, the Work browser can capture transcripts when it has a JavaScript tool.
+- **Gleaner doesn't capture YouTube transcripts.** Video clips are written from the description and chapters, or from a short description you give when there is none. Paste the transcript (**…more → Show transcript** on YouTube) for a fuller summary or to clip parts; in ChatGPT, transcript lines the video's tab shows work too. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **Paywalls and sign-ins.** Only visible content is summarized, and the clip says so.
 
 ## Troubleshooting
@@ -528,7 +527,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 
 ## Customizing
 
-Gleaner's behavior lives in [`plugins/gleaner/skills/glean/SKILL.md`](plugins/gleaner/skills/glean/SKILL.md), with video-specific steps (transcript, Key moments format) in [`plugins/gleaner/skills/youtube/SKILL.md`](plugins/gleaner/skills/youtube/SKILL.md). Common edits:
+Gleaner's behavior lives in [`plugins/gleaner/skills/glean/SKILL.md`](plugins/gleaner/skills/glean/SKILL.md), with video-specific steps (video details, Key moments and Links format) in [`plugins/gleaner/skills/youtube/SKILL.md`](plugins/gleaner/skills/youtube/SKILL.md). Common edits:
 
 - **Default folder/destination/format:** use `/gleaner:preferences`; resolution and fallback defaults are in step 2 and the shared contract.
 - **Categories:** edit the list in step 4 (names double as folder names).
@@ -645,6 +644,13 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- YouTube clips are now written from the video's description and chapters, since Gleaner can no longer capture transcripts in the browser. The youtube skill no longer asks whether to save a video without a transcript.
+- When a video has no description, Gleaner asks for a short one, which is optional; say "skip" to save it from the title alone.
+- Video clips have a new **Channel** line that names and links the channel. The **Video** line now records what the summary was written from (the description, your description, the title, or a pasted transcript) instead of the caption type.
+- Video clips have a new **Links** section with the description's links to docs, repos, slides, and other things the video uses. Sponsor, affiliate, social, subscribe, merch, and shortened links are left out.
+- Paste a transcript (**…more → Show transcript** on YouTube) for a fuller summary, or to clip moments by time range or topic.
 
 **2.9.0** (2026-10-21)
 - Articles split across numbered pages (page 2, page 3, …) are now read to the end, up to five pages, and saved as one clip that says how many pages it covers.
