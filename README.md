@@ -508,7 +508,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **ChatGPT without a JavaScript tool.** Connected Chrome tabs, and a Work browser without one, can't read highlights, the playback position, or the page facts Gleaner uses to follow an article's later pages and match its canonical URL. Name the part or paste it, and give a video part a time range or topic instead of "this part."
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
-- **YouTube transcripts must be pasted.** Gleaner can't capture a video's transcript, so video clips are written from the description and chapters, or from a short description you give when there is none. Paste the transcript (**…more → Show transcript** on YouTube) for a fuller summary or to clip parts. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
+- **Gleaner doesn't capture YouTube transcripts.** Video clips are written from the description and chapters, or from a short description you give when there is none. Paste the transcript (**…more → Show transcript** on YouTube) for a fuller summary or to clip parts; in ChatGPT, transcript lines the video's tab shows work too. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **Paywalls and sign-ins.** Only visible content is summarized, and the clip says so.
 
 ## Troubleshooting

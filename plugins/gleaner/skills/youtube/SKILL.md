@@ -87,7 +87,7 @@ Adding parts works as in the glean skill's "Collecting parts", using time in pla
 | "add this part", "this bit" while watching | the chapter that contains the current playback position; with no chapters, the ~60 seconds before it |
 
 - **Chapters** are the description lines that start with a timestamp (`0:00 Intro`, `3:10 Generics`).
-- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. For more parts of the same video, just read the position again; run the script again after moving to another video. ChatGPT's browsers without a JavaScript tool can't read it; see "In ChatGPT".
+- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. For more parts of the same video, just read the position again; run the script again after moving to another video. When the position can't be read (no browser, a script that kept failing, or ChatGPT's browsers without a JavaScript tool), ask for a time range or topic for "this part" instead, and never guess one.
 - **Confirm** with the range and first few words: `Added part 2: generics (3:10–5:40, "So now let's look at…"). Add more, or say "done" to save.`
 
 ## Write the summary
