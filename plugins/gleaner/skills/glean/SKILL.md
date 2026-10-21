@@ -75,7 +75,9 @@ Page text leaves out a few facts that live in the page's markup. This script onl
   const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].flatMap(script => {
     try { return nodes(JSON.parse(script.textContent ?? '')); } catch { return []; }
   });
-  const item = ld.find(node => /Article|BlogPosting|HowTo|VideoObject|SoftwareApplication|SoftwareSourceCode/.test(String(node['@type'])));
+  // Prefer the page's own kind: a how-to, then an article, then software, then an embedded video.
+  const item = [/HowTo/, /Article|BlogPosting/, /SoftwareApplication|SoftwareSourceCode/, /VideoObject/]
+    .map(type => ld.find(node => type.test(String(node['@type'])))).find(node => node !== undefined);
   /** @param {string} selector @returns {URL[]} */
   const links = selector => [...document.querySelectorAll(selector)].flatMap(el => {
     try { return [new URL(el.getAttribute('href') ?? '', location.href)]; } catch { return []; }
@@ -225,7 +227,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
 1. **Gather the content.**
    - **Page clip:** read the full text of the page in the current browser (title, URL, and main content), and its page facts (see Where Gleaner runs). Ignore navigation, ads, cookie banners, footers, and comment sections. If the page is long, read all of it.
-   - **An article split across pages:** when the page facts give a `next` page, open it as for a URL in the request, read its main text, and run the page facts there too. Follow `next` until there is none or 5 pages are read in all. Open each page in a new tab where the browser can; where it can only change the user's tab, go back to the first page when done. Stop at a page that turns out not to continue the article (a different title or topic) and leave it out. The result is one page clip whose **Source** is the first page's URL. Say in the confirmation how many pages it covers, and say so if pages remain past the limit.
+   - **An article split across pages:** when the page facts give a `next` page, open it as for a URL in the request, read its main text, and run the page facts there too. Follow `next` until there is none, it names a page already read, or 5 pages are read in all. Open each page in a new tab where the browser can; where it can only change the user's tab, go back to the first page when done. Stop at a page that turns out not to continue the article (a different title or topic) and leave it out. The result is one page clip whose **Source** is the first page's URL. Say in the confirmation how many pages it covers, and say so if pages remain past the limit.
    - **Part clip:** use the collected parts. For each source page, also note its title in one line of context.
    - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
