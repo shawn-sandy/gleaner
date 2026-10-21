@@ -185,6 +185,8 @@ Mention the page, article, or doc, or just say "save this" with nothing highligh
 
 Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it. A tutorial gets numbered **Steps** in place of key points.
 
+An article split across numbered pages (page 2, page 3, …) is read to the end, up to five pages, and saved as one clip that says how many pages it covers. This needs a browser Gleaner can run a script in: the Chrome side panel, the Claude Code desktop browser, Claude in Chrome, or ChatGPT's Work browser when it has a JavaScript tool.
+
 ### Saving parts of pages
 
 Use parts when only some of a page matters, or when you're pulling related bits from several pages into one clip.
@@ -196,7 +198,7 @@ Use parts when only some of a page matters, or when you're pulling related bits 
 > keep this section too
 > and this table
 
-Each part is confirmed with its first few words so you can check it's the right one.
+A described part starts from the page heading that matches it, when there is one. Each part is confirmed with its first few words so you can check it's the right one.
 
 **2. Adjust if needed.**
 
@@ -495,8 +497,8 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **"Save that" right after an answer** → takes the answer, even with text highlighted, and says so: it saves the answer, or adds it as the next part while you're collecting. "Save this page" still saves the page.
 - **Highlights under ~40 characters** (a stray word) are ignored.
 - **It acts when intent is clear**, with prompts for sync conflicts and unsupported formats, then tells you what it assumed: *"Saved the whole page — say 'just the highlighted part' if you meant only that."* It asks only when two readings are equally likely, or a named destination doesn't exist.
-- **Same page, same session** → saves and parts from a page you've already clipped this session go into that clip, wherever it was saved, unless you name another destination or say "as a new clip". The URL decides: other pages on the same site get their own clips.
-- **Duplicate check:** saving a page you clipped in an earlier session shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. Part clips skip this check, and so do clips given in the chat, since nothing is stored to check.
+- **Same page, same session** → saves and parts from a page you've already clipped this session go into that clip, wherever it was saved, unless you name another destination or say "as a new clip". The URL decides, along with the main address the page names for itself: other pages on the same site get their own clips, except the later pages of an article the clip already read.
+- **Duplicate check:** saving a page you clipped in an earlier session shows the earlier clip and offers an updated copy (marked "Supersedes" with a link) or skipping. It matches the page's address and the main address the page names for itself (its canonical URL, on the same site only), so a tracking or share link to an article you've clipped is caught too, and it tells you when the page says it changed after your clip. Part clips skip this check, and so do clips given in the chat, since nothing is stored to check.
 
 ## Limitations
 
@@ -504,7 +506,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
 - **Drive capabilities vary.** Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive’s trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots. Preference sync needs a connector that can read and update the selected document; create-only connectors leave sync pending.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
-- **ChatGPT without a JavaScript tool.** Connected Chrome tabs, and a Work browser without one, can't read highlights or the playback position. Name the part or paste it, and give a video part a time range or topic instead of "this part."
+- **ChatGPT without a JavaScript tool.** Connected Chrome tabs, and a Work browser without one, can't read highlights, the playback position, or the page facts Gleaner uses to follow an article's later pages and match its canonical URL. Name the part or paste it, and give a video part a time range or topic instead of "this part."
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
 - **YouTube needs captions.** Video clips are built from the transcript. Without captions (or during a live stream), Gleaner asks before saving a clip from the title, description, and chapters, plus a short description if you add one. Parts can't be clipped until you paste the transcript. Private, members-only, and age-restricted videos need you signed in to YouTube in that browser.
 - **In Claude, YouTube transcripts need a desktop browser, not a phone.** Gleaner gets a video's transcript by running a small script in the video's browser tab, through the Chrome side panel or the Claude Code desktop browser, and phones have neither. To get a full summary, save the video from Chrome or Claude Code desktop on your computer, or paste the transcript into the chat (**…more → Show transcript** on YouTube). In ChatGPT on a computer, the Work browser can capture transcripts when it has a JavaScript tool.
@@ -643,6 +645,13 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**2.9.0** (2026-10-21)
+- Articles split across numbered pages (page 2, page 3, …) are now read to the end, up to five pages, and saved as one clip that says how many pages it covers.
+- The duplicate check also matches the main address a page names for itself (its canonical URL, on the same site only), so a tracking or share link to an article you've already clipped is caught. When the page says it changed after your clip, Gleaner tells you before asking whether to save an updated copy.
+- "Grab the part about X" starts from the page heading that matches X, when there is one.
+- A page's own schema.org type helps pick the clip's Type, such as tutorial for a how-to page.
+- These use a small read-only script, so they work in the Chrome side panel, the Claude Code desktop browser, Claude in Chrome, and ChatGPT's Work browser when it has a JavaScript tool. ChatGPT's connected tabs work as before.
 
 **2.8.0** (2026-10-20)
 - Clips given in the conversation are now HTML files you can open in any browser, in the same clean, single-column style as artifact clips, with light and dark themes. Say "keep it as markdown", or set your default format to `markdown`, to get a `.md` file instead. Where the chat can't attach files, the clip still comes as one Markdown code block. Code blocks in HTML clips, artifacts included, can now be scrolled with the keyboard.
