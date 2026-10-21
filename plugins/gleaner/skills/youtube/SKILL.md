@@ -62,7 +62,7 @@ When a clip is saved without a transcript, say in the confirmation what it was w
 
 A part (a time range, a topic, or "this part") needs transcript lines, so don't save one without a pasted transcript: say the part can't be clipped without one, ask for it pasted, and offer a clip of the whole video instead.
 
-Never summarize what you didn't read. A clip says only what its sources say: the description (or the user's description), its chapters, and a pasted transcript. Write the TL;DR from what the description says the video covers, and don't add claims it doesn't make. Without a transcript, there's no **How it works** section, and no **Key moments** section unless the description has chapters, and then the moments are the chapters.
+Never summarize what you didn't read. A clip says only what its sources say: the description (or the user's description), its chapters, and a pasted transcript. Write the TL;DR from what the description and any pasted transcript say the video covers, and don't add claims they don't make. Without a transcript, there's no **How it works** section, and no **Key moments** section unless the description has chapters, and then the moments are the chapters.
 
 ### No browser
 
