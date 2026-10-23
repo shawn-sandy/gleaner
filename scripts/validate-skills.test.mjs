@@ -46,6 +46,7 @@ test('valid repository passes without Claude and reports the skip', t => {
 });
 
 const cases = [
+  ['broken bookmark renderer reference', 'plugins/gleaner/skills/glean/references/bookmark.md', '../scripts/bookmark.mjs', '../scripts/missing.mjs', /ENOENT/],
   ['broken contract reference', glean, '../preferences/references/contract.md', '../preferences/references/missing.md', /ENOENT|shared contract/],
   ['broken contract example link', contract, 'examples/user.yaml', 'examples/missing.yaml', /ENOENT/],
   ['malformed preference example', example, 'label: Browser Research', 'label: "Browser Research', /quote/],

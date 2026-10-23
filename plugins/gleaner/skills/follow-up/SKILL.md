@@ -80,6 +80,8 @@ Save through the glean skill. The reviewed clip's destination, category folder, 
 - **A clip attached or pasted with no link or path to where it's stored** counts as a clip given in this conversation: give the updated copy back in the chat, as glean's This conversation destination does, with a **Supersedes:** line naming the attached file, or the clip's title when it was pasted, as plain text.
 - **A clip from an earlier session** is never edited. Save an updated copy that has the Follow-ups section and one **Supersedes:** line pointing to the reviewed clip, replacing any Supersedes line the reviewed clip had, as in glean step 2, without asking first. Name it in the reply as a new copy. More follow-ups in this conversation update that copy.
 
+After a successful save, also show glean step 7's bookmark preview from the updated clip, preserving the Follow-ups section in the full content and any existing HTML companion. The follow-up choices above remain available to the user.
+
 Link only what the save returned. If the save fails, still show the follow-ups, say plainly that they weren't saved, and use glean's fallback.
 
 ## When the user picks one

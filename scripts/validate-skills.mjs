@@ -168,6 +168,13 @@ function preferences(data, inherited = {}) {
   }
 }
 
+check('shared bookmark contract and renderer references', () => {
+  const file = `${plugin}/skills/glean/references/bookmark.md`;
+  text(read(file), 'shared bookmark contract');
+  references(file);
+  requireValue(read(`${plugin}/skills/glean/SKILL.md`).includes('](references/bookmark.md)'), 'glean must link to bookmark contract');
+});
+
 const contract = `${plugin}/skills/preferences/references/contract.md`;
 check('preferences shared contract and references', () => {
   text(read(contract), 'shared contract');
@@ -185,7 +192,7 @@ check('preferences example configurations', () => {
   preferences(project, user);
 });
 
-for (const file of ['README.md', 'LICENSE', 'plugins/gleaner/skills/README.md', 'docs/chatgpt-marketplace.md', 'docs/preferences-testing.md']) {
+for (const file of ['README.md', 'LICENSE', 'plugins/gleaner/skills/README.md', 'docs/chatgpt-marketplace.md', 'docs/bookmark-previews.md', 'docs/preferences-testing.md']) {
   check(`${file} required file${file.endsWith('.md') ? ' and local references' : ''}`, () => {
     read(file);
     if (file.endsWith('.md')) references(file);

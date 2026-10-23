@@ -1,0 +1,28 @@
+{
+  "id": "fixture-repo-1",
+  "title": "Example Harness — Agent Skills",
+  "url": "https://example.com/harness",
+  "description": "A repository of reusable agent skills.",
+  "summary": "Example Harness provides reusable agent skills with local configuration.",
+  "category": "AI & Agents",
+  "tags": [
+    "#agents",
+    "#skills",
+    "#tools"
+  ],
+  "source_type": "repo",
+  "saved_at": "2026-10-23",
+  "key_points": [
+    "Skills are stored in the project.",
+    "Configuration can be reused across sessions."
+  ],
+  "destination": {
+    "provider": "drive",
+    "label": "Browser Research",
+    "remote_id": "fixture-folder-id"
+  },
+  "saved_file": null,
+  "why_it_matters": "Reusable configuration can reduce repeated setup.",
+  "content_markdown": "# Example Harness — Agent Skills\n\n**Source:** https://example.com/harness\n**Saved:** 2026-10-23\n**Category:** AI & Agents\n\n## TL;DR\nExample Harness provides reusable agent skills with local configuration.\n\n## Follow-ups\nRead the configuration guide.\n\n---\nTo get follow-ups, paste this into a new chat.",
+  "limitations": []
+}

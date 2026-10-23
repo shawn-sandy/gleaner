@@ -12,6 +12,8 @@ This skill covers only what's different about video. Everything else (understand
 
 Before any video save, run glean step 2 including its shared preferences contract before duplicate detection. Reuse the resolved destination and format through saving; reading the video never overrides preferences.
 
+After writing the video clip, fill glean's [shared bookmark model](../glean/references/bookmark.md) from those same details. Preserve the canonical Source, Channel, Video basis, chapters, description links, and any pasted transcript in the full clip. Put the description/title-only limitation in `limitations`, and leave unverified key points or practical value empty. Finish with glean steps 6 and 7, including HTML delivery and the automatic conversation preview; no separate video renderer or extraction is needed.
+
 ## Get the video
 
 1. **Find the video ID** in the URL the user gave or the tab they're on: `youtube.com/watch?v=<id>`, `youtu.be/<id>`, `youtube.com/shorts/<id>`, `youtube.com/live/<id>`, or `m.youtube.com`. The clip's **Source** is always `https://www.youtube.com/watch?v=<id>`, with `t=`, `list=`, `si=`, and tracking parameters dropped, so the duplicate check matches the same video saved from any link.

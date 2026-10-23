@@ -19,6 +19,12 @@ Save what the user is reading, or an answer you gave about it, as a summarized, 
 
 This skill does not write to claude.ai Projects; those can only be read from Cowork, not written to.
 
+## Shared bookmark workflow
+
+For every save or update, read [the shared bookmark and presentation contract](references/bookmark.md). **Extraction** uses steps 1–5 to build one bookmark model and full clip. **Storage** uses step 6 and the unchanged preferences contract. **Presentation** uses step 7 to show that same bookmark in the active conversation, even when its file is saved elsewhere. Keep source retrieval and summarization shared across hosts; only rendering uses the active session's capabilities.
+
+Existing save invocations, including `@gleaner save <URL>`, `@gleaner glean <URL>`, `/glean <URL>` where that alias is supported, and `/gleaner:glean <URL>`, all follow this workflow. These examples do not register new slash commands in hosts that lack them.
+
 ## Where Gleaner runs
 
 Gleaner works wherever Claude can see a web page. Before reading anything, work out which browser you're in by checking which tools are available, and use that browser for every page read and highlight check in the request.
@@ -55,7 +61,7 @@ If it isn't clear which tab "the page" is, such as several open tabs with none m
 - **Work browser:** use only the tools this session actually shows, and only to read or open pages. Never submit forms, sign in, or change account settings to clip a page.
 - **No browser tools:** a Chrome extension or side panel doesn't give ChatGPT tab access by itself. If no browser tools appear, ask the user to connect their browser or switch to Work mode (which gives the Work browser), or to give a URL or pasted text.
 
-**A URL in the request** ("save https://…", "clip this: https://…"): open it in the current browser (`preview_start` in the built-in browser, a new tab in Claude in Chrome; for ChatGPT, see above) and clip that page. If no browser is available, fetch the page with WebFetch and say it was read without a browser, so highlights don't apply.
+**A URL in the request** ("save https://…", "clip this: https://…"): open it in the current browser (`preview_start` in the built-in browser, a new tab in Claude in Chrome; for ChatGPT, see above) and clip that page. If no browser is available, fetch the page with the session's available web-fetch tool (such as WebFetch in Claude Code) and say it was read without a browser, so highlights don't apply.
 
 **No browser at all:** saving an answer you gave needs no browser. Otherwise, if the user didn't give a URL or pasted text, explain in one line that Gleaner needs a page open in a browser it can reach, and name the options for this surface.
 
@@ -252,7 +258,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      - If a match exists, tell the user the existing clip's title, date, and link, then ask: save an updated copy, or skip. When the page facts give an `updated` date after the clip's **Saved:** date, add that, as in `The page says it was updated 2026-10-12, after your clip from 2026-09-01.` If they don't answer, save the updated copy.
      - An updated copy keeps the same category and tags unless the content clearly changed, and adds a `**Supersedes:** <link or path to the old clip>` line under **Tags**. Never edit or delete the old clip.
 
-3. **Write the summary** in Markdown.
+3. **Write the summary** in Markdown. Build the shared bookmark from this content and the metadata below as described in [the bookmark contract](references/bookmark.md); generate each presentation from that same data, without a second extraction or summary.
 
    **Page clip:**
 
@@ -382,6 +388,8 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
 6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`). Use the destination and format already resolved in step 2. The name-based discovery and default paths below apply only to an unconfigured or explicit destination without a verified locator. For configured Drive/Notion destinations use the retained ID; for configured local/Cowork destinations use the retained base path and append only the category folder. Recheck access, never substitute a same-named resource.
 
+   Also generate and deliver the HTML bookmark as described in [the bookmark contract](references/bookmark.md#store-with-the-existing-workflow), preserving this primary destination and format. Record verified save results before rendering the conversation preview.
+
    **This conversation** (the default)
    - Nothing is stored and there are no folders; the clip's **Category:** line does that job. The save happens in this chat only: never publish the clip as an artifact or write it into the project for this destination.
    - If this session can attach a file to its reply for the user to download (a file-sending tool, or file creation that shows the file in the chat), write `<name>.html` outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and attach it. When the resolved format is `markdown` (from any scope, such as "keep it as markdown" or a stored `default_format: markdown`, or kept from a destination that failed, as in the Fallback), write the step 3 Markdown as `<name>.md` instead. A file written somewhere the user can't see from the chat doesn't count.
@@ -504,7 +512,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
    **Fallback:** give the clip in this conversation (see This conversation above) and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
-7. **Confirm** in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; the artifact's link; or, for This conversation, that it lives only in this chat, so the user should download or copy it, and that "save to Drive" stores a copy, or "save it to this project" in Claude Code and Cowork), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Don't repeat the full summary. For an update, start with `Updated "<title>"` and say what was added; on Drive, give the new link and say the earlier version went to the trash. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
+7. **Confirm and preview.** First report the actual outcome in one or two sentences: where it was saved (folder, category, and file name with its link; project and path; the artifact's link; or, for This conversation, that it lives only in this chat, so the user should download or copy it, and that "save to Drive" stores a copy, or "save it to this project" in Claude Code and Cowork), the tags, and a one-line TL;DR. Link only what the save returned; if it returned no link, say so, and never invent a URL or clip link. Then automatically render the structured bookmark preview from [the bookmark contract](references/bookmark.md#present-after-the-save-result), outside any file code block; an attachment alone is not a preview. Respect an explicit request for no preview while still reporting the outcome. For an update, start with `Updated "<title>"` and say what was added; on Drive, give the new link and say the earlier version went to the trash. After a part clip saves, clear the collected parts. If you made an assumption about intent or details, say it in a few words.
 
 ## Clip index (on demand)
 
@@ -519,7 +527,7 @@ When the user asks to find or list clips ("show my clip index", "what did I save
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
    - Artifacts: list the user's artifacts and read each one to keep only Gleaner clips (pages with the `Gleaner clip` generator line); a clip's metadata is in its header list. The list is ordered by recent use, not save date. A clip can be republished later in the session that saved it, so for a date range use its Saved row; only artifacts last updated before the range starts can be skipped without reading them. Read at most about 50 artifacts per request; if more remain, say how many weren't checked and offer to continue.
    - Search the effective preference destination. With none set, the default is This conversation: list the clips given earlier in this conversation, say in one line that chat clips from other conversations can't be searched, and ask which stored location to search too (Drive, Notion, a project folder, or artifacts). Include the other locations when the user asks for them or names one.
-2. **Read metadata.** For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content. A keyword that matches only a clip's follow-up prompt, below the divider at its end, doesn't count as a match.
+2. **Read metadata.** Collapse a confirmed primary/HTML companion pair into one result as described in the bookmark contract; preserve distinct updated copies. For each clip, take the title, date, category, type, tags, note (if any), scope (if any), and source URL from its header lines. Read only what's needed; skip the body unless the question is about content. A keyword that matches only a clip's follow-up prompt, below the divider at its end, doesn't count as a match.
 3. **Return a table** sorted newest first with these columns: Date, Title (linked to the clip; plain text for a clip given in the conversation with no link, never an invented one), Category, Type, Tags, Note, Source. Mark part clips with their count after the title, such as "(3 parts)", "(2 parts, 1 answer)", or "(whole page + 2 parts)". Leave Note blank for clips without one. Apply whatever filter the user asked for, and give a count at the top. For more than ~25 rows, show the newest 25 and say how many more there are.
 4. If a clip has no metadata lines (saved before categories existed), list it as `Uncategorized` and offer to categorize it by saving an updated copy.
 

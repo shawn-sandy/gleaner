@@ -183,6 +183,8 @@ Mention the page, article, or doc, or just say "save this" with nothing highligh
 > keep this article for later
 > bookmark this doc
 
+Every successful save also shows a readable bookmark preview in the conversation: Overview, Key details, Why it matters, metadata, and verified links. ChatGPT uses supported conversation formatting; Claude Code and other agents use equivalent Markdown. HTML stays available as a file without changing the configured destination or storage format. See [bookmark previews](docs/bookmark-previews.md) for same-bookmark examples, optional preview suppression, and host limitations.
+
 Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it. A tutorial gets numbered **Steps** in place of key points.
 
 An article split across numbered pages (page 2, page 3, …) is read to the end, up to five pages, and saved as one clip that says how many pages it covers. This needs a browser Gleaner can run a script in: the Chrome side panel, the Claude Code desktop browser, Claude in Chrome, or ChatGPT's Work browser when it has a JavaScript tool.
@@ -645,7 +647,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.10.0** (2026-10-23)
+- Every saved or updated clip now shows a structured preview in the active conversation, with the same content in ChatGPT and Claude Code and verified source/save links.
+- HTML bookmarks remain available without changing your storage preferences: local Markdown gets a companion file, while Drive and Notion can provide a separate chat download where attachments are supported.
+- Preview failures fall back to readable Markdown without saving again; say "no preview" to suppress the detailed preview for one request.
 - YouTube clips are now written from the video's description and chapters, since Gleaner can no longer capture transcripts in the browser. The youtube skill no longer asks whether to save a video without a transcript.
 - When a video has no description, Gleaner asks for a short one, which is optional; say "skip" to save it from the title alone.
 - Video clips have a new **Channel** line that names and links the channel. The **Video** line now records what the summary was written from (the description, your description, the title, or a pasted transcript) instead of the caption type.
