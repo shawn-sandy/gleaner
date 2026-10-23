@@ -647,6 +647,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**2.10.1** (2026-10-23)
+- Supported chat attachment downloads remain clickable in bookmark previews, including after an interactive preview fails.
+- Unqualified requests to use Markdown continue to select the saved file format; request a "Markdown preview" to change only conversation presentation.
+
 **2.10.0** (2026-10-23)
 - Every saved or updated clip now shows a structured preview in the active conversation, with the same content in ChatGPT and Claude Code and verified source/save links.
 - HTML bookmarks remain available without changing your storage preferences: local Markdown gets a companion file, while Drive and Notion can provide a separate chat download where attachments are supported.

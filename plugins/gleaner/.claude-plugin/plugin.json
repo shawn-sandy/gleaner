@@ -1,7 +1,7 @@
 {
   "name": "gleaner",
   "displayName": "Gleaner",
-  "version": "2.10.0",
+  "version": "2.10.1",
   "description": "Gather the best of what you read into tagged, searchable clips. Save whole pages, collected parts, or YouTube videos with timestamped key moments, with your notes, as an HTML file in the conversation by default or to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Shared local-first preferences manage save destinations and formats with optional Google Drive sync.",
   "author": {
     "name": "Shawn Sandy",

@@ -124,13 +124,44 @@ test('preview errors and rejected components preserve the successful save and fa
 });
 
 test('chat fallback and unavailable HTML do not claim persistence or a nonexistent artifact', async () => {
-  const bookmark = saved(fixture, { status: 'chat', message: 'Not saved to Drive; copy the clip above.', html_file: null });
+  const bookmark = saved(fixture, { status: 'chat', message: 'Not saved to Drive; copy the clip above.', html_file: null, destination_url: receipt.destination_url });
+  assert.equal(bookmark.destination_url, null);
   const result = await present(bookmark);
   assert.match(result.markdown, /Delivered in this conversation only; not stored/);
   assert.doesNotMatch(result.markdown, /Access saved HTML|Open saved destination/);
   const suppressed = await present(bookmark, { mode: 'none' });
   assert.match(suppressed.markdown, /Not saved to Drive/);
   assert.doesNotMatch(suppressed.markdown, /### Overview/);
+});
+
+test('verified attachment links need a host capability and stay non-executable in standalone HTML', async () => {
+  const attachment = 'sandbox:/mnt/data/bookmark (1).html';
+  const bookmark = saved(fixture, { status: 'chat', message: 'Attached HTML.', saved_file: attachment, html_file: attachment });
+  const expected = '[Access saved HTML](sandbox:/mnt/data/bookmark%20%281%29.html)';
+  for (const mode of ['auto', 'chat', 'markdown']) {
+    const result = await present(bookmark, { mode, attachmentLinks: true });
+    assert.ok(result.markdown.includes(expected), result.markdown);
+    assert.doesNotMatch((await present(bookmark, { mode })).markdown, /\]\(sandbox:/);
+  }
+  const fallback = await present(bookmark, { attachmentLinks: true, nativePreview: () => { throw new Error('unavailable'); } });
+  assert.equal(fallback.fallback, true);
+  assert.ok(fallback.markdown.includes(expected));
+  assert.match((await present(bookmark, { mode: 'none', attachmentLinks: true })).markdown, /\[Saved bookmark\]\(sandbox:/);
+  assert.doesNotMatch(renderHtml(bookmark), /href="sandbox:/);
+  for (const locator of ['javascript:alert(1)', 'data:text/html,hello', 'file:///etc/passwd', 'sandbox://evil/mnt/data/clip.html', 'sandbox:/mnt/data/../../etc/passwd']) {
+    const unsafe = saved(fixture, { status: 'chat', message: 'Attachment unavailable.', html_file: locator });
+    assert.doesNotMatch((await present(unsafe, { attachmentLinks: true })).markdown, /\[Access saved HTML\]/);
+  }
+});
+
+test('CLI forwards the attachment-link capability to conversation rendering only', () => {
+  const result = spawnSync(process.execPath, ['plugins/gleaner/skills/glean/scripts/bookmark.mjs'], {
+    input: JSON.stringify({ bookmark: fixture, receipt: { status: 'chat', message: 'Attached.', html_file: 'sandbox:/mnt/data/clip.html' }, attachmentLinks: true }), encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.match(output.markdown, /\[Access saved HTML\]\(sandbox:\/mnt\/data\/clip.html\)/);
+  assert.doesNotMatch(output.html, /href="sandbox:/);
 });
 
 test('no-preview preserves a verified saved path and single-answer clips need no invented summary', async () => {
@@ -183,5 +214,7 @@ test('page, YouTube, and follow-up instructions route through shared presentatio
   assert.match(youtube, /glean steps 6 and 7/);
   assert.match(followUp, /glean step 7/);
   assert.match(contract, /Do not add `preview_mode`/);
+  assert.match(contract, /“Use a Markdown preview”/);
+  assert.doesNotMatch(contract, /“Use Markdown” or “use a chat preview” changes presentation only/);
   assert.match(contract, /Preview failure must never trigger another save/);
 });

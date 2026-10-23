@@ -13,6 +13,18 @@ function webUrl(value) {
   try { return ['http:', 'https:'].includes(new URL(value).protocol); } catch { return false; }
 }
 
+function attachmentUrl(value) {
+  if (typeof value !== 'string' || !value.startsWith('sandbox:/mnt/data/') || /[\r\n\\]/.test(value)) return false;
+  try { return new URL(value).pathname.startsWith('/mnt/data/'); } catch { return false; }
+}
+
+function markdownLink(label, locator, attachmentLinks) {
+  const supported = webUrl(locator) || (attachmentLinks === true && attachmentUrl(locator));
+  return supported
+    ? `[${label}](${locator.replace(/[\s()<>\\]/g, char => encodeURIComponent(char).replace(/\(/g, '%28').replace(/\)/g, '%29'))})`
+    : `${label}: ${escapeMarkdown(locator)}`;
+}
+
 function validate(bookmark) {
   for (const key of ['id', 'title', 'description', 'summary', 'category', 'source_type', 'saved_at', 'content_markdown']) {
     if (typeof bookmark[key] !== 'string') throw new Error(`${key} must be a string`);
@@ -76,16 +88,13 @@ function sections(bookmark) {
   ];
 }
 
-export function renderMarkdown(bookmark) {
+export function renderMarkdown(bookmark, { attachmentLinks = false } = {}) {
   validate(bookmark);
-  const link = (label, locator) => webUrl(locator)
-    ? `[${label}](${locator.replace(/[\s()<>\\]/g, char => encodeURIComponent(char).replace(/\(/g, '%28').replace(/\)/g, '%29'))})`
-    : `${label}: ${escapeMarkdown(locator)}`;
   return [
     `## ${escapeMarkdown(bookmark.title)}`, escapeMarkdown(statusText(bookmark)),
     facts(bookmark).map(([key, value]) => `- **${key}:** ${escapeMarkdown(value)}`).join('\n'),
     ...sections(bookmark).map(([heading, values]) => `### ${heading}\n\n${values.map(value => heading === 'Key details' ? `- ${escapeMarkdown(value)}` : escapeMarkdown(value)).join('\n\n')}`),
-    `### Actions\n\n${actions(bookmark).map(([label, locator]) => `- ${link(label, locator)}`).join('\n') || 'No verified links or saved paths available.'}`,
+    `### Actions\n\n${actions(bookmark).map(([label, locator]) => `- ${markdownLink(label, locator, attachmentLinks)}`).join('\n') || 'No verified links or saved paths available.'}`,
   ].join('\n\n');
 }
 
@@ -130,10 +139,10 @@ ${sections(bookmark).map(([heading, values]) => `<section><h2>${heading}</h2>${h
 
 // A host adapter may supply an available native component; ordinary Markdown
 // is always returned for the conversation, even when that component succeeds.
-export async function present(bookmark, { mode = 'auto', nativePreview } = {}) {
+export async function present(bookmark, { mode = 'auto', nativePreview, attachmentLinks = false } = {}) {
   if (!['auto', 'chat', 'markdown', 'none'].includes(mode)) throw new Error('invalid presentation mode');
-  const markdown = renderMarkdown(bookmark);
-  if (mode === 'none') return { markdown: [escapeMarkdown(statusText(bookmark)), bookmark.saved_file ? `Saved bookmark: ${escapeMarkdown(bookmark.saved_file)}` : ''].filter(Boolean).join('\n\n'), native: false, fallback: false };
+  const markdown = renderMarkdown(bookmark, { attachmentLinks });
+  if (mode === 'none') return { markdown: [escapeMarkdown(statusText(bookmark)), bookmark.saved_file ? markdownLink('Saved bookmark', bookmark.saved_file, attachmentLinks) : ''].filter(Boolean).join('\n\n'), native: false, fallback: false };
   if (['auto', 'chat'].includes(mode) && typeof nativePreview === 'function' && ['saved', 'chat'].includes(bookmark.status)) {
     try {
       if (await nativePreview(structuredClone(bookmark), markdown) === false) throw new Error('preview declined');
@@ -146,9 +155,9 @@ export async function present(bookmark, { mode = 'auto', nativePreview } = {}) {
 }
 
 // Optional CLI: node bookmark.mjs < input.json > output.json
-// Input: { bookmark, receipt, mode? }; output is data, never a saved-file receipt.
+// Input: { bookmark, receipt, mode?, attachmentLinks? }; output is data, never a saved-file receipt.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const input = JSON.parse(readFileSync(0, 'utf8'));
   const bookmark = applyReceipt(input.bookmark, input.receipt);
-  process.stdout.write(JSON.stringify({ bookmark, html: renderHtml(bookmark), ...await present(bookmark, { mode: input.mode }) }, null, 2));
+  process.stdout.write(JSON.stringify({ bookmark, html: renderHtml(bookmark), ...await present(bookmark, { mode: input.mode, attachmentLinks: input.attachmentLinks }) }, null, 2));
 }
