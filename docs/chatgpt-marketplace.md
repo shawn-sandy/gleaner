@@ -26,6 +26,10 @@ Google Drive requires a connected Drive app with permission to create files in t
 
 For YouTube, write the clip from the video's description and chapters, and use timestamped transcript text only if the connected browser shows it or the user supplies it. When the video has no description, ask for an optional short one; do not invent quotes or key moments.
 
+## Conversation previews
+
+Every successful save also displays a structured preview in the conversation, separate from the saved file. Use normal headings, lists, and verified action links; an available interactive component may supplement them, but raw HTML is never assumed to execute. The [bookmark preview guide](bookmark-previews.md) documents equivalent Claude Code output, HTML storage, and Markdown fallbacks. No new connection or preference is needed for a text preview.
+
 ## Validation checklist
 
 - [ ] Import succeeds in an eligible ChatGPT workspace
@@ -35,6 +39,9 @@ For YouTube, write the clip from the video's description and chapters, and use t
 - [ ] Accessible Chrome tab clipping works where the connector exposes tabs
 - [ ] Work browser clipping works in Work mode
 - [ ] With no preferences set, `save this page` returns the clip in the conversation, as an attached `.html` file (`.md` when the format is `markdown`) or, when attachments aren't available, the whole clip in one code block, and stores nothing
+- [ ] A save displays Overview, Key details, Why it matters, metadata, and verified actions even when the file is saved outside chat
+- [ ] A native preview failure falls back to readable Markdown without retrying the save
+- [ ] HTML companions are delivered only where supported, and never change the configured primary format
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
 - [ ] A video saves from its description with a **Channel** line, and one with no description asks for an optional short one
 - [ ] Claude marketplace validation and existing workflows still work

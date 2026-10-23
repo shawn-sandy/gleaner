@@ -175,3 +175,9 @@ Gleaner reads the clip's link, TL;DR, note, content, and the links inside it, th
 - [Phrase cheat sheet](../../../README.md#phrase-cheat-sheet): more ways to ask.
 - [Troubleshooting](../../../README.md#troubleshooting): common problems and fixes.
 - [Customizing](../../../README.md#customizing): changing the default folder, categories, and summary length.
+
+## Automatic bookmark previews
+
+All existing save commands show a structured preview after saving, including `@gleaner save <URL>` in ChatGPT and `/gleaner:glean <URL>` in Claude Code. Both use one bookmark model for metadata, summary, HTML, and the conversation preview. The stored format and configured destination remain independent of presentation. Say "use a Markdown preview" or "no preview" for one request without changing storage preferences.
+
+See [the cross-platform examples](../../../docs/bookmark-previews.md) for the same bookmark in ChatGPT and Claude Code, HTML companion behavior, and offline versus live testing limits.
