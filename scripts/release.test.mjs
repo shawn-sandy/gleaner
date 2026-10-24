@@ -104,6 +104,15 @@ test('the README has a changelog entry for the current plugin version', () => {
   assert.match(result.stdout, /^- /);
 });
 
+test('release-notes exits 0 for Unreleased only while an entry waits, which the validate workflow warns about on main', t => {
+  for (const unreleased of [true, false]) {
+    const { repo } = fixture(t, { unreleased });
+    const result = spawnSync(process.execPath, [join(repo, 'scripts/release-notes.mjs'), 'Unreleased'], { encoding: 'utf8' });
+    assert.equal(result.status, unreleased ? 0 : 1, result.stderr);
+    assert.equal(result.stdout.trim(), unreleased ? '- Added a thing.' : '');
+  }
+});
+
 test('bumps, dates the changelog, validates, and commits on a release branch from main', t => {
   const { directory, repo } = fixture(t);
   const [major, minor] = version(repo).split('.').map(Number);

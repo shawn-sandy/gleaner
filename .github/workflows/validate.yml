@@ -25,3 +25,21 @@ jobs:
       - run: npm install --global @anthropic-ai/claude-code@2.1.304
       - run: npm run validate
       - run: npm test
+      # Only a version change runs release.yml, so a merge with Unreleased bullets and no bump releases nothing.
+      # Warn instead of picking the bump: patch, minor, or major stays with a person, and entries may wait to batch.
+      - name: Warn when a release is owed
+        if: github.event_name == 'push'
+        run: |
+          if node scripts/release-notes.mjs Unreleased > "$RUNNER_TEMP/unreleased.md"; then
+            url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/workflows/cut-release.yml"
+            echo "::warning title=Release owed::main has changelog bullets under Unreleased that no version includes yet. Run Cut release to publish them: $url"
+            {
+              echo "## Release owed"
+              echo
+              echo "These bullets under **Unreleased** are on \`main\` but in no version yet. [Run Cut release]($url) and pick the bump, or leave them to go out with the next change."
+              echo
+              cat "$RUNNER_TEMP/unreleased.md"
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No Unreleased changelog entry, so no release is owed."
+          fi
