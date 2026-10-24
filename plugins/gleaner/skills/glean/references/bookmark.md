@@ -30,9 +30,11 @@ Do not add these fields to preferences or require old clips to contain them. For
 
 Use glean step 6 with the destination and format from step 2. Presentation never changes `default_destination`, `default_format`, sync data, permissions, duplicate decisions, or format compatibility. A configured Google Drive `Browser Research` folder still uses its retained ID and category subfolder, not a fresh same-name lookup. `auto` can still yield a Google Doc or Notion page; `markdown` still yields raw Markdown wherever supported.
 
-Generate the reusable HTML from the same bookmark before saving; fill in confirmed action links afterward when possible. The existing full-clip HTML template in step 6 remains the default for chat HTML and Artifact publishing. It keeps all sections and links. The optional helper below generates a compact companion with the full Markdown preserved in an expandable section. Do not replace an existing richly formatted full clip with this companion during updates.
+In ChatGPT, do not automatically generate or deliver HTML companions for chat, Drive, Notion, or local Markdown saves. Keep `html_file` null when no HTML was requested or retained from an existing clip, and omit the HTML action without reporting an error. Generate HTML only for an explicit HTML download or Artifact request, or to maintain an existing clip's retained HTML format/companion during an update. In Claude, keep the HTML delivery behavior below. This host rule changes neither configured destinations nor explicit format choices.
 
-Deliver HTML without changing the primary storage format:
+When HTML is needed, generate it from the same bookmark before saving; fill in confirmed action links afterward when possible. The existing full-clip HTML template in step 6 remains the default for chat HTML and Artifact publishing. It keeps all sections and links. The optional helper below generates a compact companion with the full Markdown preserved in an expandable section. Do not replace an existing richly formatted full clip with this companion during updates.
+
+When the host rule above calls for HTML, deliver it without changing the primary storage format:
 
 - For chat HTML or an Artifact save, that output already is the HTML bookmark; do not create another copy.
 - For local/Cowork Markdown, save an HTML companion beside the primary file, using the same basename when free and collision-checking `.html` separately. Never overwrite an unrelated file. Retain its exact path with the session's clip; update only that known companion after a successful same-session primary update. After a category move, move only that retained companion. A new copy gets a new companion; old clips and their companions stay untouched.

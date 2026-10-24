@@ -1,6 +1,6 @@
 ---
 name: glean
-description: Save web pages, parts of them, or Claude's answers about them as tagged gleans. Gives each glean as an HTML file in the conversation by default, or saves it to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, or file a page, a URL, part of a page, or an answer Claude gave about one, such as "save this page", "grab the part about animation lengths", "add this bit too", "save that answer", "done, save them", or "save this as an artifact", or to find or index saved gleans.
+description: Save web pages, parts of them, or Claude's answers about them as tagged gleans. Gives each glean as a Markdown file in ChatGPT or an HTML file in Claude by default, or saves it to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, or file a page, a URL, part of a page, or an answer Claude gave about one, such as "save this page", "grab the part about animation lengths", "add this bit too", "save that answer", "done, save them", or "save this as an artifact", or to find or index saved gleans.
 argument-hint: '[--to chat | drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
@@ -10,7 +10,7 @@ Gather the best of what you read into tagged, searchable clips. Use shared local
 
 Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of six places:
 
-- **This conversation** (default on every surface): an HTML file given to the user in the chat, or a `.md` file when the resolved format is `markdown`. Nothing is stored, so it can't be searched later.
+- **This conversation** (default on every surface): a Markdown (`.md`) file in ChatGPT or an HTML (`.html`) file in Claude. An explicit or saved `markdown` choice gives `.md` in either host. Nothing is stored, so it can't be searched later.
 - **Google Drive:** uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
 - **This project** (Claude Code): the folder the Claude Code session is working in.
@@ -170,7 +170,7 @@ Any request can carry a `--to` flag (short form `-t`) that sets the destination 
 
 | Flag | Saves to |
 | --- | --- |
-| `--to chat` | This conversation → an HTML file in the chat (`.md` when the resolved format is `markdown`), not stored anywhere |
+| `--to chat` | This conversation → a `.md` file in ChatGPT or `.html` in Claude (`.md` in either host when the resolved format is `markdown`), not stored anywhere |
 | `--to drive` | Google Drive → `Browser Research/<Category>/` |
 | `--to notion` | Notion → the `Browser Research` database |
 | `--to notion:"Database Name"` | Notion → that database |
@@ -388,11 +388,11 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
 6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`). Use the destination and format already resolved in step 2. The name-based discovery and default paths below apply only to an unconfigured or explicit destination without a verified locator. For configured Drive/Notion destinations use the retained ID; for configured local/Cowork destinations use the retained base path and append only the category folder. Recheck access, never substitute a same-named resource.
 
-   Also generate and deliver the HTML bookmark as described in [the bookmark contract](references/bookmark.md#store-with-the-existing-workflow), preserving this primary destination and format. Record verified save results before rendering the conversation preview.
+   Apply the host-specific HTML delivery rules in [the bookmark contract](references/bookmark.md#store-with-the-existing-workflow), preserving this primary destination and format. Record verified save results before rendering the conversation preview.
 
    **This conversation** (the default)
    - Nothing is stored and there are no folders; the clip's **Category:** line does that job. The save happens in this chat only: never publish the clip as an artifact or write it into the project for this destination.
-   - If this session can attach a file to its reply for the user to download (a file-sending tool, or file creation that shows the file in the chat), write `<name>.html` outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and attach it. When the resolved format is `markdown` (from any scope, such as "keep it as markdown" or a stored `default_format: markdown`, or kept from a destination that failed, as in the Fallback), write the step 3 Markdown as `<name>.md` instead. A file written somewhere the user can't see from the chat doesn't count.
+   - If this session can attach a file to its reply for the user to download (a file-sending tool, or file creation that shows the file in the chat), write the step 3 Markdown as `<name>.md` in ChatGPT, or the full clip as `<name>.html` in Claude, when the format is unset or `auto`. Use the active assistant host, not the browser being clipped or the presence of an HTML renderer, to choose the default. When the resolved format is `markdown` (from any scope, such as "keep it as markdown" or a stored `default_format: markdown`, or kept from a destination that failed, as in the Fallback), write `<name>.md` in either host. An explicit request for an HTML chat file overrides that choice for this save only; retain the actual delivered format for same-session updates. Write outside the project (the session's scratchpad directory or a temporary folder, never `browser-research/`) and attach the file. A file written somewhere the user can't see from the chat doesn't count.
    - **For an HTML file, build the page** from the template under Artifact below, filled by the same rules. A downloaded file has no publisher to add the page basics, so put these four lines above its `<title>`, in this order: `<!doctype html>`, `<html lang="en">` (with the clip's language code if it isn't English), `<meta charset="utf-8">`, and `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`.
    - Otherwise, when no file can be attached, put the whole clip in one Markdown code block, with `<name>.md` on the line above it, since a page of HTML can't be read in the chat. Use a longer fence than any code block inside the clip, so the clip's own code doesn't cut it short.
 
