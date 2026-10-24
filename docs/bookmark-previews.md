@@ -7,13 +7,13 @@ Saving through Gleaner's existing commands now shows a structured bookmark in th
 | Output | Purpose | Behavior |
 | --- | --- | --- |
 | Configured primary save | Keep the full clip where you chose | Existing preferences and formats apply: Drive Markdown/Google Docs, local/Cowork Markdown, Notion pages, artifacts, or chat downloads. |
-| HTML bookmark | Reusable file opened in a browser | Existing chat HTML/artifact output, or a companion beside a local Markdown file, or a chat download for other destinations when attachments are supported. |
+| HTML bookmark | Reusable file opened in a browser | Automatic in Claude: chat HTML/artifact output, a local Markdown companion, or a chat download for other destinations where supported. In ChatGPT: only when requested or maintaining retained HTML on updates. |
 | ChatGPT preview | Read the bookmark without opening a file | Ordinary conversation headings, lists, and links; an available native component can supplement them. Arbitrary HTML is not executed in chat. |
 | Claude Code/other agent preview | Read the same bookmark in a conversation or terminal | Portable Markdown, with source URL and confirmed saved path/link. No ChatGPT tool dependency. |
 
-The default destination remains the conversation when no preference exists. A configured Google Drive `Browser Research` folder remains the primary destination, using its verified ID and category folder. HTML is not silently uploaded there or substituted for a Google Doc. A chat HTML companion is labeled as a download, separate from the Drive save.
+The default destination remains the conversation when no preference exists: Markdown in ChatGPT, HTML in Claude. Both unset format and `auto` follow this host default; `markdown` gives Markdown in either host. A configured Google Drive `Browser Research` folder remains the primary destination, using its verified ID and category folder. HTML is not silently uploaded there or substituted for a Google Doc. A chat HTML companion is labeled as a download, separate from the Drive save.
 
-No preferences migration or manual setup is required. Schema 1 and the meaning of `auto`/`markdown` are unchanged. “No preview” suppresses the detailed preview for that request but still confirms the result. “Use a Markdown preview” affects conversation presentation only; “keep the saved file as Markdown” changes storage format through the existing contract. There is no persisted `preview_mode` key.
+No preferences migration or manual setup is required. Schema 1 is unchanged; `auto` uses the host-specific chat format, and `markdown` still requests a raw Markdown file. “No preview” suppresses the detailed preview for that request but still confirms the result. “Use a Markdown preview” affects conversation presentation only; “keep the saved file as Markdown” changes storage format through the existing contract. There is no persisted `preview_mode` key.
 
 ## Same bookmark in ChatGPT and Claude Code
 
@@ -30,7 +30,7 @@ Example response after a verified Drive save:
 ```markdown
 ## Example Harness — Agent Skills
 
-Saved to Browser Research/AI & Agents. HTML supplied as a separate chat download.
+Saved to Browser Research/AI & Agents as Markdown.
 
 - **Source:** repo
 - **Category:** AI & Agents
@@ -54,7 +54,6 @@ Reusable configuration can reduce repeated setup.
 
 - [Open original source](https://example.com/harness)
 - Access saved bookmark: <verified Drive link>
-- Access saved HTML: <verified chat attachment link>
 - Open saved destination: <verified category folder link>
 ```
 
@@ -84,9 +83,9 @@ The offline tests exercise the renderer, native-component mock, save receipts, m
 
 Run `npm ci`, `npm run validate`, and `npm test`. After loading the updated plugin, maintainers should verify:
 
-- A ChatGPT save to configured Drive displays the preview and correct links; the stored file retains its configured format, and an HTML chat download is offered when supported.
+- A ChatGPT save to configured Drive displays the preview and correct links; the stored file retains its configured format, and no HTML companion is generated unless requested.
 - A Claude Code local save writes Markdown and an HTML companion, then displays equivalent content with the actual source and paths.
-- A chat-only save with and without attachments preserves the existing file/code-block fallback and adds a readable preview outside it.
+- A chat-only save returns `.md` in ChatGPT and `.html` in Claude with unset or `auto` format, uses `.md` in either with `markdown`, and adds a readable preview. Without attachments, both use the full Markdown code-block fallback.
 - A same-session update refreshes only its known primary/companion pair; an older duplicate offers an updated copy or skip, and index results do not double-count the pair.
 - A YouTube description-only or title-only clip carries its limitation in both outputs; pasted transcripts and chapter links remain intact in the full clip.
 - A native component failure shows Markdown without uploading again. A failed save never reports success; HTML-only failures preserve and report the primary save.
