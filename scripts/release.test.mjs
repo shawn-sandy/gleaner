@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { parse } from 'yaml';
 import { bump, entry, stamp } from './changelog.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -111,6 +112,14 @@ test('release-notes exits 0 for Unreleased only while an entry waits, which the 
     assert.equal(result.status, unreleased ? 0 : 1, result.stderr);
     assert.equal(result.stdout.trim(), unreleased ? '- Added a thing.' : '');
   }
+});
+
+test('the validate workflow still warns about an owed release when an earlier step fails', () => {
+  const workflow = parse(readFileSync(join(root, '.github/workflows/validate.yml'), 'utf8'));
+  const step = workflow.jobs.validate.steps.find((/** @type {{ run?: string }} */ step) => step.run?.includes('release-notes.mjs Unreleased'));
+  assert.ok(step, 'no validate.yml step runs release-notes.mjs Unreleased');
+  // A step-level if with no status function gets an implicit success(), which skips the step after a failure.
+  assert.match(step.if, /\b(always|cancelled|failure)\(\)/);
 });
 
 test('bumps, dates the changelog, validates, and commits on a release branch from main', t => {

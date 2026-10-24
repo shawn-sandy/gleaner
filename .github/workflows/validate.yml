@@ -27,8 +27,9 @@ jobs:
       - run: npm test
       # Only a version change runs release.yml, so a merge with Unreleased bullets and no bump releases nothing.
       # Warn instead of picking the bump: patch, minor, or major stays with a person, and entries may wait to batch.
+      # !cancelled() keeps the warning on a push whose validation failed; without a status function the step is skipped.
       - name: Warn when a release is owed
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && !cancelled()
         run: |
           if node scripts/release-notes.mjs Unreleased > "$RUNNER_TEMP/unreleased.md"; then
             url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/workflows/cut-release.yml"
