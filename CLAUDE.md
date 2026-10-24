@@ -24,6 +24,7 @@ Local validation parses all four Skills' frontmatter and ChatGPT metadata, check
 
 - The version lives only in `plugins/gleaner/.claude-plugin/plugin.json`. `marketplace.json` has no version field; do not add one.
 - The changelog is the last section of `README.md` (there is no CHANGELOG.md). New entries start under a `**Unreleased**` line. Use `/release` to cut a version: it writes the entry, then runs `npm run release`, which bumps the version, dates the entry, validates, and commits. Once the entry is on `main`, the Cut release workflow (`.github/workflows/cut-release.yml`, run from the Actions tab) does the same on `main` and pushes the `release/X.Y.Z` branch for a PR.
+- A merge with `**Unreleased**` bullets and no version change releases nothing. While that entry is on `main`, the Validate workflow's push run adds a "Release owed" warning and a job summary linking to Cut release; it never picks the bump, which stays with the maintainer.
 - Merging a version change to `main` runs `.github/workflows/release.yml`, which tags `vX.Y.Z` and publishes a GitHub Release from that changelog entry. Do not create tags or GitHub Releases directly; to publish a version the workflow missed, run it from the Actions tab.
 - Bump only for changes to what the skill does. Wording, typo, and doc-only fixes ship without a bump.
 
