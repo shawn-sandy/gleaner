@@ -24,7 +24,7 @@ Do not assume the ChatGPT Chrome extension exposes the current tab. Ask for a UR
 
 Google Drive requires a connected Drive app with permission to create files in the target folder. If a save fails, return the generated Markdown and explicitly say it was **not** saved.
 
-For YouTube, write the clip from the video's description and chapters, and use timestamped transcript text only if the connected browser shows it or the user supplies it. When the video has no description, ask for an optional short one; do not invent quotes or key moments.
+For YouTube, write the clip from the video's description and chapters, and use timestamped transcript text only if the connected browser shows it or the user supplies it. When it shows none, a Work browser that can click opens **Show transcript** itself; with connected tabs, ask the user to open **Show transcript** under the video and read the tab again before asking for a paste. When the video has no description, ask for an optional short one; do not invent quotes or key moments.
 
 ## Conversation previews
 
