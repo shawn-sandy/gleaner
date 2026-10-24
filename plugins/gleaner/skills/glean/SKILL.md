@@ -538,7 +538,7 @@ Notion users already have a live index in the database; offer its link first. If
 ## Edge cases
 
 - **Paywalled or sign-in pages:** summarize only what's visible and say so.
-- **YouTube videos:** use Gleaner's youtube skill (`../youtube/SKILL.md`), which reads the video's description and channel and links its chapters.
+- **YouTube videos:** use Gleaner's youtube skill (`../youtube/SKILL.md`), which reads the video's transcript or description and its channel, and links its key moments.
 - **PDFs or other videos in the tab:** summarize the text or transcript if readable; otherwise tell the user what couldn't be read.
 - **Several tabs at once:** if the user groups tabs and says "save these pages", write one page clip per tab, or one combined clip if they ask for it.
 - **Session ended mid-collection:** collected parts exist only in the conversation. If the user comes back in a new session asking about unsaved parts, say they weren't saved and offer to start again.

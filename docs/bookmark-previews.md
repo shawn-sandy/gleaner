@@ -87,6 +87,6 @@ Run `npm ci`, `npm run validate`, and `npm test`. After loading the updated plug
 - A Claude Code local save writes Markdown and an HTML companion, then displays equivalent content with the actual source and paths.
 - A chat-only save returns `.md` in ChatGPT and `.html` in Claude with unset or `auto` format, uses `.md` in either with `markdown`, and adds a readable preview. Without attachments, both use the full Markdown code-block fallback.
 - A same-session update refreshes only its known primary/companion pair; an older duplicate offers an updated copy or skip, and index results do not double-count the pair.
-- A YouTube description-only or title-only clip carries its limitation in both outputs; pasted transcripts and chapter links remain intact in the full clip.
+- A YouTube description-only or title-only clip carries its limitation in both outputs; transcript-based key moments and chapter links remain intact in the full clip.
 - A native component failure shows Markdown without uploading again. A failed save never reports success; HTML-only failures preserve and report the primary save.
 - Existing Notion, Cowork, Artifact, collected-parts, answers, and follow-up saves still use their existing destinations and full-clip content.
