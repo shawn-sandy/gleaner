@@ -21,7 +21,7 @@ The rename does not change existing clips or plain-language requests such as "sa
 
 ## preferences: shared save settings
 
-Gleaner skips the setup prompt on your first save, since its default, the chat, needs nothing stored; it mentions setup once instead. Run `/gleaner:preferences setup` to choose a verified default destination, a format (left unset by default, so chat clips are HTML files and stored clips are Markdown where supported; `default_format` is written only if you pick `auto` or `markdown`), and optional Drive sync, or choose “just this save” to keep session settings. Existing environment defaults remain when setup is skipped. Both page and video saves use the same preferences.
+Gleaner skips the setup prompt on your first save, since its default, the chat, needs nothing stored; it mentions setup once instead. Run `/gleaner:preferences setup` to choose a verified default destination, a format (left unset by default, so chat clips are Markdown in ChatGPT and HTML in Claude, and stored clips are Markdown where supported; `default_format` is written only if you pick `auto` or `markdown`), and optional Drive sync, or choose “just this save” to keep session settings. Existing environment defaults remain when setup is skipped. Both page and video saves use the same preferences.
 
 ```text
 /gleaner:preferences setup
@@ -32,14 +32,14 @@ reset my project format override
 sync my preferences
 ```
 
-“Always” persists at user scope unless project/session scope is explicit; “save this here” stays temporary. Precedence is explicit request (`--to` before words), session, project, user, then environment defaults. With no format set, chat clips are HTML files and Gleaner saves raw `markdown` wherever another destination supports it. `auto` preserves native output, such as an HTML file in the chat or Google Docs in Drive; raw `markdown` supports the chat, local/Cowork, and capable Drive connectors, with a prompt for incompatible Notion/artifact saves.
+“Always” persists at user scope unless project/session scope is explicit; “save this here” stays temporary. Precedence is explicit request (`--to` before words), session, project, user, then environment defaults. With no format set, chat clips are Markdown in ChatGPT and HTML in Claude and Gleaner saves raw `markdown` wherever another destination supports it. `auto` preserves native output, such as Markdown chat files in ChatGPT, HTML chat files in Claude, or Google Docs in Drive; raw `markdown` supports the chat, local/Cowork, and capable Drive connectors, with a prompt for incompatible Notion/artifact saves.
 
 Preferences use local user storage and optional project overrides. Drive sync runs only during invocations, keeps project overrides and metadata local, and asks about conflicts. Disconnected writes stay pending; cloud-only hosts can persist in Drive, otherwise settings are session-only. See [storage and sync details](../../../README.md#shared-preferences) and the [shared contract](preferences/references/contract.md).
 
 ## Before you start
 
 - **A page Claude can see.** Use the Claude side panel in Chrome, or the Browser pane in Claude Code desktop (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows). In ChatGPT, use connected Chrome tabs or the Work browser. Or skip browsing and put a URL in the request.
-- **A destination, if you want one stored.** Until you set your own with preferences, every surface gives you the clip as an HTML file in the conversation. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
+- **A destination, if you want one stored.** Until you set your own with preferences, ChatGPT gives you the clip as a Markdown file in the conversation and Claude gives you an HTML file. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
 
 ## glean: pages, parts, answers, and search
 
