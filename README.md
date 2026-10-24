@@ -647,7 +647,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.11.0** (2026-10-24)
 - YouTube clips are written from the video's transcript again. In the Chrome side panel and Claude in Chrome, Gleaner opens YouTube's own **Show transcript** panel and reads it, long transcripts included, and the **Video** line says `transcript panel`. Parts and "add this part" work from that transcript without pasting. When the transcript isn't in the video's language, the clip says which language it was written from. YouTube sends the panel empty to the Claude Code built-in browser, so Claude Code reads it through Claude in Chrome when that's connected, and otherwise writes from the description.
 - ChatGPT: where Gleaner would ask you to paste a transcript, it first asks you to open **Show transcript** in the video's tab and reads the lines from there, recorded as `transcript panel`. The Work browser opens the panel itself when it has a click or JavaScript tool.
 - Video tags and categories take hints from the uploader's keywords and YouTube's category, which also help catch misheard names in a transcript. Key moments and parts are written to make sense without the video open, and saving several videos confirms first whether you want one clip each or one for the set.
