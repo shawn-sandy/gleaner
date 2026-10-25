@@ -30,7 +30,7 @@ If access fails and neither a usable description nor transcript can be read, fol
 
 ## Conversation previews
 
-Every successful save also displays a structured preview in the conversation, separate from the saved file. Use normal headings, lists, and verified action links; an available interactive component may supplement them, but raw HTML is never assumed to execute. The [bookmark preview guide](bookmark-previews.md) documents equivalent Claude Code output, HTML storage, and Markdown fallbacks. No new connection or preference is needed for a text preview.
+Every successful save or update displays the full clip directly in the ChatGPT conversation, including on mobile and when the destination is Drive or another service. Render normal Markdown headings, lists, and links outside a surrounding code block, preserving metadata, notes, source limitations, timestamp links, Follow-ups, and the final copyable prompt. Put verified attachment and destination links afterward; label Markdown chat attachments `Download Markdown (.md)`, without promising that tapping opens a preview pane. A file card, download link, or short summary alone does not satisfy this rule. An available interactive component may supplement the inline content, but raw HTML is never assumed to execute. Explicit short-preview, download-only, and no-preview requests still apply; without attachments, a chat-only save must deliver its full content inline once. If a response limit prevents completion, identify what remains and offer to continue rather than silently truncating. The [bookmark preview guide](bookmark-previews.md) documents equivalent Claude Code output, HTML storage, and Markdown fallbacks. No new connection or preference is needed for a text preview.
 
 ## Validation checklist
 
@@ -40,9 +40,12 @@ Every successful save also displays a structured preview in the conversation, se
 - [ ] URL clipping works without browser access
 - [ ] Accessible Chrome tab clipping works where the connector exposes tabs
 - [ ] Work browser clipping works in Work mode
-- [ ] With no preferences set, `save this page` returns the clip in the conversation, as an attached `.md` file (with the format unset, `auto`, or `markdown`) or, when attachments aren't available, the whole clip in one code block, and stores nothing
-- [ ] A save displays Overview, Key details, Why it matters, metadata, and verified actions even when the file is saved outside chat
-- [ ] A native preview failure falls back to readable Markdown without retrying the save
+- [ ] With no preferences set, `save this page` displays the full clip inline and returns an attached `.md` file when supported (with the format unset, `auto`, or `markdown`); without attachments, it delivers the full clip inline once, outside a surrounding code block, and accurately reports chat-only delivery
+- [ ] On ChatGPT mobile, the entire clip is readable without tapping a file; a verified Markdown attachment appears separately as `Download Markdown (.md)` with no promise that it opens a preview pane
+- [ ] Saves and updates, including YouTube and follow-ups, show the full clip even for external destinations, preserving notes, source limitations, timestamp links, actual code fences, and the final copyable prompt
+- [ ] Explicit short-preview, download-only, and no-preview requests are respected; no-preview with no attachment still delivers a chat-only clip once
+- [ ] An oversized clip is split where supported or identifies what remains and offers continuation; it is never silently truncated
+- [ ] A native preview failure falls back to the full inline clip without retrying the save
 - [ ] New saves do not automatically generate HTML companions; an explicit HTML download works only where supported and never changes the configured primary destination
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
 - [ ] A video saves from its description with a **Channel** line, and one with no description asks for an optional short one
