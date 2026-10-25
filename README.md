@@ -140,8 +140,8 @@ If you installed the earlier **page-to-project** skill, remove it so the two don
 
 1. Open any article in Chrome.
 2. Open the Claude side panel and say **"save this page."**
-3. Gleaner replies with the clip as a Markdown (`.md`) file in ChatGPT or an HTML (`.html`) file in Claude, its tags, and a one-line summary. Where the chat can't attach files, the clip comes as one Markdown code block instead.
-4. Download the file, or copy the code block, to keep it. To store a copy, say "save to Drive". To store every clip somewhere, set a default with `/gleaner:preferences setup`.
+3. In ChatGPT, Gleaner shows the full clip directly in the conversation and includes a separate Markdown (`.md`) download when attachments are supported. In Claude, it gives an HTML (`.html`) file, its tags, and a compact preview; without attachments, it gives the clip as one Markdown code block. ChatGPT without attachments still shows the full readable clip inline once and says no file was attached.
+4. Download the file, or copy the clip from the conversation, to keep it. To store a copy, say "save to Drive". To store every clip somewhere, set a default with `/gleaner:preferences setup`.
 
 That's it. Everything below is optional.
 
@@ -288,6 +288,8 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 | **Artifact** → a private page on claude.ai | "save it as an artifact", or `--to artifact` | A session that can publish artifacts, such as Claude Code |
 
 Folders are created the first time they're needed. Stored clips are saved as Markdown (`.md`) files, in Drive too. Say "save it as a Google Doc" for a Doc instead, or set your default format to `auto` to get Docs whenever Drive can convert them (otherwise `auto` saves `.md` too). Notion and artifact clips keep their own formats, and a Drive connector that can't upload raw files saves Google Docs.
+
+`Browser Research` is the folder default when Drive is selected without a configured folder or an explicit folder name. Connecting Drive alone keeps the chat default; saved destination preferences and per-save requests still take precedence.
 
 A clip in the conversation isn't stored anywhere, so a search or a follow-up in a later session can't find it. Download or copy it, or name a stored destination.
 
@@ -650,6 +652,11 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**2.12.2** (2026-10-25)
+- Browser selection now covers sessions with both ChatGPT Work and connected tabs: honor a named browser or tab, use the surface that identifies the requested page, and keep subsequent reads on that page.
+- Clarify that selected Drive saves use `Browser Research/<Category>` unless a configured or explicit folder overrides it. The conversation remains the unconfigured default, with existing automatic and explicit format choices preserved.
+- Align first-save instructions and preference acceptance scenarios with ChatGPT's full inline delivery when attachments are unavailable; Claude keeps its existing file and preview behavior.
 
 **2.12.1** (2026-10-25)
 - ChatGPT now shows the full clip directly in the conversation, including on mobile, with Markdown downloads linked separately. Notes, source and timestamp links, limitations, and follow-ups remain readable without opening a file; Claude presentation is unchanged.
