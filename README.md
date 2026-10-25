@@ -97,6 +97,8 @@ See [ChatGPT marketplace setup and compatibility](docs/chatgpt-marketplace.md) f
 - *Optional:* the **Notion** connector, for saving to Notion.
 - *Optional:* a session that can publish artifacts, such as Claude Code, for saving clips as artifacts.
 
+See [Gleaner requirements](docs/requirements.md) for the full list by surface, destination, and skill.
+
 ### Claude app and Cowork
 
 1. Open **Customize → Plugins**, then choose **Add → Add marketplace**.
@@ -575,7 +577,8 @@ gleaner/
 │   ├── artifacts/                  # HTML artifacts
 │   ├── chatgpt-marketplace.md      # ChatGPT import, compatibility, and manual checklist
 │   ├── plans/                      # planning notes
-│   └── preferences-testing.md      # maintainer-run preference scenarios
+│   ├── preferences-testing.md      # maintainer-run preference scenarios
+│   └── requirements.md             # what Gleaner needs, by surface, destination, and skill
 ├── plugins/
 │   └── gleaner/
 │       ├── .claude-plugin/
