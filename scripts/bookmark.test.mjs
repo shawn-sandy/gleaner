@@ -201,6 +201,34 @@ test('CLI renders fixture input offline without creating a file or changing the 
   assert.match(output.markdown, /Overview/);
 });
 
+test('link-only YouTube previews disclose missing content without inventing a summary or stored copy', async () => {
+  const linkOnly = JSON.parse(read('scripts/fixtures/youtube-link-only.json'));
+  const bookmark = saved(linkOnly, {
+    status: 'chat', message: 'Link-only bookmark provided in this conversation.',
+    saved_file: 'sandbox:/mnt/data/youtube-fixture.md',
+  });
+  const normal = await present(bookmark, { attachmentLinks: true });
+  const fallback = await present(bookmark, {
+    attachmentLinks: true, nativePreview: () => { throw new Error('unavailable'); },
+  });
+  assert.equal(fallback.fallback, true);
+  for (const output of [normal.markdown, fallback.markdown, renderHtml(bookmark)]) {
+    assert.match(output, /Link only; video content was unavailable and has not been summarized/);
+    assert.match(output, /No summary supplied/);
+    assert.match(output, /No additional details verified/);
+    assert.match(output, /Practical value not established/);
+    assert.match(output, /https:\/\/www.youtube.com\/watch\?v=fixture/);
+    assert.doesNotMatch(output, /Access saved HTML|Open saved destination/);
+  }
+  assert.match(normal.markdown, /Delivered in this conversation only; not stored/);
+  assert.match(normal.markdown, /\[Access saved bookmark\]\(sandbox:\/mnt\/data\/youtube-fixture.md\)/);
+  assert.equal(bookmark.content_markdown, linkOnly.content_markdown);
+  assert.equal(bookmark.summary, '');
+  assert.deepEqual(bookmark.key_points, []);
+  assert.equal(bookmark.html_file, null);
+  assert.equal(bookmark.destination_url, null);
+});
+
 test('page, YouTube, and follow-up instructions route through shared presentation', () => {
   const glean = read('plugins/gleaner/skills/glean/SKILL.md');
   const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');

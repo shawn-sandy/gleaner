@@ -1,0 +1,17 @@
+{
+  "id": "fixture-youtube-link-only",
+  "title": "Untitled YouTube video (fixture)",
+  "url": "https://www.youtube.com/watch?v=fixture",
+  "description": "",
+  "summary": "",
+  "category": "Other",
+  "tags": ["#youtube", "#video", "#bookmark"],
+  "source_type": "video",
+  "saved_at": "2026-10-25",
+  "key_points": [],
+  "destination": { "provider": "chat", "label": "This conversation" },
+  "saved_file": null,
+  "why_it_matters": "",
+  "content_markdown": "# Untitled YouTube video (fixture)\n\n**Source:** https://www.youtube.com/watch?v=fixture\n**Saved:** 2026-10-25\n**Category:** Other\n**Type:** video\n**Tags:** #youtube #video #bookmark\n**Video:** from: link only\n**Content status:** Link only; video content was unavailable and has not been summarized.\n\n---\nTo get follow-ups later, attach or paste this file into a new chat and say:\n\n```text\nSuggest follow-ups for this Gleaner clip\n```",
+  "limitations": ["Link only; video content was unavailable and has not been summarized."]
+}

@@ -111,6 +111,8 @@ With no browser available, fetch the Source URL with WebFetch for the title, cha
 
 ### In ChatGPT
 
+In every ChatGPT session, with or without JavaScript, read the [blocked-content fallback](references/chatgpt-blocked-content.md) before handling unavailable video content or repairing an existing link-only clip. Its ask-before-saving rule applies when access prevents reading either a usable description or transcript; it takes precedence over "No description" for that case only. Claude Code and other Claude surfaces do not use this reference.
+
 ChatGPT's connected Chrome tabs have no JavaScript tool, and the Work browser has one only if this session shows it. Without one, the scripts and the playback position don't work. In place of steps 2 and 3:
 
 - **Read the video's tab** as in the glean skill's "ChatGPT specifics". If no open tab shows the video, the Work browser can open the Source URL; connected tabs can't, so follow "No browser", fetching with the session's web tool.
