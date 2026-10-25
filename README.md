@@ -651,6 +651,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- Gleaner closes the Claude in Chrome tabs it opens, such as the YouTube tab it opens to read a transcript, once the clip is saved or the request ends without a save. A tab stays open while you're still adding parts or when you ask to keep it, tabs you opened are never closed, and adding to a saved clip later opens the page again.
+
 **2.11.1** (2026-10-25)
 - ChatGPT now asks before saving when YouTube content cannot be read, including on mobile. Paste a description or transcript for a summary, or explicitly choose a link-only bookmark; readable descriptions still save without interruption.
 - Supplied video text refreshes an existing clip from the same conversation without retrying the blocked URL. Chat attachments are clearly labeled as replacements, and storage updates that require another copy ask first. Claude's video workflow is unchanged.
