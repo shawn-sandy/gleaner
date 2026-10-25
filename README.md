@@ -183,7 +183,7 @@ Mention the page, article, or doc, or just say "save this" with nothing highligh
 > keep this article for later
 > bookmark this doc
 
-Every successful save also shows a readable bookmark preview in the conversation: Overview, Key details, Why it matters, metadata, and verified links. ChatGPT uses supported conversation formatting; Claude Code and other agents use equivalent Markdown. Claude also supplies HTML companions where supported; ChatGPT supplies HTML only when requested or when updating a clip with retained HTML. An explicit HTML download request applies to that save only. See [bookmark previews](docs/bookmark-previews.md) for same-bookmark examples, optional preview suppression, and host limitations.
+Every successful save also shows a readable bookmark preview in the conversation. ChatGPT, including mobile, shows the full clip as rendered Markdown with its links, notes, and follow-up prompt; a Markdown attachment is a separate download, so reading the clip does not require opening a file. Claude Code and other agents keep the compact Overview, Key details, Why it matters, metadata, and verified links layout. Claude also supplies HTML companions where supported; ChatGPT supplies HTML only when requested or when updating a clip with retained HTML. An explicit HTML download request applies to that save only. See [bookmark previews](docs/bookmark-previews.md) for same-bookmark examples, optional preview suppression, and host limitations.
 
 Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it. A tutorial gets numbered **Steps** in place of key points.
 
@@ -650,6 +650,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**2.12.1** (2026-10-25)
+- ChatGPT now shows the full clip directly in the conversation, including on mobile, with Markdown downloads linked separately. Notes, source and timestamp links, limitations, and follow-ups remain readable without opening a file; Claude presentation is unchanged.
 
 **2.12.0** (2026-10-25)
 - Gleaner closes the Claude in Chrome tabs it opens, such as the YouTube tab it opens to read a transcript, once the clip is saved or the request ends without a save. A tab stays open while you're still adding parts or when you ask to keep it, tabs you opened are never closed, and adding to a saved clip later opens the page again.
