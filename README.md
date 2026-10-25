@@ -258,6 +258,8 @@ With a transcript, collect moments as parts by time or topic:
 
 Gleaner opens and reads the transcript panel itself in your own Chrome: the Chrome side panel or Claude in Chrome. YouTube sends the panel empty to the Claude Code built-in browser, even when you're signed in there, so Claude Code reads the transcript through Claude in Chrome when it's connected; otherwise the clip is written from the description and chapters, and you can paste the transcript (**…more → Show transcript** on YouTube), before or after saving, for a fuller summary with moments from the whole video. In ChatGPT, the Work browser opens the panel itself when it can click; with connected tabs, Gleaner asks you to open **Show transcript** in the video's tab and reads the lines from there. If a video has no description and no transcript, Gleaner asks for a short description, which is optional; say "skip" to save it from the title alone. Parts need the transcript, so without one Gleaner won't save a part; it asks you to paste the transcript and offers a clip of the whole video instead.
 
+In ChatGPT, including mobile, if video content cannot be read, Gleaner asks before saving: paste a description or transcript for a summary, or say "save link only" for an explicitly unsummarized bookmark. An accessible description still produces a summary when the transcript is unavailable. Pasted text works without a desktop browser or another attempt to fetch the video. Content supplied later updates a clip from the same conversation at its existing destination; replacing a chat attachment gives a revised file with the same name, and a storage operation that requires another copy is explained before proceeding. Clips from earlier conversations are never overwritten.
+
 Any link to a video (`youtu.be`, Shorts, a share link) is saved with the same **Source**, `youtube.com/watch?v=…`, so the duplicate check catches a video you've already clipped. A link with a timestamp opens the player at that time, so "add this part" uses that position.
 
 ### Adding notes
@@ -648,6 +650,10 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**2.11.1** (2026-10-25)
+- ChatGPT now asks before saving when YouTube content cannot be read, including on mobile. Paste a description or transcript for a summary, or explicitly choose a link-only bookmark; readable descriptions still save without interruption.
+- Supplied video text refreshes an existing clip from the same conversation without retrying the blocked URL. Chat attachments are clearly labeled as replacements, and storage updates that require another copy ask first. Claude's video workflow is unchanged.
 
 **2.11.0** (2026-10-24)
 - YouTube clips are written from the video's transcript again. In the Chrome side panel and Claude in Chrome, Gleaner opens YouTube's own **Show transcript** panel and reads it, long transcripts included, and the **Video** line says `transcript panel`. Parts and "add this part" work from that transcript without pasting. When the transcript isn't in the video's language, the clip says which language it was written from. YouTube sends the panel empty to the Claude Code built-in browser, so Claude Code reads it through Claude in Chrome when that's connected, and otherwise writes from the description.

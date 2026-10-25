@@ -26,6 +26,8 @@ Google Drive requires a connected Drive app with permission to create files in t
 
 For YouTube, write the clip from the video's description and chapters, and use timestamped transcript text only if the connected browser shows it or the user supplies it. When it shows none, a Work browser that can click opens **Show transcript** itself; with connected tabs, ask the user to open **Show transcript** under the video and read the tab again before asking for a paste. When the video has no description, ask for an optional short one; do not invent quotes or key moments.
 
+If access fails and neither a usable description nor transcript can be read, follow the [ChatGPT blocked-content fallback](../plugins/gleaner/skills/youtube/references/chatgpt-blocked-content.md): ask before creating or changing a clip. Pasted text can supply the summary without another fetch; "save link only" explicitly chooses an unsummarized bookmark. With no accessible tab, including on mobile, ask for pasted text directly rather than requiring a desktop browser. A readable description still saves normally when only the transcript is unavailable. Repair a same-session clip at its retained destination; explain and ask first if storage requires a replacement copy. A revised chat attachment replaces the earlier copy logically, without claiming the old attachment was edited or removed.
+
 ## Conversation previews
 
 Every successful save also displays a structured preview in the conversation, separate from the saved file. Use normal headings, lists, and verified action links; an available interactive component may supplement them, but raw HTML is never assumed to execute. The [bookmark preview guide](bookmark-previews.md) documents equivalent Claude Code output, HTML storage, and Markdown fallbacks. No new connection or preference is needed for a text preview.
@@ -44,6 +46,16 @@ Every successful save also displays a structured preview in the conversation, se
 - [ ] New saves do not automatically generate HTML companions; an explicit HTML download works only where supported and never changes the configured primary destination
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
 - [ ] A video saves from its description with a **Channel** line, and one with no description asks for an optional short one
+- [ ] On ChatGPT mobile with no browser access and an unreadable YouTube URL, one question offers pasted content or an explicit link-only bookmark; no clip is created or changed before a choice, and no desktop switch is required
+- [ ] A verified access-denied result is reported accurately; a generic fetch failure is not asserted to be a YouTube block
+- [ ] Pasted descriptions and transcripts produce supported summaries without another fetch; missing timestamps or passages never produce invented time links or parts
+- [ ] "Save link only", "skip", and "just save it" after the question produce a bookmark with a canonical Source, verified metadata, and a visible unsummarized limitation; an initial explicit link-only request needs no second confirmation
+- [ ] "Cancel", "no", an unrelated reply, and no reply create or change nothing; unusable pasted text leaves the choice pending rather than silently saving
+- [ ] A readable description with an unavailable transcript saves normally without the blocked-content question
+- [ ] A same-session clip repaired from pasted text retains its identity, destination, format, notes, parts, and Follow-ups; failed retrieval never erases an existing sourced summary
+- [ ] A revised chat attachment uses the same filename and is described as replacing the earlier copy, without claiming the old attachment was edited or removed
+- [ ] An unavailable/failed stored update leaves the original intact and asks before creating another copy or changing delivery; an upload-and-retire update asks first and reports any retirement failure accurately
+- [ ] Earlier-session clips are never overwritten; a no-new-copy constraint is respected, and unavailable duplicate checks are disclosed without a "no duplicates" claim
 - [ ] Claude marketplace validation and existing workflows still work
 
 Marketplace import, browser, and Drive behavior require live manual testing. Repository validation alone does not establish runtime compatibility.
