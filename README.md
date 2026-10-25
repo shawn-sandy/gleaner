@@ -200,7 +200,11 @@ Use parts when only some of a page matters, or when you're pulling related bits 
 > keep this section too
 > and this table
 
-A described part starts from the page heading that matches it, when there is one. Each part is confirmed with its first few words so you can check it's the right one.
+A described part starts from the page heading that matches it, when there is one. You don't need to highlight anything for a described part, and where highlights can't be read, describing or pasting the part is the way to add it. A highlight counts when it's about 40 characters or more.
+
+Each part is confirmed with its first few words so you can check it's the right one, and nothing is saved yet:
+
+> **Gleaner:** Added part 1: animation lengths ("Keep most UI transitions…"). Add more, or say "done" to save.
 
 **2. Adjust if needed.**
 
@@ -215,9 +219,21 @@ A described part starts from the page heading that matches it, when there is one
 > save them
 > that's it, wrap it up
 
-All parts are saved as one clip, grouped under headings with a link to each source page.
+Any one of these works on its own. All parts are saved as one clip, grouped under headings with a link to each source page, and a **Scope** line counts them, such as `3 parts from 2 pages`.
 
-> **Tip:** Parts can come from different tabs and sites. Collect from three articles, then save once.
+#### Collecting across tabs and sites
+
+Parts can come from different tabs and sites: collect from three articles, then save once. Collected parts live in the conversation, not in a tab, and each "add this" reads the tab you're on at that moment, so switch tabs, add, and switch again. How you point at the next page depends on where you run Gleaner:
+
+| Where you run Gleaner | Across tabs | How to add from another page |
+| --- | --- | --- |
+| Chrome side panel | Yes | Switch to the tab, highlight or describe the part, and say "add this". |
+| Claude Code desktop, built-in browser | Yes | Switch tabs in the Browser pane; Gleaner reads the active tab. |
+| ChatGPT, connected Chrome tabs | Yes, without highlights | Switch tabs and describe the part ("grab the part about easing") or paste it; highlights can't be read there. |
+| ChatGPT Work browser | Yes | Open the next page in the Work browser. Highlights work only when the session has its JavaScript tool; otherwise describe or paste the part. |
+| Claude in Chrome (Claude Code with `--chrome`, or Cowork) | By URL | Gleaner works in tabs it opens itself, so it can't see what you highlighted in your own tabs. Give it the page's URL and describe the part. |
+
+Keep the same conversation open while you collect: switching tabs is fine, but starting a new session drops the unsaved parts.
 
 > **Already saved this page?** In the same session, "add this bit too" goes straight into that clip and saves it, so a page never ends up split across several docs. Say "as a new clip" to start a separate one.
 
