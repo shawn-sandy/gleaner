@@ -651,7 +651,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.12.0** (2026-10-25)
 - Gleaner closes the Claude in Chrome tabs it opens, such as the YouTube tab it opens to read a transcript, once the clip is saved or the request ends without a save. A tab stays open while you're still adding parts or when you ask to keep it, tabs you opened are never closed, and adding to a saved clip later opens the page again.
 
 **2.11.1** (2026-10-25)
