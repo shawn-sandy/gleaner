@@ -37,7 +37,7 @@ Gleaner works wherever Claude can see a web page. Before reading anything, work 
 | **ChatGPT, connected Chrome tabs** | the Browser connector's `list_tabs` and `get_tab_context` | the tab the connector marks as active, or the open tab whose title or URL the user named |
 | **ChatGPT Work browser** | the Work browser's tools, by the names this session shows | the page open in the Work browser |
 
-If more than one is available, prefer the one the user names, then the side panel, then the built-in browser, then Claude in Chrome.
+Use the tool names this session actually exposes; the names above describe capabilities, not APIs to invent. First honor the browser or tab the user names. Otherwise select among browsers that can identify the requested page: in ChatGPT prefer the Work browser, then connected Chrome tabs; in Claude prefer the side panel, then the built-in browser, then Claude in Chrome. If only one surface identifies the requested page, use it. Keep that surface and the chosen tab for subsequent reads and highlight checks; a browser with a JavaScript tool does not authorize switching to a different page. The youtube skill's explicit transcript-tab route is the exception.
 
 If it isn't clear which tab "the page" is, such as several open tabs with none marked active and no title or URL in the request, ask which one. Never clip a tab you guessed.
 
@@ -247,7 +247,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - A `--to` flag decides the destination (see Destination flag).
    - "Save to Notion" or "put it in Notion" in words means the Notion destination, the same as `--to notion`.
    - "Save it as an artifact", "make it an artifact", or "save to my artifacts" means the Artifact destination, the same as `--to artifact`.
-   - "Just give me the file", "in the chat", or "don't save it anywhere" means This conversation, the same as `--to chat`. "Save it as a Google Doc" or "put it in Browser Research" means Drive.
+   - "Just give me the file", "in the chat", or "don't save it anywhere" means This conversation, the same as `--to chat`. "Save it as a Google Doc" or "put it in Browser Research" means Drive. When Drive is selected without a configured folder ID or an explicit folder name, use `Browser Research` as its base folder, with the category subfolder from step 4. This folder default never selects Drive over the conversation or a saved destination preference.
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
    - **Otherwise the default is This conversation** on every surface: the Chrome side panel, ChatGPT, Claude Code, and Cowork. With no saved preference, store the clip somewhere only when the user names a destination.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
