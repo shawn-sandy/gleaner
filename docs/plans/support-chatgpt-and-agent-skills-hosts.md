@@ -4,7 +4,7 @@ Exploration, 2026-10-26. Nothing in the skills has changed yet. This note looks 
 
 ## At a glance
 
-- **It already installs.** OpenAI's tooling reads `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` as legacy-compatible manifests. Codex added the marketplace, installed the plugin, and registered all four skills as `gleaner:glean`, `gleaner:youtube`, `gleaner:preferences`, and `gleaner:follow-up`.
+- **It already installs in Codex.** Codex CLI 0.155.1 read `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` as legacy-compatible manifests; other OpenAI hosts are unverified. Codex added the marketplace, installed the plugin, and registered all four skills as `gleaner:glean`, `gleaner:youtube`, `gleaner:preferences`, and `gleaner:follow-up`.
 - **Only a public directory listing has hard blockers.** It needs a square plugin logo and composer icon, and listing names and short descriptions of 30 characters or fewer. Workspace and manual installs need neither.
 - **The biggest runtime cost is size.** A YouTube save reads five files, 127,158 characters in all, before it reads the video. Much of glean covers only Claude's surfaces.
 - **The skills are written as if the model is Claude.** glean's description, the model's first impression in ChatGPT, names Claude three times and offers claude.ai artifacts.
@@ -68,7 +68,7 @@ The Agent Skills specification allows six frontmatter fields and recommends keep
 
 ### What to change
 
-1. **Remove `argument-hint` from all four skills.** Codex loaded the skills with it, so no real host rejects it, but strict spec validity requires removing it. The `--to` values are already in the skill text, and the only loss is the autocomplete hint in Claude Code.
+1. **Remove `argument-hint` from all four skills.** Codex loaded the skills with it, so the one host tested accepts it (others are unverified), but strict spec validity requires removing it. The `--to` values are already in the skill text, and the only loss is the autocomplete hint in Claude Code.
 2. **Add `license: MIT` and a `compatibility` line,** such as "Needs a browser tool or a URL; Google Drive and Notion connectors are optional; install as part of the gleaner plugin."
 3. **Say the skills depend on the plugin, rather than copying shared files.** Copying `bookmark.md` and `contract.md` into each skill would make standalone installs work, but the copies would drift apart.
 4. **Split glean.** Keep the shared core in SKILL.md: intents, the clip format, categories, and the steps. Move host details to `references/hosts/claude.md` and `references/hosts/chatgpt.md`, and destination details to `references/destinations/`, each read only when it applies. This touches the README's step references and the four-place description rule.
