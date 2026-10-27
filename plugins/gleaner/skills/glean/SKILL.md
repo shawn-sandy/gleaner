@@ -1,6 +1,6 @@
 ---
 name: glean
-description: Save web pages, parts of them, or Claude's answers about them as tagged gleans. Gives each glean as a Markdown file in ChatGPT or an HTML file in Claude by default, or saves it to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when the user wants to keep, save, glean, bookmark, or file a page, a URL, part of a page, or an answer Claude gave about one, such as "save this page", "grab the part about animation lengths", "add this bit too", "save that answer", "done, save them", or "save this as an artifact", or to find or index saved gleans.
+description: Gleaner's web clipper. Saves web pages, parts of them, or Claude's answers about them as tagged gleans, as a Markdown file in ChatGPT or an HTML file in Claude by default, or to Google Drive, Notion, a Cowork project, the current Claude Code project, or a private claude.ai artifact, from the Chrome side panel, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Use when saving, bookmarking, or filing a page, URL, selection, or answer, or finding saved gleans.
 argument-hint: '[--to chat | drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
