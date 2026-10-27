@@ -28,7 +28,7 @@ ChatGPT request:
 Example response after a verified Drive save, rendering the fixture's complete `content_markdown` directly. The outer fence below is only for this documentation example; the actual reply has no surrounding code block:
 
 ```markdown
-Saved to Browser Research/AI & Agents as Markdown.
+Saved "Example Harness — Agent Skills" to Browser Research/AI & Agents as Markdown.
 
 # Example Harness — Agent Skills
 
@@ -60,7 +60,7 @@ Claude Code request:
 Claude Code retains the compact Overview, Key details, Why it matters, metadata, and actions layout. Its outcome and actions reflect the filesystem result:
 
 ```text
-Saved to notes/ai-agents/2026-10-23-example-harness.md.
+Saved "Example Harness — Agent Skills" to notes/ai-agents/2026-10-23-example-harness.md.
 HTML companion: notes/ai-agents/2026-10-23-example-harness.html.
 Open original source: https://example.com/harness
 ```
