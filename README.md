@@ -672,6 +672,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- Wording change: a new clip's confirmation now starts with its title, so the reply names the clip. A stored clip starts with `Saved "<title>"`, the way updates start with `Updated "<title>"`, and a clip given in the chat, which isn't stored, starts with `Here's "<title>"`. A save that falls back to the chat starts with where the clip wasn't saved.
+
 **2.12.2** (2026-10-25)
 - Browser selection now covers sessions with both ChatGPT Work and connected tabs: honor a named browser or tab, use the surface that identifies the requested page, and keep subsequent reads on that page.
 - Clarify that selected Drive saves use `Browser Research/<Category>` unless a configured or explicit folder overrides it. The conversation remains the unconfigured default, with existing automatic and explicit format choices preserved.
