@@ -1,17 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="76 24 400 400" role="img" aria-labelledby="title desc">
   <title id="title">Gleaner</title>
-  <desc id="desc">A slightly left-tilted white hand with a raised index finger and copper reminder string and knot. The curved thumb folds across the palm beneath three rounded fingers. A solid evergreen circle encloses the symbol.</desc>
-  <circle cx="276" cy="224" r="190" fill="#185C53" stroke="#185C53" stroke-width="6"/>
-  <g transform="translate(287.246 224.518) rotate(-10) scale(.84) translate(-276 -232)">
+  <desc id="desc">A slightly left-tilted white hand with a raised index finger and copper reminder string and knot. The curved thumb folds across the palm beneath three rounded fingers. Three stacked rounded square cards form the background, with the back cards tilted slightly.</desc>
+  <g id="cards">
+    <rect x="116" y="64" width="320" height="320" rx="26" fill="#A4C1B9" transform="rotate(-9 276 224)" />
+    <rect x="116" y="64" width="320" height="320" rx="26" fill="#5F9083" transform="rotate(6 276 224)" />
+    <rect x="116" y="64" width="320" height="320" rx="26" fill="#185C53" />
+  </g>
+  <g transform="translate(285.639 224.444) rotate(-10) scale(.72) translate(-276 -232)">
   <g id="hand" fill="#FFFFFF">
-    <path d="M304 232V78a23 23 0 0 1 46 0v186q-8-15-24-23Z"/>
-    <path d="M255 226v-25a22 22 0 0 1 44 0v29l-18-8q-16-9-26 4Z"/>
-    <rect x="206" y="197" width="43" height="102" rx="21.5"/>
-    <path d="M156 241a22 22 0 0 1 44 0v63q0 6 6 6h81q13-1 5-11l-21-16q-16-13-16-36v-5q0-23 21-16l48 20q26 13 26 49v20q0 92-74 94h-33q-87 0-87-88Z"/>
+    <path d="M304 232V78a23 23 0 0 1 46 0v186q-8-15-24-23Z" />
+    <path d="M255 226v-25a22 22 0 0 1 44 0v29l-18-8q-16-9-26 4Z" />
+    <rect x="206" y="197" width="43" height="102" rx="21.5" />
+    <path d="M156 241a22 22 0 0 1 44 0v63q0 6 6 6h81q13-1 5-11l-21-16q-16-13-16-36v-5q0-23 21-16l48 20q26 13 26 49v20q0 92-74 94h-33q-87 0-87-88Z" />
   </g>
   <g id="knot" fill="none" stroke="#C46B43" stroke-width="14" stroke-linejoin="round">
-    <path d="M283 108h67"/>
-    <path stroke-linecap="round" d="M305 124h45l23-24q16-12 22 3 7 17-13 24h-29l35 31"/>
+    <path stroke-linecap="round" d="M305 124h45l23-24q16-12 22 3 7 17-13 24h-29l35 31" />
   </g>
   </g>
 </svg>
