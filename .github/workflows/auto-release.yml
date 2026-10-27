@@ -1,6 +1,6 @@
 # Release every plugin change merged to main: bump the version, date the changelog, commit to main, then run release.yml.
 # Docs, READMEs, and changelogs do not trigger it. Label a PR release:minor or release:major to pick the bump (patch by
-# default), or release:skip to hold it for the next release. Run it from the Actions tab to retry a failed run.
+# default), or release:skip to hold it for the next release. Run it from the Actions tab to retry a run that pushed nothing.
 name: Auto release
 
 on:
@@ -77,5 +77,8 @@ jobs:
             echo "::error::main moved while Gleaner $version was being cut, so nothing was pushed. Run this workflow again from the Actions tab."
             exit 1
           fi
-          gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main
+          if ! gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main; then
+            echo "::error::Gleaner $version is on main, but the release workflow did not start. Run Release from the Actions tab to publish v$version; rerunning this workflow will not."
+            exit 1
+          fi
           echo "Pushed Gleaner $version to main and started the release workflow to tag v$version." | tee -a "$GITHUB_STEP_SUMMARY"
