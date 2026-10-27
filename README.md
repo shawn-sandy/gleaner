@@ -692,7 +692,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.12.4** (2026-10-27)
 - The Gleaner icon is now the square logo from the website, replacing the round one, including in ChatGPT.
 
 **2.12.3** (2026-10-27)
