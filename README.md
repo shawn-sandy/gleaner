@@ -666,9 +666,9 @@ Each release covers every plugin change since the last release tag, so merges th
 | `release:major` | major release |
 | `release:skip` | not released now; it goes out with the next plugin change, such as for a wording-only edit |
 
-When several unreleased PRs are labeled, the largest bump wins. Write the user-facing changes as bullets under a `**Unreleased**` line at the top of the [changelog](#changelog) in the same PR, as before. If a PR has none, the workflow writes one bullet per PR from its title, and the commit summary is the latest PR's title in lowercase.
+When several unreleased PRs are labeled, the largest bump wins. Write the user-facing changes as bullets under a `**Unreleased**` line at the top of the [changelog](#changelog) in the same PR, as before. Each PR that doesn't edit the README gets a bullet from its title instead, and the commit summary is the latest PR's title in lowercase.
 
-The workflow runs `npm run release` with the Claude CLI installed, so both strict checks and `npm test` must pass before anything is pushed. If `main` moves while it runs, it pushes nothing and fails; run it again from the Actions tab.
+The workflow runs `npm run release` with the Claude CLI installed, so both strict checks and `npm test` must pass before anything is pushed. If `main` moves while it runs, it pushes nothing and fails; run it again from the Actions tab. A plugin PR merged while the previous release is still waiting for its tag is picked up when the release workflow finishes, because that workflow tags the version commit and then runs auto-release again.
 
 #### Releasing by hand
 

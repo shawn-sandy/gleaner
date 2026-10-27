@@ -95,13 +95,20 @@ test('summarizes changes as one lowercase line', () => {
   assert.equal(summarize(['Fix A', 'Fix B', 'Add C']), 'add c and 2 more changes');
 });
 
-test('adds an Unreleased entry from PR titles only when the changelog has none', () => {
-  const changes = [{ sha: 'a', title: 'Close the Chrome tabs (#42)', number: 42, labels: [] }, { sha: 'b', title: 'Fix a typo.', number: null, labels: [] }];
+test('adds an Unreleased entry from PR titles when the changelog has none', () => {
+  const changes = [{ sha: 'a', title: 'Close the Chrome tabs (#42)', number: 42, labels: [], notes: false }, { sha: 'b', title: 'Fix a typo.', number: null, labels: [], notes: true }];
   const added = withUnreleased(changelog, changes);
   assert.equal(entry(added, 'Unreleased'), '- Close the Chrome tabs (#42).\n- Fix a typo.');
   assert.equal(entry(added, '1.0.0'), '- First.');
+});
+
+test('appends title bullets to an existing Unreleased entry only for changes that wrote none', () => {
   const written = changelog.replace('## Changelog\n\n', '## Changelog\n\n**Unreleased**\n- Written by hand.\n\n');
-  assert.equal(withUnreleased(written, changes), written);
+  const wrote = { sha: 'a', title: 'Add a thing', number: 1, labels: [], notes: true };
+  assert.equal(withUnreleased(written, [wrote]), written);
+  const added = withUnreleased(written, [wrote, { sha: 'b', title: 'Add another', number: 2, labels: [], notes: false }]);
+  assert.equal(entry(added, 'Unreleased'), '- Written by hand.\n- Add another (#2).');
+  assert.equal(entry(added, '1.0.0'), '- First.');
 });
 
 test('pending and plan find nothing when only docs changed since the release tag', t => {
@@ -128,6 +135,17 @@ test('plan releases plugin changes since the tag as a patch and writes the chang
   assert.equal(readFileSync(join(repo, 'release-body.md'), 'utf8'), '- Save answers as gleans.\n- README: add and date the changelog entry\n');
 });
 
+test('plan adds bullets for later changes when an earlier one wrote the Unreleased entry', t => {
+  const repo = fixture(t);
+  writeFileSync(join(repo, 'README.md'), changelog.replace('## Changelog\n\n', '## Changelog\n\n**Unreleased**\n- Written by hand.\n\n'));
+  commit(repo, 'plugins/gleaner/skills/glean/SKILL.md', 'Add a thing');
+  commit(repo, 'plugins/gleaner/skills/youtube/SKILL.md', 'Add another');
+  const plan = run(repo, 'plan');
+  assert.equal(plan.status, 0, plan.stderr);
+  assert.equal(entry(readFileSync(join(repo, 'README.md'), 'utf8'), 'Unreleased'), '- Written by hand.\n- Add another.');
+  assert.match(plan.stdout, /^summary=add another and 1 more change$/m);
+});
+
 test('plan leaves a merged version bump to release.yml until it is tagged', t => {
   const repo = fixture(t);
   const path = join(repo, manifest);
@@ -135,6 +153,6 @@ test('plan leaves a merged version bump to release.yml until it is tagged', t =>
   git(repo, 'commit', '-q', '-am', 'Gleaner 99.0.0: bump');
   const plan = run(repo, 'plan');
   assert.equal(plan.status, 0, plan.stderr);
-  assert.match(plan.stdout, /v99\.0\.0 is not tagged yet/);
+  assert.match(plan.stdout, /v99\.0\.0 is not tagged yet, so release\.yml publishes it and then runs this workflow again/);
   assert.match(plan.stdout, /^release=false$/m);
 });

@@ -9,7 +9,8 @@ import { spawnSync } from 'node:child_process';
 import { bumps, entry, unreleased } from './changelog.mjs';
 
 /** @typedef {import('./changelog.mjs').Bump} Bump */
-/** @typedef {{ sha: string, title: string, number: number | null, labels: string[] }} Change */
+/** @typedef {{ sha: string, title: string, number: number | null, labels: string[], notes: boolean }} Change */
+// notes: the change edited README.md, so it wrote its own changelog bullets.
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = resolve(root, 'plugins/gleaner/.claude-plugin/plugin.json');
@@ -82,23 +83,28 @@ export function hasUnreleased(readme) {
 }
 
 /**
- * Add an Unreleased entry with one bullet per change at the top of the changelog, unless one is there already.
+ * Add a bullet from its title for each change that wrote no changelog bullets of its own, at the end of the
+ * Unreleased entry. With no entry yet, start one at the top of the changelog with a bullet for every change.
  * @param {string} readme
  * @param {Change[]} changes
  * @returns {string}
  */
 export function withUnreleased(readme, changes) {
-  if (hasUnreleased(readme)) return readme;
   const lines = readme.split('\n');
   const heading = lines.indexOf('## Changelog');
   if (heading === -1) throw new Error('README.md has no ## Changelog section');
-  const bullets = changes.map(change => {
+  const top = lines.findIndex((line, index) => index > heading && line.trim());
+  const started = top !== -1 && lines[top] === unreleased;
+  const bullets = changes.filter(change => !started || !change.notes).map(change => {
     const title = bare(change.title).replace(/\.$/, '');
     return `- ${title}${change.number === null ? '' : ` (#${change.number})`}.`;
   });
-  const top = lines.findIndex((line, index) => index > heading && line.trim());
-  const at = top === -1 ? lines.length : top;
-  lines.splice(at, 0, unreleased, ...bullets, '');
+  if (started) {
+    const blank = lines.findIndex((line, index) => index > top && !line.trim());
+    lines.splice(blank === -1 ? lines.length : blank, 0, ...bullets);
+  } else {
+    lines.splice(top === -1 ? lines.length : top, 0, unreleased, ...bullets, '');
+  }
   return lines.join('\n');
 }
 
@@ -140,14 +146,15 @@ function releasableCommits(tag) {
  * @returns {Change}
  */
 function describe(sha) {
+  const notes = capture('git', ['diff', '--name-only', `${sha}^1`, sha]).split('\n').includes('README.md');
   const repository = process.env.GITHUB_REPOSITORY;
   if (repository) {
     /** @type {{ number: number, title: string, merge_commit_sha: string | null, labels: { name: string }[] }[]} */
     const pulls = JSON.parse(capture('gh', ['api', `repos/${repository}/commits/${sha}/pulls`]));
     const pull = pulls.find(candidate => candidate.merge_commit_sha === sha) ?? pulls[0];
-    if (pull) return { sha, title: pull.title, number: pull.number, labels: pull.labels.map(label => label.name) };
+    if (pull) return { sha, title: pull.title, number: pull.number, labels: pull.labels.map(label => label.name), notes };
   }
-  return { sha, title: capture('git', ['log', '-1', '--format=%s', sha]).trim(), number: null, labels: [] };
+  return { sha, title: capture('git', ['log', '-1', '--format=%s', sha]).trim(), number: null, labels: [], notes };
 }
 
 /**
@@ -170,8 +177,8 @@ function main(mode) {
   const version = currentVersion();
   const tag = `v${version}`;
   if (!capture('git', ['tag', '--list', tag]).trim()) {
-    // A merged version bump that release.yml has not tagged yet: that workflow publishes it.
-    console.log(`${tag} is not tagged yet, so release.yml publishes it.`);
+    // A merged version bump that release.yml has not tagged yet: it publishes that, then runs this workflow again.
+    console.log(`${tag} is not tagged yet, so release.yml publishes it and then runs this workflow again.`);
     if (mode === 'plan') output('release', 'false');
     return mode === 'pending' ? 1 : 0;
   }
