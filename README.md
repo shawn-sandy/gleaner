@@ -692,6 +692,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- A YouTube clip saved without a transcript because no Chrome was available to read it (only the built-in browser, or no browser at all) now ends its confirmation by suggesting saving it again from the video's page in Chrome, with the Chrome side panel or Claude in Chrome, for better results. Before, only the built-in browser got a Chrome hint, and a clip read without a browser got none.
+
 **2.12.3** (2026-10-27)
 - Wording change: a new clip's confirmation now starts with its title, so the reply names the clip. A stored clip starts with `Saved "<title>"`, the way updates start with `Updated "<title>"`, and a clip given in the chat, which isn't stored, starts with `Here's "<title>"`. A save that falls back to the chat starts with where the clip wasn't saved.
 - Shorten Gleaner skill descriptions (#51).
