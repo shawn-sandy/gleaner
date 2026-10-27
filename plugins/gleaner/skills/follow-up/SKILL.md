@@ -1,6 +1,6 @@
 ---
 name: follow-up
-description: Suggest three follow-ups for a saved Gleaner clip and save them to the clip, or ask what the user wants to follow up on, after reviewing the clip's link, TL;DR, note, saved content, and the links inside it. Use when the user asks what to do next with a clip they saved, such as "what should I follow up on?", "suggest follow-ups for that clip", "next steps for the glean I just saved", "follow up on my view transitions clip", or "what now with https://drive.google.com/…".
+description: Gleaner's follow-up helper for saved clips. Reviews a clip and the links inside it, then suggests three next steps and saves them to the clip. Use when asked what to do next with a saved clip.
 argument-hint: '[<clip link, path, or title>]'
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: youtube
-description: Save YouTube videos, or moments from them, as summarized, tagged Gleaner clips built from the video's transcript or description, with its channel and chapters that link to the exact second. Use when the page or URL is a YouTube video (youtube.com/watch, youtu.be, Shorts, live) and the user wants to keep, save, clip, or bookmark it or part of it, such as "save this video", "clip this talk for the motion post", "grab the part about generics", "keep 3:10 to 5:40", "add this part", or "save https://youtu.be/… to Notion".
+description: Gleaner's YouTube clipper. Saves a video, or a moment from it, as a summarized, tagged clip from its transcript, with chapters linked to the exact second. Use when keeping or clipping a YouTube video.
 argument-hint: "[--to chat | drive | notion | artifact | local | <path>]"
 ---
 

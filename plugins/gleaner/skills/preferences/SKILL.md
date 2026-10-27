@@ -1,6 +1,6 @@
 ---
 name: preferences
-description: Manage shared save destinations and output formats with local-first preferences and optional Google Drive sync. Use for setup, show, update, reset, or sync requests, including "set up my preferences", "always save here", "change my default format", "show my preferences", "reset my project override", and "sync my preferences". These preferences can be adopted by other skills and apply to Gleaner page and YouTube saves.
+description: Gleaner's shared save preferences. Sets up, shows, updates, resets, or syncs default destinations and formats, stored locally with optional Drive sync. Use when changing where or how Gleaner saves.
 argument-hint: '[setup | show | update | reset | sync]'
 ---
 
