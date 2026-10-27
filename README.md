@@ -693,7 +693,7 @@ MIT © Shawn Sandy
 ## Changelog
 
 **Unreleased**
-- The Gleaner icon is now the square logo from the website, replacing the round one. This covers `gleaner-symbol.svg` and the glean skill's ChatGPT icons, `icon-small.png` and `icon-large.png`.
+- The Gleaner icon is now the square logo from the website, replacing the round one, including in ChatGPT.
 
 **2.12.3** (2026-10-27)
 - Wording change: a new clip's confirmation now starts with its title, so the reply names the clip. A stored clip starts with `Saved "<title>"`, the way updates start with `Updated "<title>"`, and a clip given in the chat, which isn't stored, starts with `Here's "<title>"`. A save that falls back to the chat starts with where the clip wasn't saved.
