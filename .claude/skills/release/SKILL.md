@@ -5,7 +5,9 @@ argument-hint: "patch | minor | major"
 disable-model-invocation: true
 ---
 
-Cut a Gleaner release. Bump type: `$ARGUMENTS` (if empty, ask: patch, minor, or major).
+Cut a Gleaner release by hand. Bump type: `$ARGUMENTS` (if empty, ask: patch, minor, or major).
+
+Merging a plugin change to `main` already releases it through `.github/workflows/auto-release.yml`, picking the bump from the PR's `release:patch`, `release:minor`, or `release:major` label (patch by default). If the user only needs a normal release, say so: write the `**Unreleased**` entry in the PR (step 2), label the PR, and merge. Continue below only when they want the release commit cut by hand.
 
 1. **Confirm a bump is warranted.** Run `git log --oneline <last release commit>..HEAD` (the last commit whose subject starts with "Gleaner" and a version number) and `git status`. If every change since then is wording, typo, or doc-only, say so and stop: those ship without a bump.
 2. **Write the changelog entry** under a `**Unreleased**` line at the top of the `## Changelog` section at the end of `README.md`, above the previous entry. If an earlier PR already started one, review and complete it instead of adding a second. Match the existing format; the script replaces the `**Unreleased**` line with the version and today's date:

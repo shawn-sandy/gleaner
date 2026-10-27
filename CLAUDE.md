@@ -23,10 +23,11 @@ Local validation parses all four Skills' frontmatter and ChatGPT metadata, check
 ## Versioning and changelog
 
 - The version lives only in `plugins/gleaner/.claude-plugin/plugin.json`. `marketplace.json` has no version field; do not add one.
-- The changelog is the last section of `README.md` (there is no CHANGELOG.md). New entries start under a `**Unreleased**` line. Use `/release` to cut a version: it writes the entry, then runs `npm run release`, which bumps the version, dates the entry, validates, and commits. Once the entry is on `main`, the Cut release workflow (`.github/workflows/cut-release.yml`, run from the Actions tab) does the same on `main` and pushes the `release/X.Y.Z` branch for a PR.
-- A merge with `**Unreleased**` bullets and no version change releases nothing. While that entry is on `main`, the Validate workflow's push run adds a "Release owed" warning and a job summary linking to Cut release; it never picks the bump, which stays with the maintainer.
+- The changelog is the last section of `README.md` (there is no CHANGELOG.md). New entries start under a `**Unreleased**` line; write them in the PR that changes the plugin.
+- Releases are automatic: `.github/workflows/auto-release.yml` releases every merge to `main` that changes a file under `plugins/` or `.claude-plugin/`, except READMEs, changelogs, and `docs/` folders. It runs `npm run release`, pushes the release commit to `main`, and dispatches `release.yml`. The bump is patch unless the PR is labeled `release:minor` or `release:major`; `release:skip` holds a change for the next release. `scripts/auto-release.mjs` decides what is releasable; keep its `releasable()` and the workflow's `paths` filter in step. Do not bump the version in a feature PR.
+- `/release` and the Cut release workflow (`.github/workflows/cut-release.yml`) still cut a version by hand on a `release/X.Y.Z` branch; auto-release leaves a merged version bump to `release.yml`. Unreleased bullets merged with no plugin change get a "Release owed" warning from the Validate workflow until a release includes them.
 - Merging a version change to `main` runs `.github/workflows/release.yml`, which tags `vX.Y.Z` and publishes a GitHub Release from that changelog entry. Do not create tags or GitHub Releases directly; to publish a version the workflow missed, run it from the Actions tab.
-- Bump only for changes to what the skill does. Wording, typo, and doc-only fixes ship without a bump.
+- Bump only for changes to what the skill does. Doc-only fixes never trigger a release; label a wording or typo fix under `plugins/` `release:skip` so it waits for the next release.
 
 ## Editing rules
 

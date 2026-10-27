@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: write
+  # Dispatching auto-release.yml after a release, below.
+  actions: write
 
 # No concurrency group: a group keeps only one pending run, which would skip a version merged mid-run.
 jobs:
@@ -18,6 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # History, to tag the commit that set the version rather than whatever main has reached since.
+          fetch-depth: 0
       - name: Publish the plugin.json version
         id: publish
         env:
@@ -29,8 +34,16 @@ jobs:
             exit 0
           fi
           node scripts/release-notes.mjs "$version" > "$RUNNER_TEMP/notes.md"
-          gh release create "v$version" --target "$GITHUB_SHA" --title "Gleaner $version" --notes-file "$RUNNER_TEMP/notes.md"
+          # An auto release dispatches this run after its push, so main may already hold a later PR: tag the version commit.
+          target=$(git log -1 --format=%H -G'"version":' -- plugins/gleaner/.claude-plugin/plugin.json)
+          gh release create "v$version" --target "$target" --title "Gleaner $version" --notes-file "$RUNNER_TEMP/notes.md"
           echo "released=true" >> "$GITHUB_OUTPUT"
+      # A plugin PR merged while this version waited for its tag found no tag and released nothing, so look again now.
+      - name: Release plugin changes merged since
+        if: steps.publish.outputs.released == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run auto-release.yml --repo "$GITHUB_REPOSITORY" --ref main
       # The Gleaner site reads its changelog from these releases at build time, so a new release rebuilds it.
       - name: Rebuild the Gleaner site
         if: steps.publish.outputs.released == 'true'

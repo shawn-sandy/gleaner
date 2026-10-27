@@ -572,9 +572,10 @@ gleaner/
 │   └── marketplace.json            # marketplace "shawn-sandy"
 ├── .github/
 │   └── workflows/
+│       ├── auto-release.yml        # releases every plugin change merged to main: npm run release, push to main, run release.yml
 │       ├── cut-release.yml         # run from the Actions tab: npm run release on main, then push release/X.Y.Z
 │       ├── release.yml             # tags and publishes a GitHub Release when the version changes on main
-│       └── validate.yml            # npm run validate and npm test on every pull request and push to main; warns on main when a release is owed
+│       └── validate.yml            # npm run validate and npm test on every pull request and push to main; warns on main when Unreleased bullets have no release coming
 ├── docs/
 │   ├── artifacts/                  # HTML artifacts
 │   ├── chatgpt-marketplace.md      # ChatGPT import, compatibility, and manual checklist
@@ -608,6 +609,8 @@ gleaner/
 │               │   └── openai.yaml # YouTube skill display metadata
 │               └── SKILL.md        # YouTube videos (uses glean for saving)
 ├── scripts/
+│   ├── auto-release.mjs            # finds unreleased plugin changes and picks the bump for auto-release.yml
+│   ├── auto-release.test.mjs       # auto-release script tests
 │   ├── changelog.mjs               # changelog parsing shared by the release scripts
 │   ├── release.mjs                 # npm run release: bump, date the changelog, validate, commit
 │   ├── release.test.mjs            # release script tests
@@ -652,17 +655,34 @@ In Claude Code, a hook in `.claude/settings.json` reruns both strict checks afte
 
 ### Releasing
 
-Only changes to what the skills do get a new version. In Claude Code, `/release minor` (or `patch` or `major`) walks through the steps below. By hand, add the user-facing changes as bullets under a `**Unreleased**` line at the top of the [changelog](#changelog), write the commit body bullets to a file outside the repository, and run:
+Releases are automatic. When a merge to `main` changes the plugin, the [auto-release workflow](.github/workflows/auto-release.yml) bumps the version, dates the changelog, commits `Gleaner X.Y.Z: <summary>` to `main`, and runs the release workflow to tag and publish it. A plugin change is any file under `plugins/` or `.claude-plugin/` except docs: a `README.md`, a `CHANGELOG.md`, or anything in a `docs/` folder. Changes to the repository's `docs/`, its README, scripts, and workflows never trigger a release on their own.
+
+Each release covers every plugin change since the last release tag, so merges that land close together go out as one release. Choose the bump with a label on the PR before merging:
+
+| Label | Effect |
+| --- | --- |
+| none, or `release:patch` | patch release |
+| `release:minor` | minor release |
+| `release:major` | major release |
+| `release:skip` | not released now; it goes out with the next plugin change, such as for a wording-only edit |
+
+When several unreleased PRs are labeled, the largest bump wins. Write the user-facing changes as bullets under a `**Unreleased**` line at the top of the [changelog](#changelog) in the same PR, as before. Each PR that doesn't edit the README gets a bullet from its title instead, and the commit summary is the latest PR's title in lowercase.
+
+The workflow runs `npm run release` with the Claude CLI installed, so both strict checks and `npm test` must pass before anything is pushed. If `main` moves while it runs, it pushes nothing and fails; run it again from the Actions tab. A plugin PR merged while the previous release is still waiting for its tag is picked up when the release workflow finishes, because that workflow tags the version commit and then runs auto-release again.
+
+#### Releasing by hand
+
+In Claude Code, `/release minor` (or `patch` or `major`) walks through the steps below. By hand, add the user-facing changes as bullets under a `**Unreleased**` line at the top of the [changelog](#changelog), write the commit body bullets to a file outside the repository, and run:
 
 ```bash
 npm run release -- minor --summary "add a notion destination" --body ../release-body.txt
 ```
 
-The script bumps `version` in `plugins/gleaner/.claude-plugin/plugin.json`, replaces `**Unreleased**` with the new version and today's date, runs `npm run validate` and `npm test`, and commits every tracked change as `Gleaner X.Y.Z: <summary>`, on a new `release/X.Y.Z` branch when run on `main`. It needs the Claude CLI on `PATH` so both strict checks run, refuses untracked files, and restores both files if validation or the commit fails.
+The script bumps `version` in `plugins/gleaner/.claude-plugin/plugin.json`, replaces `**Unreleased**` with the new version and today's date, runs `npm run validate` and `npm test`, and commits every tracked change as `Gleaner X.Y.Z: <summary>`, on a new `release/X.Y.Z` branch when run on `main`. It needs the Claude CLI on `PATH` so both strict checks run, refuses untracked files, and restores both files if validation or the commit fails. A PR that already changes the version is left alone by the auto-release workflow.
 
 To cut a release without a local checkout, run the [cut-release workflow](.github/workflows/cut-release.yml) from the Actions tab once the `**Unreleased**` entry is on `main`. Pick the bump, enter the summary, and it runs the same script on `main`, with the Unreleased bullets as the commit body and the date in New York time, then pushes the `release/X.Y.Z` branch and links to open its PR.
 
-Merging a PR with `**Unreleased**` bullets but no version change releases nothing. Until a release dates that entry, every push to `main` gets a "Release owed" warning from the [validate workflow](.github/workflows/validate.yml), with the bullets and a link to the cut-release workflow in the run's summary. It never picks the bump or cuts the release itself, so you still choose patch, minor, or major, and entries can wait to go out together.
+Unreleased bullets merged with no plugin change, such as with a docs-only PR, wait for the next plugin change. Until then, every push to `main` gets a "Release owed" warning from the [validate workflow](.github/workflows/validate.yml), with the bullets and a link to the cut-release workflow in the run's summary.
 
 When a merge to `main` changes the version, the [release workflow](.github/workflows/release.yml) tags `vX.Y.Z` and publishes a GitHub Release whose notes are that version's changelog entry. To publish a version that is on `main` but not released yet, run the workflow from the repository's Actions tab.
 

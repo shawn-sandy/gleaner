@@ -1,0 +1,84 @@
+# Release every plugin change merged to main: bump the version, date the changelog, commit to main, then run release.yml.
+# Docs, READMEs, and changelogs do not trigger it. Label a PR release:minor or release:major to pick the bump (patch by
+# default), or release:skip to hold it for the next release. Run it from the Actions tab to retry a run that pushed nothing.
+name: Auto release
+
+on:
+  push:
+    branches: [main]
+    # Keep in step with releasable() in scripts/auto-release.mjs, which decides; this filter only avoids empty runs.
+    paths:
+      - 'plugins/**'
+      - '.claude-plugin/**'
+      - '!**/README.md'
+      - '!**/CHANGELOG.md'
+      - '!**/docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+  # Dispatching release.yml: a push made with GITHUB_TOKEN starts no workflows, but a dispatch does.
+  actions: write
+
+# One run at a time, because each pushes to main. A pending run replaced by a newer one loses nothing: every run
+# releases all plugin changes since the last release tag, not only the commits that started it.
+concurrency:
+  group: auto-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      # The script dates the changelog entry with the local day; runners use UTC, which is a day ahead on US evenings.
+      TZ: America/New_York
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The latest main, not the commit that started the run, so a queued run sees earlier runs' release commits.
+          ref: main
+          # Tags and history, to find the changes since the last release tag.
+          fetch-depth: 0
+          # Only the push step gets the write token, so it is not saved in .git/config while npm packages install and run.
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Plan the release
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/auto-release.mjs plan
+      - if: steps.plan.outputs.release == 'true'
+        run: npm ci
+      # The release script refuses to run without the Claude CLI, so both strict checks run instead of skipping.
+      # Pinned to the same version as validate.yml and cut-release.yml; bump all three together.
+      - if: steps.plan.outputs.release == 'true'
+        run: npm install --global @anthropic-ai/claude-code@2.1.304
+      - name: Commit the release
+        if: steps.plan.outputs.release == 'true'
+        env:
+          BUMP: ${{ steps.plan.outputs.bump }}
+          SUMMARY: ${{ steps.plan.outputs.summary }}
+          BODY: ${{ steps.plan.outputs.body }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm run release -- "$BUMP" --summary "$SUMMARY" --body "$BODY"
+      - name: Push to main and publish
+        if: steps.plan.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./plugins/gleaner/.claude-plugin/plugin.json').version")
+          if ! git push "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:main; then
+            echo "::error::main moved while Gleaner $version was being cut, so nothing was pushed. Run this workflow again from the Actions tab."
+            exit 1
+          fi
+          if ! gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main; then
+            echo "::error::Gleaner $version is on main, but the release workflow did not start. Run Release from the Actions tab to publish v$version; rerunning this workflow will not."
+            exit 1
+          fi
+          echo "Pushed Gleaner $version to main and started the release workflow to tag v$version." | tee -a "$GITHUB_STEP_SUMMARY"
