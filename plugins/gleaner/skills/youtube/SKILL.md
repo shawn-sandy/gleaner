@@ -1,6 +1,6 @@
 ---
 name: youtube
-description: Gleaner's YouTube clipper. Saves a video, or a moment from it, as a summarized, tagged clip from its transcript, with chapters linked to the exact second. Use when keeping or clipping a YouTube video.
+description: Gleaner's YouTube clipper. Saves a video or moment from it as a tagged summary clip from its transcript or description, with timestamped chapter links. Use when keeping or clipping a YouTube video.
 argument-hint: "[--to chat | drive | notion | artifact | local | <path>]"
 ---
 
