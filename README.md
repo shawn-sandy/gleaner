@@ -692,6 +692,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- Outside ChatGPT, a YouTube clip saved without a transcript because no Chrome was available to read it (only the built-in browser, or no browser at all) now ends its confirmation by suggesting saving it again from the video's page in Chrome, with the Chrome side panel or Claude in Chrome, which may get better results if the video has a transcript. Before, only the built-in browser got a Chrome hint, and a clip read without a browser got none.
+
 **2.12.4** (2026-10-27)
 - The Gleaner icon is now the square logo from the website, replacing the round one, including in ChatGPT.
 
