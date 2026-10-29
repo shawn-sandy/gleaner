@@ -137,10 +137,11 @@ ${sections(bookmark).map(([heading, values]) => `<section><h2>${heading}</h2>${h
 </main></body></html>\n`;
 }
 
-// Unix seconds for a YYYY-MM-DD Saved date at UTC midnight; null for anything
-// else, including dates Date.parse rolls over (2026-02-30 becomes March 2).
+// Unix seconds for a YYYY-MM-DD Saved date at noon UTC, so browsers from UTC-12
+// to UTC+11 show the same day; null for anything else, including dates
+// Date.parse rolls over (2026-02-30 becomes March 2).
 function savedSeconds(date) {
-  const ms = Date.parse(`${date}T00:00:00Z`);
+  const ms = Date.parse(`${date}T12:00:00Z`);
   return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(ms) && new Date(ms).toISOString().startsWith(date) ? ms / 1000 : null;
 }
 

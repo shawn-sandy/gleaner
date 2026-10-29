@@ -416,9 +416,9 @@ Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every 
 
 > export my gleans as bookmarks
 
-Gives you `Gleaner Bookmarks <date>.html`, a file you can import into Chrome, Firefox, Safari, or Edge. Your clips land in a `Gleaner` folder, one subfolder per category, and each bookmark opens the page you clipped (or the clip itself, for a saved answer). Notes and links back to the clips go in each bookmark's description, and tags come along in browsers that have them. Chrome has no tags. Clips with no web link to open, such as an answer saved only to a local folder, are left out, and Gleaner says how many.
+Gives you `Gleaner Bookmarks <date>.html`, a file you can import into Chrome, Firefox, Safari, or Edge. Your clips land in a `Gleaner` folder, one subfolder per category, and each bookmark opens the page you clipped (or the clip itself, for an answer saved without a page). The file also holds each clip's tags, note, and a link back to the clip, but browsers may drop the note and link on import, and Chrome has no tags. Clips with no web link to open, such as an answer without a page saved only to a local folder, are left out, and Gleaner says how many.
 
-Like the index sheet, it's a **snapshot**. Importing a newer file adds a second `Gleaner` folder instead of updating the first. Clips kept only in a past conversation can't be found, so they can't be included.
+Like the index sheet, it's a **snapshot**. Importing a newer file won't update the bookmarks you imported before. Clips kept only in a past conversation can't be found, so they can't be included.
 
 ### Following up on a clip
 
@@ -703,7 +703,7 @@ MIT © Shawn Sandy
 ## Changelog
 
 **Unreleased**
-- "Export my gleans as bookmarks" gives you a bookmarks file to import into Chrome, Firefox, Safari, or Edge, with a `Gleaner` folder holding one subfolder per category. Each bookmark opens the clipped page, or the clip for a saved answer, and keeps the clip's date, tags, note, and link. Like the index sheet, it's a snapshot. See [Bookmarks file](#bookmarks-file).
+- "Export my gleans as bookmarks" gives you a bookmarks file to import into Chrome, Firefox, Safari, or Edge, with a `Gleaner` folder holding one subfolder per category. Each bookmark opens the clipped page, or the clip for an answer saved without a page, and the file carries the clip's date, tags, note, and link. Like the index sheet, it's a snapshot. See [Bookmarks file](#bookmarks-file).
 
 **2.12.5** (2026-10-28)
 - Outside ChatGPT, a YouTube clip saved without a transcript because no Chrome was available to read it (only the built-in browser, or no browser at all) now ends its confirmation by suggesting saving it again from the video's page in Chrome, with the Chrome side panel or Claude in Chrome, which may get better results if the video has a transcript. Before, only the built-in browser got a Chrome hint, and a clip read without a browser got none.
