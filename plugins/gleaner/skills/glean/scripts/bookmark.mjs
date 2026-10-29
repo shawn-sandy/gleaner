@@ -137,6 +137,47 @@ ${sections(bookmark).map(([heading, values]) => `<section><h2>${heading}</h2>${h
 </main></body></html>\n`;
 }
 
+// Unix seconds for a YYYY-MM-DD Saved date at noon UTC, so browsers from UTC-12
+// to UTC+11 show the same day; null for anything else, including dates
+// Date.parse rolls over (2026-02-30 becomes March 2).
+function savedSeconds(date) {
+  const ms = Date.parse(`${date}T12:00:00Z`);
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(ms) && new Date(ms).toISOString().startsWith(date) ? ms / 1000 : null;
+}
+
+// Chrome's importer parses the file one line at a time and drops an entry or
+// folder name split by a line break, so each one is kept on a single line.
+const oneLine = value => String(value).replace(/\s*[\r\n]+\s*/g, ' ');
+
+// A Netscape bookmark file, the HTML import format browsers share, built from
+// Clip index rows. Each bookmark opens the clip's source page, or the clip itself
+// when it has no page; rows with neither as an HTTP(S) link come back in skipped.
+export function renderBookmarksFile(clips) {
+  const folders = new Map();
+  const skipped = [];
+  for (const clip of clips) {
+    const href = [clip.url, clip.clip_link].find(webUrl);
+    if (!href) { skipped.push(String(clip.title ?? '')); continue; }
+    const added = savedSeconds(clip.saved_at);
+    const tags = oneLine((Array.isArray(clip.tags) ? clip.tags : []).map(tag => String(tag).replace(/^#/, '')).join(','));
+    const note = oneLine([clip.note, clip.clip_link && clip.clip_link !== href ? `Clip: ${clip.clip_link}` : ''].filter(Boolean).join(' · '));
+    const category = oneLine(clip.category || 'Uncategorized');
+    if (!folders.has(category)) folders.set(category, []);
+    folders.get(category).push(`      <DT><A HREF="${escapeHtml(href)}"${added === null ? '' : ` ADD_DATE="${added}"`}${tags ? ` TAGS="${escapeHtml(tags)}"` : ''}>${escapeHtml(oneLine(clip.title || href))}</A>${note ? `\n      <DD>${escapeHtml(note)}` : ''}`);
+  }
+  const html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Bookmarks</TITLE>
+<H1>Bookmarks</H1>
+<DL><p>
+  <DT><H3>Gleaner</H3>
+  <DL><p>
+${[...folders].map(([category, entries]) => `    <DT><H3>${escapeHtml(category)}</H3>\n    <DL><p>\n${entries.join('\n')}\n    </DL><p>`).join('\n')}
+  </DL><p>
+</DL><p>\n`;
+  return { html, skipped };
+}
+
 // A host adapter may supply an available native component; ordinary Markdown
 // is always returned for the conversation, even when that component succeeds.
 export async function present(bookmark, { mode = 'auto', nativePreview, attachmentLinks = false } = {}) {
@@ -155,9 +196,14 @@ export async function present(bookmark, { mode = 'auto', nativePreview, attachme
 }
 
 // Optional CLI: node bookmark.mjs < input.json > output.json
-// Input: { bookmark, receipt, mode?, attachmentLinks? }; output is data, never a saved-file receipt.
+// Input: { bookmark, receipt, mode?, attachmentLinks? }, or { clips } for a
+// bookmarks file; output is data, never a saved-file receipt.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const input = JSON.parse(readFileSync(0, 'utf8'));
-  const bookmark = applyReceipt(input.bookmark, input.receipt);
-  process.stdout.write(JSON.stringify({ bookmark, html: renderHtml(bookmark), ...await present(bookmark, { mode: input.mode, attachmentLinks: input.attachmentLinks }) }, null, 2));
+  if (Array.isArray(input.clips)) {
+    process.stdout.write(JSON.stringify(renderBookmarksFile(input.clips), null, 2));
+  } else {
+    const bookmark = applyReceipt(input.bookmark, input.receipt);
+    process.stdout.write(JSON.stringify({ bookmark, html: renderHtml(bookmark), ...await present(bookmark, { mode: input.mode, attachmentLinks: input.attachmentLinks }) }, null, 2));
+  }
 }

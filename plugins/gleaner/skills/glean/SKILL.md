@@ -139,7 +139,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 | **Save answer** | Saves an answer you gave in this conversation as a clip now; adds it as a part instead while parts are being collected, or to the page's clip if one was saved this session | "save that answer", "keep that explanation", "save those steps", "save what you just told me", "explain the auth flow and save it" |
 | **Save clip** | Saves all collected parts (plus a current highlight not yet added) as one clip | "save this clip", "that's it, save them", "done", "wrap it up", "save what I've got" |
 | **Manage parts** | Lists, removes, edits, or discards parts | "what have I got so far?", "drop the second one", "change part 1's note to …", "start over" |
-| **Find clips** | Searches saved clips (see Clip index) | "what did I save about Cowork?", "show my clips from this week", "anything on view transitions?" |
+| **Find clips** | Searches saved clips, or exports them as an index sheet or a bookmarks file (see Clip index) | "what did I save about Cowork?", "show my clips from this week", "anything on view transitions?", "export my clips as bookmarks" |
 
 **Deciding between them:**
 - A request naming the whole thing ("this page", "this article", "the whole doc") is **Save page**, even with text highlighted.
@@ -150,6 +150,7 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 - "Done", "that's all", or "save them" with parts collected is **Save clip**. With nothing collected, say there's nothing new to save, naming the clip saved from this page this session if there is one; otherwise offer to save the page.
 - A follow-up like "and this one" or "this too" right after adding a part is another **Add part**.
 - If parts are collected and the user asks to save the page, ask once: save the page on its own (keeping the parts), or include the parts?
+- A request for saved clips as browser bookmarks ("export my gleans as bookmarks", "make me a bookmark list") is **Find clips** (see Bookmarks file), not **Save page**, even though "bookmark this" saves the page.
 
 ### Details to pull out
 
@@ -537,6 +538,14 @@ When the user asks to find or list clips ("show my clip index", "what did I save
 ### Snapshot sheet
 
 Notion users already have a live index in the database; offer its link first. If the user still wants a spreadsheet ("make me an index sheet"), build the table above for all clips and create a **new** Google Sheet in `Browser Research` titled `Clip Index <yyyy-mm-dd>`. Upload it as CSV (`contentMimeType: text/csv`) so Drive converts it to a Sheet, with the columns Date, Title, Category, Type, Tags, Note, Source URL, Clip link. Tell the user it's a point-in-time snapshot: it won't update itself, and they can ask for a fresh one anytime. Never try to edit an existing index sheet.
+
+### Bookmarks file
+
+If the user wants their clips as browser bookmarks ("export my gleans as bookmarks", "make me a bookmark list"), gather and read the clips as in Clip index steps 1 and 2, applying any filter the user gives, then build a bookmarks file in the Netscape bookmark format, which Chrome, Firefox, Safari, and Edge all import. Put one folder per category inside a `Gleaner` folder. Each bookmark opens the clip's Source page (the first one when it has several), or the clip itself when it has no Source line, such as an answer saved without a page. Its date is the Saved date, its tags go in without the `#`, and its note and the clip's link or path go in its description line. Leave out a clip with no HTTP(S) link to open, and say how many were left out and why. If no clip is left to export, say so and don't deliver a file.
+
+- **Build it:** when Node.js and the skill files are available, write the rows as JSON, `{"clips": [...]}`, to a scratch file and pipe it to [bookmark.mjs](scripts/bookmark.mjs) with the bookmark contract's command. Give each row `title`, `url` (the clip's Source URL, the first one when it has several, or null when it has no Source line), `saved_at`, `category`, `tags`, `note`, and `clip_link` (the verified clip link or path, or null). A Notion page keeps these in its database properties rather than header lines, so for a Notion clip take them from Name, Source, Saved, Category, Tags, and Note, with the page's URL as `clip_link`. It returns the file as `html` and the left-out titles as `skipped`. Without Node, write the same format directly: a `Gleaner` folder heading holding one folder heading per category, each followed by its list of links; each link's ADD_DATE is the Unix time in seconds at noon UTC on the Saved date, left off when the Saved date is missing or isn't a real YYYY-MM-DD date, and its TAGS is one comma-separated attribute. Keep each link and folder heading on one line, replacing line breaks in its text with spaces, and escape ampersands, angle brackets, and double quotes in every title, category, tag, note, URL, and clip link, since they come from web pages.
+- **Deliver it** as `Gleaner Bookmarks <yyyy-mm-dd>.html`, written outside the project and attached the same way as a This conversation clip (step 6); if the session can't attach files, give it in a code block. Don't upload it to Drive or write it into the project unless the user asks.
+- **Tell the user** it's a snapshot, like the index sheet: importing a newer file won't update the bookmarks imported before. Notes and clip links are in the file's description lines, which browsers may not keep, and Chrome has no tags. Chrome puts an import under Other bookmarks when bookmarks already exist.
 
 ## Edge cases
 
