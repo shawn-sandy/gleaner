@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>.mermaid-diagram svg{display:block;margin:0 auto;height:auto}</style>
+</head>
+<body>
+<title>Gleaner chat tagging</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one reading column, like a Gleaner clip; the stat strip and change cards are the only grids. Palette is Gleaner's own clip template. */
+  :root {
+    --bg: #f6f7f4; --fg: #1f2523; --muted: #5d6863; --line: #d8ded9; --accent: #2d6a5d; --accent-soft: #e4efeb; --code: #eaeeeb; --card: #fdfdfb; --diagram: #ffffff;
+    --display: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #151a18; --fg: #e3e8e5; --muted: #9ba6a1; --line: #2d3633; --accent: #80c4b3; --accent-soft: #1e2e29; --code: #1e2522; --card: #1a201d; --diagram: #f4f6f3; color-scheme: dark }
+  }
+  :root[data-theme="dark"] { --bg: #151a18; --fg: #e3e8e5; --muted: #9ba6a1; --line: #2d3633; --accent: #80c4b3; --accent-soft: #1e2e29; --code: #1e2522; --card: #1a201d; --diagram: #f4f6f3; color-scheme: dark }
+
+  body { background: var(--bg); color: var(--fg); font: 1.0625rem/1.65 var(--body); margin: 0 }
+  main { max-width: 46rem; margin: 0 auto; padding-block: 2.5rem 4rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.2; text-wrap: balance; margin: 0 }
+  h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 700; letter-spacing: -0.01em }
+  h2 { font-size: 1.375rem; font-weight: 600; margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--line) }
+  h3 { font-size: 1.0625rem; font-weight: 600; margin-top: 1.5rem }
+  p { margin: 0.75rem 0 }
+  a { color: var(--accent); overflow-wrap: anywhere }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+  code { font-family: var(--mono); font-size: 0.85em; background: var(--code); border-radius: 4px; padding: 0.1em 0.35em; overflow-wrap: anywhere }
+  .eyebrow { font-family: var(--display); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted) }
+  .deck { font-size: 1.2rem; color: var(--muted); margin-top: 0.75rem; max-width: 36rem }
+  .tagline { font-family: var(--mono); font-size: 0.9rem; background: var(--code); border-left: 3px solid var(--accent); padding: 0.75rem 1rem; margin: 1.25rem 0; overflow-x: auto; white-space: nowrap }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.75rem; margin: 1.5rem 0 }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 0.9rem 1rem; min-width: 0 }
+  .stat b { display: block; font-family: var(--display); font-size: 1.75rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1 }
+  .stat span { font-family: var(--display); font-size: 0.8rem; color: var(--muted) }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1rem; margin-top: 1.25rem }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.125rem; min-width: 0; display: flex; flex-direction: column; gap: 0.5rem }
+  .card h3 { margin-top: 0 }
+  .card .affects { font-family: var(--display); font-size: 0.8rem; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 0.15rem 0.6rem; align-self: flex-start }
+  .card p { margin: 0; font-size: 0.97rem }
+  .card .where { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); margin-top: auto; padding-top: 0.5rem; border-top: 1px dashed var(--line) }
+  .diagram { background: var(--diagram); color: #1f2523; border: 1px solid var(--line); border-radius: 8px; padding: 1rem; margin: 1.25rem 0 0.5rem; overflow-x: auto }
+  .diagram pre.mermaid { margin: 0; min-width: 0 }
+  figcaption { font-size: 0.92rem; color: var(--muted); margin-bottom: 1rem }
+  .scroll { overflow-x: auto; margin: 1.25rem 0 }
+  table { border-collapse: collapse; width: 100%; min-width: 40rem; font-size: 0.95rem }
+  th, td { text-align: left; vertical-align: top; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--line) }
+  th { font-family: var(--display); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted) }
+  td:first-child { font-weight: 600; font-family: var(--display); font-size: 0.9rem }
+  ol, ul { padding-left: 1.25rem }
+  li + li { margin-top: 0.6rem }
+  .rejected { color: var(--muted) }
+  dl { margin: 1rem 0 }
+  dt { font-family: var(--display); font-weight: 600; margin-top: 0.75rem }
+  dd { margin: 0.15rem 0 0 }
+  .files h3 { font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted) }
+  .files ul { list-style: none; padding: 0 }
+  .files li { padding: 0.5rem 0; border-bottom: 1px solid var(--line) }
+  .files code { font-size: 0.82em }
+  .status { font-family: var(--display); font-size: 0.8rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 0.1rem 0.45rem }
+</style>
+<main>
+  <p class="eyebrow">Team recap · 2026-10-29 · Gleaner</p>
+  <h1>Gleaner chat tagging</h1>
+  <p class="deck">Every Gleaner reply now leaves one searchable line in the chat, so "what did I save about X?" can find the conversations that hold clips.</p>
+
+  <h2>At a glance</h2>
+  <div class="stats">
+    <div class="stat"><b>6</b><span>changes</span></div>
+    <div class="stat"><b>5</b><span>files, plus this record</span></div>
+    <div class="stat"><b>8</b><span>decisions</span></div>
+    <div class="stat"><b>5</b><span>open items</span></div>
+  </div>
+  <p>Gleaner now tags the chat it is working in. Every reply that saves, updates, or searches for a clip carries one plain line, and the "find my clips" flow searches past conversations for that line where the host can. Before, a clip kept in the conversation, which is Gleaner's default destination, could not be found from any later chat, and the skill said so.</p>
+  <div class="tagline">Gleaner clip · 2026-10-29 · Motion timing guidelines · Design Engineering · #motion #css</div>
+  <p>The work is one commit on branch <code>claude/gleaner-chat-tagging-1cab86</code>, open for review as <a href="https://github.com/shawn-sandy/gleaner/pull/56">pull request 56</a>. Both checks pass. It is <span class="status">not merged</span>, not version-bumped (auto-release does that on merge), and not live-tested on any surface.</p>
+
+  <h2>What changed</h2>
+  <div class="cards">
+    <article class="card">
+      <span class="affects">Everyone who saves clips</span>
+      <h3>1. Every save tags its chat</h3>
+      <p>Right after the outcome sentence ("Saved …", "Here's …", "Updated …") and before the preview, the reply carries one plain line: <code>Gleaner clip · &lt;Saved date&gt; · &lt;clip title&gt; · &lt;Category&gt; · #tag #tag #tag</code>. It is written the same way on every surface and for every destination, including a Fallback that drops the clip into the chat, and it never goes into the saved file or page.</p>
+      <p class="where">plugins/gleaner/skills/glean/SKILL.md · step 7 · Tagging the chat</p>
+    </article>
+    <article class="card">
+      <span class="affects">Everyone who searches</span>
+      <h3>2. Searches tag the chat too</h3>
+      <p>Under the result count, the reply writes <code>Gleaner search · &lt;what was searched&gt;</code>, in the user's words, so a search can be found again later without being mistaken for a save.</p>
+      <p class="where">glean/SKILL.md · Clip index · step 3</p>
+    </article>
+    <article class="card">
+      <span class="affects">Claude Code desktop, claude.ai with chat search</span>
+      <h3>3. Find clips searches past conversations</h3>
+      <p>When the host offers a search over earlier conversations, Find clips searches it for "Gleaner clip" plus the user's tag, keyword, title words, or category. It does so in three cases: the effective destination is This conversation, the stored destination turns up nothing, or the user asks about chats ("which chat did I save that in?"). Hits appear in the usual table marked "(chat)", linked to the conversation where the host gives a link. Only hits with a real tag line count; the words "Gleaner clip" in a pasted follow-up prompt do not.</p>
+      <p class="where">glean/SKILL.md · Clip index · step 1 Past conversations, step 3</p>
+    </article>
+    <article class="card">
+      <span class="affects">Claude Code desktop</span>
+      <h3>4. Gleaner conversations get a name</h3>
+      <p>Where the session has a tool that sets the conversation's title, and the conversation began with a Gleaner request, the first clip saved or given in it names the conversation <code>Gleaner: &lt;clip title&gt;</code>, once. A coding session that saves one page keeps its own name.</p>
+      <p class="where">glean/SKILL.md · step 7 · second bullet under Tagging the chat</p>
+    </article>
+    <article class="card">
+      <span class="affects">Follow-up skill users</span>
+      <h3>5. Follow-up replies carry the tag line</h3>
+      <p>After the follow-up skill saves its three suggestions into a clip, it shows glean's chat tag line along with the bookmark preview, so a follow-up chat is findable too.</p>
+      <p class="where">plugins/gleaner/skills/follow-up/SKILL.md · Save the follow-ups</p>
+    </article>
+    <article class="card">
+      <span class="affects">README and guide readers</span>
+      <h3>6. Docs describe it</h3>
+      <p>The README's Features, destinations, Finding your clips, phrase cheat sheet, and Troubleshooting sections; the skills guide's Find section; the requirements table; and an Unreleased changelog entry.</p>
+      <p class="where">README.md · plugins/gleaner/skills/README.md · docs/requirements.md</p>
+    </article>
+  </div>
+
+  <h2>How it works now</h2>
+  <p>The save side only adds one line to a reply, so it needs no picture. The find side changed shape: a second search source and a filter on its hits.</p>
+  <figure style="margin: 0">
+    <div class="diagram">
+<div class="mermaid-diagram"><svg aria-roledescription="flowchart-v2" role="graphics-document document" viewBox="0 0 601 1648.5" height="1648.5" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="601" id="capture-0"><style>#capture-0{font-family:system-ui,sans-serif;font-size:15px;fill:#1f2523;}#capture-0 .error-icon{fill:hsl(338.1818181818, 25.5813953488%, 96.568627451%);}#capture-0 .error-text{fill:rgb(6.5116279069, 10.988372093, 9.3604651162);stroke:rgb(6.5116279069, 10.988372093, 9.3604651162);}#capture-0 .edge-thickness-normal{stroke-width:1px;}#capture-0 .edge-thickness-thick{stroke-width:3.5px;}#capture-0 .edge-pattern-solid{stroke-dasharray:0;}#capture-0 .edge-thickness-invisible{stroke-width:0;fill:none;}#capture-0 .edge-pattern-dashed{stroke-dasharray:3;}#capture-0 .edge-pattern-dotted{stroke-dasharray:2;}#capture-0 .marker{fill:#5d6863;stroke:#5d6863;}#capture-0 .marker.cross{stroke:#5d6863;}#capture-0 svg{font-family:system-ui,sans-serif;font-size:15px;}#capture-0 p{margin:0;}#capture-0 .label{font-family:system-ui,sans-serif;color:#1f2523;}#capture-0 .cluster-label text{fill:rgb(6.5116279069, 10.988372093, 9.3604651162);}#capture-0 .cluster-label span{color:rgb(6.5116279069, 10.988372093, 9.3604651162);}#capture-0 .cluster-label span p{background-color:transparent;}#capture-0 .label text,#capture-0 span{fill:#1f2523;color:#1f2523;}#capture-0 .node rect,#capture-0 .node circle,#capture-0 .node ellipse,#capture-0 .node polygon,#capture-0 .node path{fill:#e4efeb;stroke:#2d6a5d;stroke-width:1px;}#capture-0 .rough-node .label text,#capture-0 .node .label text,#capture-0 .image-shape .label,#capture-0 .icon-shape .label{text-anchor:middle;}#capture-0 .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#capture-0 .rough-node .label,#capture-0 .node .label,#capture-0 .image-shape .label,#capture-0 .icon-shape .label{text-align:center;}#capture-0 .node.clickable{cursor:pointer;}#capture-0 .root .anchor path{fill:#5d6863!important;stroke-width:0;stroke:#5d6863;}#capture-0 .arrowheadPath{fill:#000000;}#capture-0 .edgePath .path{stroke:#5d6863;stroke-width:2.0px;}#capture-0 .flowchart-link{stroke:#5d6863;fill:none;}#capture-0 .edgeLabel{background-color:#ffffff;text-align:center;}#capture-0 .edgeLabel p{background-color:#ffffff;}#capture-0 .edgeLabel rect{opacity:0.5;background-color:#ffffff;fill:#ffffff;}#capture-0 .labelBkg{background-color:rgba(255, 255, 255, 0.5);}#capture-0 .cluster rect{fill:hsl(338.1818181818, 25.5813953488%, 96.568627451%);stroke:hsl(338.1818181818, 0%, 86.568627451%);stroke-width:1px;}#capture-0 .cluster text{fill:rgb(6.5116279069, 10.988372093, 9.3604651162);}#capture-0 .cluster span{color:rgb(6.5116279069, 10.988372093, 9.3604651162);}#capture-0 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:system-ui,sans-serif;font-size:12px;background:hsl(338.1818181818, 25.5813953488%, 96.568627451%);border:1px solid hsl(338.1818181818, 0%, 86.568627451%);border-radius:2px;pointer-events:none;z-index:100;}#capture-0 .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#1f2523;}#capture-0 rect.text{fill:none;stroke-width:0;}#capture-0 .icon-shape,#capture-0 .image-shape{background-color:#ffffff;text-align:center;}#capture-0 .icon-shape p,#capture-0 .image-shape p{background-color:#ffffff;padding:2px;}#capture-0 .icon-shape rect,#capture-0 .image-shape rect{opacity:0.5;background-color:#ffffff;fill:#ffffff;}#capture-0 :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="capture-0_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="capture-0_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="capture-0_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="capture-0_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="capture-0_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="capture-0_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_A_B_0" d="M304.25,60.5L304.25,64.667C304.25,68.833,304.25,77.167,304.25,84.833C304.25,92.5,304.25,99.5,304.25,103L304.25,106.5"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_B_C_1" d="M304.25,185.5L304.25,189.667C304.25,193.833,304.25,202.167,304.32,209.917C304.391,217.667,304.531,224.834,304.601,228.417L304.672,232.001"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_C_D_2" d="M239.102,445.352L223.501,462.251C207.901,479.151,176.701,512.951,161.1,535.225C145.5,557.5,145.5,568.25,145.5,573.625L145.5,579"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_C_E_3" d="M370.398,445.352L385.832,462.251C401.266,479.151,432.133,512.951,447.566,544.017C463,575.083,463,603.417,463,629.875C463,656.333,463,680.917,463,713.375C463,745.833,463,786.167,463,806.333L463,826.5"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_F_4" d="M145.5,680.5L145.5,684.667C145.5,688.833,145.5,697.167,145.57,704.917C145.641,712.667,145.781,719.834,145.851,723.417L145.922,727.001"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_F_J_5" d="M134.354,994.354L133.532,1002.253C132.71,1010.153,131.066,1025.951,130.244,1048.017C129.422,1070.083,129.422,1098.417,129.422,1126.75C129.422,1155.083,129.422,1183.417,129.422,1217.375C129.422,1251.333,129.422,1290.917,129.422,1328.625C129.422,1366.333,129.422,1402.167,142.996,1424.062C156.57,1445.958,183.718,1453.917,197.291,1457.896L210.865,1461.875"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_F_G_6" d="M207.998,944.002L221.36,960.294C234.722,976.585,261.447,1009.167,285.505,1031.186C309.564,1053.204,330.956,1064.658,341.652,1070.385L352.348,1076.112"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_E_G_7" d="M463,905.5L463,928.208C463,950.917,463,996.333,461.981,1024.428C460.962,1052.523,458.924,1063.296,457.905,1068.683L456.887,1074.07"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_G_H_8" d="M446.922,1175.5L446.922,1181.542C446.922,1187.583,446.922,1199.667,446.922,1211.083C446.922,1222.5,446.922,1233.25,446.922,1238.625L446.922,1244"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_H_J_9" d="M446.922,1413L446.922,1417.167C446.922,1421.333,446.922,1429.667,435.95,1437.775C424.978,1445.883,403.034,1453.765,392.062,1457.706L381.09,1461.648"></path><path marker-end="url(#capture-0_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_J_K_10" d="M304.25,1515.5L304.25,1519.667C304.25,1523.833,304.25,1532.167,304.25,1539.833C304.25,1547.5,304.25,1554.5,304.25,1558L304.25,1561.5"></path></g><g class="edgeLabels"><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g transform="translate(145.5, 546.75)" class="edgeLabel"><g transform="translate(-9.765625, -11.25)" class="label"><foreignObject height="22.5" width="19.53125"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>No</p></span></div></foreignObject></g></g><g transform="translate(463, 631.75)" class="edgeLabel"><g transform="translate(-12.15625, -11.25)" class="label"><foreignObject height="22.5" width="24.3125"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>Yes</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g transform="translate(129.421875, 1211.75)" class="edgeLabel"><g transform="translate(-9.765625, -11.25)" class="label"><foreignObject height="22.5" width="19.53125"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>No</p></span></div></foreignObject></g></g><g transform="translate(288.171875, 1041.75)" class="edgeLabel"><g transform="translate(-12.15625, -11.25)" class="label"><foreignObject height="22.5" width="24.3125"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"><p>Yes</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" class="labelBkg" xmlns="http://www.w3.org/1999/xhtml"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g transform="translate(304.25, 34.25)" id="flowchart-A-0" class="node default"><rect height="52.5" width="210.71875" y="-26.25" x="-105.359375" style="" class="basic label-container"></rect><g transform="translate(-75.359375, -11.25)" style="" class="label"><rect></rect><foreignObject height="22.5" width="150.71875"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>User asks to find clips</p></span></div></foreignObject></g></g><g transform="translate(304.25, 148)" id="flowchart-B-1" class="node default"><rect height="75" width="260" y="-37.5" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Resolve the effective destination</p></span></div></foreignObject></g></g><g transform="translate(304.25, 373)" id="flowchart-C-3" class="node default"><polygon transform="translate(-137.5,137.5)" class="label-container" points="137.5,0 275,-137.5 137.5,-275 0,-137.5"></polygon><g transform="translate(-100, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Destination is This conversation?</p></span></div></foreignObject></g></g><g transform="translate(145.5, 631.75)" id="flowchart-D-5" class="node default"><rect height="97.5" width="260" y="-48.75" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -33.75)" style="" class="label"><rect></rect><foreignObject height="67.5" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Search the stored destination:Drive, Notion, project folder, or artifacts</p></span></div></foreignObject></g></g><g transform="translate(463, 868)" id="flowchart-E-7" class="node default"><rect height="75" width="260" y="-37.5" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>List clips from this conversation</p></span></div></foreignObject></g></g><g transform="translate(145.5, 868)" id="flowchart-F-9" class="node default"><polygon transform="translate(-137.5,137.5)" class="label-container" points="137.5,0 275,-137.5 137.5,-275 0,-137.5"></polygon><g transform="translate(-100, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Found nothing,or user asked about chats?</p></span></div></foreignObject></g></g><g transform="translate(304.25, 1489.25)" id="flowchart-J-11" class="node default"><rect height="52.5" width="238.15625" y="-26.25" x="-119.078125" style="" class="basic label-container"></rect><g transform="translate(-89.078125, -11.25)" style="" class="label"><rect></rect><foreignObject height="22.5" width="178.15625"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Table of clips, newest first</p></span></div></foreignObject></g></g><g transform="translate(446.921875, 1126.75)" id="flowchart-G-13" class="node default"><rect height="97.5" width="260" y="-48.75" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -33.75)" style="" class="label"><rect></rect><foreignObject height="67.5" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Search past conversations forGleaner clip plus the user's terms</p></span></div></foreignObject></g></g><g transform="translate(446.921875, 1330.5)" id="flowchart-H-17" class="node default"><rect height="165" width="260" y="-82.5" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -67.5)" style="" class="label"><rect></rect><foreignObject height="135" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Keep hits that have a tag line;skip this conversation;skip clips already found at the destination,unless the user asked about chats</p></span></div></foreignObject></g></g><g transform="translate(304.25, 1603)" id="flowchart-K-21" class="node default"><rect height="75" width="260" y="-37.5" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Write the line: Gleaner search · what was searched</p></span></div></foreignObject></g></g></g></g></g></svg></div>
+    </div>
+    <figcaption>The new path is the right-hand branch. Past conversations are a second search source, read through the tag lines only, and their hits join the same table marked "(chat)".</figcaption>
+  </figure>
+
+  <h2>Before and after</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Rule</th><th>Before</th><th>After</th></tr></thead>
+      <tbody>
+        <tr><td>A clip kept in the chat, looked for from a later chat</td><td>Could not be found; the skill said chat clips from other conversations can't be searched</td><td>Found through its tag line where the host can search past conversations; listed as "(chat)" with a link to that conversation</td></tr>
+        <tr><td>What a save reply contains</td><td>Outcome sentence, tags, one-line TL;DR, then the preview</td><td>The same, plus one plain <code>Gleaner clip · …</code> line between the outcome and the preview</td></tr>
+        <tr><td>What a search reply contains</td><td>Count, then the table</td><td>Count, then <code>Gleaner search · …</code>, then the table</td></tr>
+        <tr><td>A save with "no preview" requested</td><td>Outcome only</td><td>Outcome plus the tag line; the line does not depend on the preview</td></tr>
+        <tr><td>Conversation title in Claude Code desktop</td><td>The app's automatic title</td><td><code>Gleaner: &lt;clip title&gt;</code> after the first clip, only when the chat began with a Gleaner request, and never renamed again</td></tr>
+        <tr><td>A conversation that began with other work</td><td>Keeps its name</td><td>Still keeps its name</td></tr>
+        <tr><td>Which past-conversation hits count</td><td>Not applicable</td><td>Only hits with a tag line; a pasted follow-up prompt or a clip's own text does not count</td></tr>
+        <tr><td>A stored clip that also appears in a past chat</td><td>Not applicable</td><td>The chat hit is skipped, unless the user asked which chat</td></tr>
+        <tr><td>The current conversation in past-chat results</td><td>Not applicable</td><td>Skipped; its clips are already listed</td></tr>
+        <tr><td>Hosts without a past-conversation search</td><td>One line says chat clips from other conversations can't be searched</td><td>The same line, unchanged</td></tr>
+        <tr><td>Follow-up skill's save reply</td><td>Reply plus the bookmark preview</td><td>Reply plus the tag line and the preview</td></tr>
+        <tr><td>The clip file or page itself</td><td>Unchanged</td><td>Unchanged; the tag line never enters it</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Decisions</h2>
+  <ol>
+    <li><strong>Tag the chat instead of keeping an index.</strong> The default destination stores nothing, so the chat is the only place a marker can live. A plain line in the reply works on every host and needs no file, lock, or sync. <span class="rejected">Rejected: a local ledger of chat clips under the preferences folder (needs local file access, the lock protocol, and sync rules, and contradicts the skill's "the clips themselves are the index"); a new setting in the reserved <code>skills.gleaner</code> preferences namespace (a schema change for a feature that needs no setting).</span></li>
+    <li><strong>One plain line, identical everywhere, after the outcome and before the preview.</strong> Plain text survives every renderer and reads the same in a transcript search. Placing it before the preview keeps it from being cut off when ChatGPT splits a long inline clip into parts. <span class="rejected">Rejected: adding it to the compact preview layout in the bookmark contract (would mean changing <code>bookmark.mjs</code> and its tests for a line that is not part of the clip); bold, code, or heading formatting (renders differently per host and adds noise to search hits).</span></li>
+    <li><strong>The line carries date, title, category, and tags.</strong> A transcript search returns a snippet, not the whole message, so the line has to stand on its own as the clip's index row. <span class="rejected">Rejected: tags only (a hit could not fill the table's Date, Title, or Category columns).</span></li>
+    <li><strong>Two kinds: "Gleaner clip" and "Gleaner search".</strong> The request asked for searches to be tagged as well as saves. Distinct words let a later clip search skip chats that only searched. <span class="rejected">Rejected: one marker word for both (every search chat would come back as a false clip hit).</span></li>
+    <li><strong>Search past conversations in three cases, not on every find.</strong> Transcript search is slow on some hosts and redundant when the destination search already found the clip. It runs when the destination is the chat, when the stored destination finds nothing, or when the user asks about chats. <span class="rejected">Rejected: always (extra cost on every search with mostly duplicate results); never (the whole point of the change).</span></li>
+    <li><strong>Rename only conversations that began with a Gleaner request, once.</strong> A rename makes Gleaner chats stand out in the Claude Code desktop sidebar, but renaming a coding session that saved one page would be wrong, and a name the user gives must stay. <span class="rejected">Rejected: rename on every save; never rename (loses the one visible tag a sidebar can show).</span></li>
+    <li><strong>Hits need a tag line, skip the current chat, and keep dedup unless the user asked which chat.</strong> A fresh-context review found three gaps: every clip's follow-up prompt contains the words "Gleaner clip", so a chat that only pasted that prompt would be a hit; a transcript search can return the current session and list its clips twice; and the dedup rule dropped the chat hit exactly when the user asked which chat. All three are now explicit in the Clip index text. <span class="rejected">Rejected: leaving the heuristics to the model (the review showed it would misread them).</span></li>
+    <li><strong>No code changes.</strong> The renderer helper <code>bookmark.mjs</code>, the validator, and the tests are untouched; the product of this repo is the prose the model reads. <span class="rejected">Rejected: a renderer flag for the tag line (nothing consumes it).</span></li>
+  </ol>
+
+  <h2>Learnings</h2>
+  <ul>
+    <li><strong>Four auto-release tests fail in the Claude Code sandbox for an unrelated reason.</strong> They spawn the release script inside a temp folder under the macOS temp directory; in the sandbox the spawned process exits 0 with empty output. Pointing <code>TMPDIR</code> at a folder inside the session scratchpad makes all 81 tests pass, and the same tests are green on <code>main</code> in CI. Nothing under <code>scripts/</code> changed in this work.</li>
+    <li><strong>The fixture is independent of the README.</strong> The test copies only <code>scripts/</code> and <code>plugin.json</code> and writes its own changelog, so an Unreleased entry in the README cannot affect it.</li>
+    <li><strong>"Gleaner clip" is already a phrase in every clip.</strong> The follow-up prompt at the end of each clip and the HTML generator line both use it, so a chat search for the words alone is not enough; the rule had to require the dotted tag line.</li>
+    <li><strong>In zsh, <code>echo =====</code> fails.</strong> zsh treats a word starting with <code>=</code> as a command lookup. Quote it.</li>
+    <li><strong>The app would not enable Auto-fix for this PR.</strong> The PR was opened through a driver script, so the app could not attribute it to this session; the toggle on the PR itself still works. The PR pane is also not available in this app build.</li>
+  </ul>
+
+  <h2>Open items</h2>
+  <ol>
+    <li><strong>Not live-tested.</strong> No save or search was run against the Chrome side panel, Claude Code desktop, Cowork, or ChatGPT. The maintainer does live testing; the first checks worth doing are a chat-only save followed by "which chat did I save that in?" in a new Claude Code desktop session, and a Drive save to confirm the tag line appears and the destination result still wins.</li>
+    <li><strong>Host capability wording is hedged, not verified.</strong> The docs say claude.ai can search past chats "when its chat search is turned on" and Claude Code desktop has a transcript search. Confirm both tool names and availability in a real session and tighten or soften the README sentence in Finding your clips.</li>
+    <li><strong>Merge and release.</strong> PR 56 is open with both checks passing and is mergeable. Auto-release will cut a patch version on merge; this is a behavior addition, so decide whether to label the PR <code>release:minor</code> before merging.</li>
+    <li><strong>Auto-fix is off.</strong> The session could not switch it on; turn it on from the PR to have the app wake the session on review comments or conflicts.</li>
+    <li><strong>This record and its gallery copy are uncommitted</strong> until someone decides whether they belong in the PR branch.</li>
+  </ol>
+
+  <h2>Files touched</h2>
+  <div class="files">
+    <h3>Skill prose (what the model reads)</h3>
+    <ul>
+      <li><code>plugins/gleaner/skills/glean/SKILL.md</code>: step 7 gains the "Tagging the chat" block (the tag line and the conversation rename); the Clip index gains the "Past conversations" source, the "(chat)" row rule, and the search tag line; the follow-up prompt rule now says a later session finds only the chat, not the file.</li>
+      <li><code>plugins/gleaner/skills/follow-up/SKILL.md</code>: shows glean's chat tag line with the preview after saving follow-ups.</li>
+    </ul>
+    <h3>Docs</h3>
+    <ul>
+      <li><code>README.md</code>: Features bullet, destinations note, a new paragraph under Finding your clips, a cheat-sheet phrase, a Troubleshooting row, and the Unreleased changelog entry.</li>
+      <li><code>plugins/gleaner/skills/README.md</code>: the Find section gains the "which chat" phrase and one sentence on tagged chats.</li>
+      <li><code>docs/requirements.md</code>: the This conversation row says what finding that chat later needs.</li>
+    </ul>
+    <h3>This recap</h3>
+    <ul>
+      <li><code>docs/plans/sessions/add-chat-tagging-session.md</code>: the committed record this page is rendered from.</li>
+      <li><code>docs/artifacts/</code>: the gallery copy, filed by the save-artifact skill.</li>
+    </ul>
+  </div>
+
+  <h2>Glossary</h2>
+  <dl>
+    <dt>Gleaner</dt><dd>The Claude Code plugin in this repo; a web clipper that saves pages, parts of pages, answers, and YouTube videos as summarized, tagged clips.</dd>
+    <dt>Clip (or glean)</dt><dd>One saved summary with its Source, Saved date, Category, Type, Tags, and optional Note header lines.</dd>
+    <dt>Destination</dt><dd>Where a clip goes: this conversation (the default), Google Drive, Notion, a Cowork project, the Claude Code project folder, or a claude.ai artifact.</dd>
+    <dt>This conversation</dt><dd>The default destination; the clip is handed back as a file in the chat and stored nowhere.</dd>
+    <dt>Tag line</dt><dd>The new one-line marker in a reply: "Gleaner clip · …" for saves and "Gleaner search · …" for searches.</dd>
+    <dt>Clip index</dt><dd>The part of the glean skill that answers "what did I save about X?" by searching the destination and returning a table.</dd>
+    <dt>Fallback</dt><dd>What happens when a save fails: the clip is given in the chat and the reply says where it was not saved.</dd>
+    <dt>Follow-up skill</dt><dd>Gleaner's helper that reads a clip and saves three suggested next steps into it.</dd>
+    <dt>Follow-up prompt</dt><dd>The ready-made line at the end of every clip that a user can paste into a new chat; it contains the words "Gleaner clip".</dd>
+    <dt>Past-chats search, transcript search</dt><dd>A host tool that searches earlier conversations; claude.ai has one when chat search is turned on, and Claude Code desktop has one over session transcripts.</dd>
+    <dt>SKILL.md</dt><dd>The Markdown instruction file for a skill; the model reads it raw at runtime, so its prose is the product.</dd>
+    <dt>Bookmark contract, bookmark.mjs</dt><dd>The shared presentation rules for the preview after a save, and the optional Node helper that renders it; both unchanged here.</dd>
+    <dt>Worktree</dt><dd>A separate checkout of the repo on its own branch, which is where this session worked.</dd>
+    <dt>Auto-release</dt><dd>The workflow that bumps the plugin version and publishes a release whenever a merge to main changes the plugin; patch by default, minor or major by PR label.</dd>
+    <dt>Auto-fix</dt><dd>A Claude Code desktop switch that wakes a session when its pull request gets CI failures, merge conflicts, or review comments.</dd>
+    <dt>Strict validators</dt><dd>The two <code>claude plugin validate --strict</code> checks that <code>npm run validate</code> runs alongside markdownlint.</dd>
+  </dl>
+</main>
+
+</body>
+</html>
