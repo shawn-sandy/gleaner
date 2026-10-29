@@ -705,7 +705,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.13.1** (2026-10-29)
 - Every save, update, and search now tags its chat with one plain line, `Gleaner clip · <date> · <title> · <category> · <tags> · <source URL>` or `Gleaner search · <what you asked for>`, so "what did I save about X?" can also find the conversations that hold clips, including clips kept in the chat, where the host can search past conversations (Claude Code desktop; claude.ai with chat search on). Found chats are listed marked "(chat)", linked where the host gives a link. In Claude Code desktop, a conversation that began with a Gleaner request is named `Gleaner: <clip title>` after its first save.
 
 **2.13.0** (2026-10-29)
