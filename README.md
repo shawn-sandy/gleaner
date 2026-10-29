@@ -702,7 +702,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.13.0** (2026-10-29)
 - "Export my gleans as bookmarks" gives you a bookmarks file to import into Chrome, Firefox, Safari, or Edge, with a `Gleaner` folder holding one subfolder per category. Each bookmark opens the clipped page, or the clip for an answer saved without a page, and the file carries the clip's date, tags, note, and link. Like the index sheet, it's a snapshot. See [Bookmarks file](#bookmarks-file).
 
 **2.12.5** (2026-10-28)
