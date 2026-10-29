@@ -111,10 +111,11 @@ tag it motion and css
 what did I save about Cowork?
 show my #prompting clips
 clips from this week
+which chat did I save that in?
 make me an index sheet
 ```
 
-You get a table, newest first, with a link to each clip. "Make me an index sheet" creates a Google Sheet snapshot that doesn't update itself; ask for a new one when you need it.
+You get a table, newest first, with a link to each clip. Every save tags its chat with a plain `Gleaner clip` line, so where your host can search past conversations, a search can also point you to the chat a clip was kept in, marked "(chat)". "Make me an index sheet" creates a Google Sheet snapshot that doesn't update itself; ask for a new one when you need it.
 
 ## youtube: videos and moments
 

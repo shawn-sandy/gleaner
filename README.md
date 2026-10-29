@@ -62,7 +62,7 @@ Gleaner: Here's "Motion timing guidelines" as an HTML file, filed under Design E
 - **Your reasons, kept.** Add a note to any request ("…for the motion post") and it's saved with the clip. Gleaner never invents notes.
 - **Organized automatically.** Every clip gets a category (used as its folder), a type, and 3–6 specific tags, reusing your existing tag spellings.
 - **One clip per page.** In a session, saving or adding more from a page you've already clipped updates that clip instead of starting a new doc. A page clipped in an earlier session gets an updated copy that links to the original; clips from earlier sessions are never changed or deleted.
-- **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one.
+- **Search by asking.** "What did I save about Cowork?" returns a sortable table. Ask for a spreadsheet snapshot whenever you want one. Every save tags its chat with a plain `Gleaner clip` line, so where your host can search past conversations, a search can also point you to the chat a clip was kept in.
 - **Next steps, suggested.** Ask "what should I follow up on?" and Gleaner suggests three next steps drawn from a clip's note, takeaways, and links, then saves them to the clip.
 - **In the chat, or stored where you choose.** Gives you each clip as a Markdown file in ChatGPT or an HTML file in Claude by default, or saves it to Google Drive, a Notion database, a private claude.ai artifact, a Cowork project folder, or, in Claude Code, straight into the project you're working on.
 - **Your defaults, remembered.** Pick a destination and format once with `/gleaner:preferences setup`, override them for a project or a single save, and optionally sync them across devices through Google Drive.
@@ -309,7 +309,7 @@ Folders are created the first time they're needed. Stored clips are saved as Mar
 
 `Browser Research` is the folder default when Drive is selected without a configured folder or an explicit folder name. Connecting Drive alone keeps the chat default; saved destination preferences and per-save requests still take precedence.
 
-A clip in the conversation isn't stored anywhere, so a search or a follow-up in a later session can't find it. Download or copy it, or name a stored destination.
+A clip in the conversation isn't stored anywhere, so a follow-up in a later session can't read it. Download or copy it, or name a stored destination. The chat itself is tagged, though, so where your host can search past conversations a later search can point you back to it (see [Finding your clips](#finding-your-clips)).
 
 If a destination can't be reached, Gleaner gives you the clip as a file and says plainly that it wasn't saved. It never claims a save that didn't happen.
 
@@ -401,6 +401,8 @@ Ask in plain language:
 
 You get a table, newest first: date, title (linked), category, type, tags, note, and source. Multi-part clips are marked with their count, such as "(3 parts)," "(2 parts, 1 answer)," or "(whole page + 2 parts)." Keyword searches match titles, tags, notes, and summary text.
 
+Every reply that saves or updates a clip also carries one plain line that tags the chat, such as `Gleaner clip · 2026-10-19 · Motion timing guidelines · Design Engineering · #motion #animation #css-transitions`, and every search carries `Gleaner search · <what you asked for>`. Where your host lets Claude search past conversations (Claude Code desktop does; claude.ai does when its chat search is turned on), a search can also find the chats that hold a clip, including clips you kept in the conversation, and lists them marked "(chat)", linked to the conversation where your host gives a link. You can type `Gleaner clip` and a tag into your host's conversation search yourself, too. In Claude Code desktop, a conversation that began with a Gleaner request is named `Gleaner: <clip title>` after its first save, so it stands out in the sidebar.
+
 You can also search directly in Google Drive: type a tag like `#motion` or a note phrase into Drive's search bar.
 
 Clips saved as artifacts are searched only when you ask for them ("what did I save to artifacts about Cowork?"); see [Saving as an artifact](#saving-as-an-artifact).
@@ -465,7 +467,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 | Force a destination | add `--to chat`, `--to drive`, `--to notion`, `--to artifact`, `--to local`, or `--to ./path` |
 | Pick a category | "file this under design" |
 | Add tags | "tag it motion and css" |
-| Find clips | "what did I save about X?" · "clips from this week" |
+| Find clips | "what did I save about X?" · "clips from this week" · "which chat did I save X in?" |
 | Plan next steps | "what should I follow up on?" · "suggest follow-ups for that clip" |
 | Spreadsheet | "make me an index sheet" |
 
@@ -548,6 +550,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 | "Couldn't reach the project folder" | Open the Claude desktop app and make sure it's connected, then ask again. |
 | Clip saved as a `.md` file, not a formatted Doc | Markdown is the default for stored clips. Say "save it as a Google Doc" for one Doc, or set your default format to `auto` to get Docs whenever Drive can convert them. |
 | Similar tags like `#ai-design` and `#ai-designs` | Name the tag you want in the request ("tag it ai-design"). Gleaner reuses existing spellings by default, so this gets rarer as your library grows. |
+| Can't find a clip you kept in the chat | Ask "which chat did I save X in?", or type `Gleaner clip` and a tag into your host's conversation search. Chat clips aren't stored, so only that conversation holds the file, and finding it needs a host that can search past conversations. |
 
 ## Customizing
 
@@ -691,6 +694,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Every save, update, and search now tags its chat with one plain line, `Gleaner clip · <date> · <title> · <category> · <tags>` or `Gleaner search · <what you asked for>`, so "what did I save about X?" can also find the conversations that hold clips, including clips kept in the chat, where the host can search past conversations (Claude Code desktop; claude.ai with chat search on). Found chats are listed marked "(chat)", linked where the host gives a link. In Claude Code desktop, a conversation that began with a Gleaner request is named `Gleaner: <clip title>` after its first save.
 
 **2.12.5** (2026-10-28)
 - Outside ChatGPT, a YouTube clip saved without a transcript because no Chrome was available to read it (only the built-in browser, or no browser at all) now ends its confirmation by suggesting saving it again from the video's page in Chrome, with the Chrome side panel or Claude in Chrome, which may get better results if the video has a transcript. Before, only the built-in browser got a Chrome hint, and a clip read without a browser got none.

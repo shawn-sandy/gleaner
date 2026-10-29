@@ -29,7 +29,7 @@ Clips come back in the conversation by default, which needs nothing. Every other
 
 | Destination | Needs |
 | --- | --- |
-| This conversation (`.md` in ChatGPT, `.html` in Claude) | Nothing |
+| This conversation (`.md` in ChatGPT, `.html` in Claude) | Nothing. Finding that chat again in a later session needs a host that can search past conversations, such as Claude Code desktop, or claude.ai with chat search turned on |
 | Google Drive | The Google Drive connector, with permission to create files in the target folder |
 | Cowork project | The Claude desktop app, open and connected |
 | This project (`--to local`) | A Claude Code session |
