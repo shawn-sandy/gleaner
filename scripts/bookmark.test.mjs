@@ -237,6 +237,7 @@ const clips = [
   { title: 'Local answer', url: null, saved_at: '2026-10-21', category: 'Design', tags: [], clip_link: '/work/notes/answer.md' },
   { title: 'Unsafe source', url: 'javascript:alert(1)', saved_at: '2026-10-20', category: 'Design', tags: [] },
   { title: 'Quoted query', url: 'https://example.com/?x=1&y="z', saved_at: '2026-10-19', category: 'Design', tags: ['"><b>'] },
+  { title: 'Two\nlines', url: 'https://example.com/two', saved_at: '2026-10-18', category: 'Multi\r\nline', tags: [] },
 ];
 
 test('bookmarks file puts clips in category folders with only escaped text and web links', () => {
@@ -251,8 +252,12 @@ test('bookmarks file puts clips in category folders with only escaped text and w
   assert.match(html, /<A HREF="https:\/\/example.com\/feb">Rolled-over date/);
   assert.match(html, /<A HREF="https:\/\/example.com\/us">US-style date/);
   assert.equal(html.match(/<DT><H3>Design<\/H3>/g).length, 1);
-  assert.deepEqual([...html.matchAll(/HREF="([^"]*)"/g)].map(match => new URL(match[1]).protocol), ['https:', 'https:', 'https:', 'https:', 'https:']);
+  assert.deepEqual([...html.matchAll(/HREF="([^"]*)"/g)].map(match => new URL(match[1]).protocol), ['https:', 'https:', 'https:', 'https:', 'https:', 'https:']);
   assert.deepEqual(skipped, ['Local answer', 'Unsafe source']);
+  // Chrome's importer parses one line at a time and drops an entry split across lines.
+  const lines = html.split('\n');
+  assert.equal(lines.filter(line => /<DT><A .*<\/A>/.test(line)).length, 6);
+  assert.deepEqual(lines.filter(line => /<DT><H3>.*<\/H3>/.test(line)).map(line => line.trim()), ['<DT><H3>Gleaner</H3>', '<DT><H3>AI &amp; Agents</H3>', '<DT><H3>Design</H3>', '<DT><H3>Multi line</H3>']);
 });
 
 test('CLI renders a bookmarks file from clip index rows', () => {

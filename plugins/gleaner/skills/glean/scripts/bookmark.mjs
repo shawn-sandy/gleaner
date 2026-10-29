@@ -145,6 +145,10 @@ function savedSeconds(date) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(ms) && new Date(ms).toISOString().startsWith(date) ? ms / 1000 : null;
 }
 
+// Chrome's importer parses the file one line at a time and drops an entry or
+// folder name split by a line break, so each one is kept on a single line.
+const oneLine = value => String(value).replace(/\s*[\r\n]+\s*/g, ' ');
+
 // A Netscape bookmark file, the HTML import format browsers share, built from
 // Clip index rows. Each bookmark opens the clip's source page, or the clip itself
 // when it has no page; rows with neither as an HTTP(S) link come back in skipped.
@@ -155,11 +159,11 @@ export function renderBookmarksFile(clips) {
     const href = [clip.url, clip.clip_link].find(webUrl);
     if (!href) { skipped.push(String(clip.title ?? '')); continue; }
     const added = savedSeconds(clip.saved_at);
-    const tags = (Array.isArray(clip.tags) ? clip.tags : []).map(tag => String(tag).replace(/^#/, '')).join(',');
-    const note = [clip.note, clip.clip_link && clip.clip_link !== href ? `Clip: ${clip.clip_link}` : ''].filter(Boolean).join(' · ');
-    const category = clip.category || 'Uncategorized';
+    const tags = oneLine((Array.isArray(clip.tags) ? clip.tags : []).map(tag => String(tag).replace(/^#/, '')).join(','));
+    const note = oneLine([clip.note, clip.clip_link && clip.clip_link !== href ? `Clip: ${clip.clip_link}` : ''].filter(Boolean).join(' · '));
+    const category = oneLine(clip.category || 'Uncategorized');
     if (!folders.has(category)) folders.set(category, []);
-    folders.get(category).push(`      <DT><A HREF="${escapeHtml(href)}"${added === null ? '' : ` ADD_DATE="${added}"`}${tags ? ` TAGS="${escapeHtml(tags)}"` : ''}>${escapeHtml(clip.title || href)}</A>${note ? `\n      <DD>${escapeHtml(note).replace(/[\r\n]+/g, ' ')}` : ''}`);
+    folders.get(category).push(`      <DT><A HREF="${escapeHtml(href)}"${added === null ? '' : ` ADD_DATE="${added}"`}${tags ? ` TAGS="${escapeHtml(tags)}"` : ''}>${escapeHtml(oneLine(clip.title || href))}</A>${note ? `\n      <DD>${escapeHtml(note)}` : ''}`);
   }
   const html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
