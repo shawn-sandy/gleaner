@@ -92,6 +92,8 @@ In ChatGPT, honor an explicit request for a short preview or download only inste
 
 When Node.js and local skill files are available, [bookmark.mjs](../scripts/bookmark.mjs) can render the same bookmark deterministically. It takes JSON on stdin with `bookmark`, `receipt`, and optional `mode` (`auto`, `chat`, `markdown`, `none`) and returns JSON with the finalized bookmark, HTML companion source, and Markdown preview. Use the returned strings with existing save/attachment tools; generating strings is not a successful write. For pre-save HTML generation, import `renderHtml(bookmark)` with null saved locators, then apply the actual receipt for the preview. Never create a fake successful receipt to generate HTML.
 
+Given `{ "clips": [...] }` instead, the CLI returns a browser bookmarks file as `html` and the left-out titles as `skipped`; see glean's Bookmarks file section.
+
 The helper's Markdown output is the compact layout for other hosts. In ChatGPT, use its finalized receipt and verified locators, but render `content_markdown` with the ChatGPT rules above instead of sending the helper's compact preview as the whole response. The helper does not open a mobile file viewer.
 
 ```bash

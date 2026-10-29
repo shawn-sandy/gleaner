@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { parse } from 'yaml';
-import { applyReceipt, present, renderHtml, renderMarkdown } from '../plugins/gleaner/skills/glean/scripts/bookmark.mjs';
+import { applyReceipt, present, renderBookmarksFile, renderHtml, renderMarkdown } from '../plugins/gleaner/skills/glean/scripts/bookmark.mjs';
 
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/bookmark.json', import.meta.url), 'utf8'));
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -227,6 +227,47 @@ test('link-only YouTube previews disclose missing content without inventing a su
   assert.deepEqual(bookmark.key_points, []);
   assert.equal(bookmark.html_file, null);
   assert.equal(bookmark.destination_url, null);
+});
+
+const clips = [
+  { title: '<script>alert("x")</script>', url: 'https://example.com/harness', saved_at: '2026-10-23', category: 'AI & Agents', tags: ['#agents', '#skills'], note: 'Read "setup"\nfirst', clip_link: 'https://drive.google.com/file/d/fixture-file/view' },
+  { title: 'Answer about pricing', url: null, saved_at: '2026-10-22', category: 'Design', tags: [], clip_link: 'https://claude.ai/artifact/fixture' },
+  { title: 'Rolled-over date', url: 'https://example.com/feb', saved_at: '2026-02-30', category: 'Design', tags: [] },
+  { title: 'US-style date', url: 'https://example.com/us', saved_at: '9/22/2026', category: 'Design', tags: [] },
+  { title: 'Local answer', url: null, saved_at: '2026-10-21', category: 'Design', tags: [], clip_link: '/work/notes/answer.md' },
+  { title: 'Unsafe source', url: 'javascript:alert(1)', saved_at: '2026-10-20', category: 'Design', tags: [] },
+  { title: 'Quoted query', url: 'https://example.com/?x=1&y="z', saved_at: '2026-10-19', category: 'Design', tags: ['"><b>'] },
+  { title: 'Two\nlines', url: 'https://example.com/two', saved_at: '2026-10-18', category: 'Multi\r\nline', tags: [] },
+];
+
+test('bookmarks file puts clips in category folders with only escaped text and web links', () => {
+  const { html, skipped } = renderBookmarksFile(clips);
+  assert.match(html, /^<!DOCTYPE NETSCAPE-Bookmark-file-1>/);
+  // Noon UTC, so the date reads the same in every time zone from UTC-12 to UTC+11.
+  assert.match(html, /<DT><H3>AI &amp; Agents<\/H3>\n\s*<DL><p>\n\s*<DT><A HREF="https:\/\/example.com\/harness" ADD_DATE="1792756800" TAGS="agents,skills">&lt;script&gt;/);
+  assert.doesNotMatch(html, /<script|alert\(1\)|"><b>/);
+  assert.match(html, /<A HREF="https:\/\/example.com\/\?x=1&amp;y=&quot;z" ADD_DATE="[0-9]+" TAGS="&quot;&gt;&lt;b&gt;">Quoted query<\/A>/);
+  assert.match(html, /<DD>Read &quot;setup&quot; first · Clip: https:\/\/drive.google.com\/file\/d\/fixture-file\/view\n/);
+  assert.match(html, /<A HREF="https:\/\/claude.ai\/artifact\/fixture" ADD_DATE="[0-9]+">Answer about pricing<\/A>/);
+  assert.match(html, /<A HREF="https:\/\/example.com\/feb">Rolled-over date/);
+  assert.match(html, /<A HREF="https:\/\/example.com\/us">US-style date/);
+  assert.equal(html.match(/<DT><H3>Design<\/H3>/g).length, 1);
+  assert.deepEqual([...html.matchAll(/HREF="([^"]*)"/g)].map(match => new URL(match[1]).protocol), ['https:', 'https:', 'https:', 'https:', 'https:', 'https:']);
+  assert.deepEqual(skipped, ['Local answer', 'Unsafe source']);
+  // Chrome's importer parses one line at a time and drops an entry split across lines.
+  const lines = html.split('\n');
+  assert.equal(lines.filter(line => /<DT><A .*<\/A>/.test(line)).length, 6);
+  assert.deepEqual(lines.filter(line => /<DT><H3>.*<\/H3>/.test(line)).map(line => line.trim()), ['<DT><H3>Gleaner</H3>', '<DT><H3>AI &amp; Agents</H3>', '<DT><H3>Design</H3>', '<DT><H3>Multi line</H3>']);
+});
+
+test('CLI renders a bookmarks file from clip index rows', () => {
+  const result = spawnSync(process.execPath, ['plugins/gleaner/skills/glean/scripts/bookmark.mjs'], {
+    input: JSON.stringify({ clips }), encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.html, renderBookmarksFile(clips).html);
+  assert.deepEqual(output.skipped, ['Local answer', 'Unsafe source']);
 });
 
 test('page, YouTube, and follow-up instructions route through shared presentation', () => {
