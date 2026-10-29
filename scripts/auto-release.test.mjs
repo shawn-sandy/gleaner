@@ -128,6 +128,8 @@ test('runs when started through a symlinked path, as macOS temp folders are', t 
   t.after(() => rmSync(link));
   const pending = run(link, 'pending');
   assert.equal(pending.status, 1, pending.stderr);
+  // A crash also exits 1, so require the report only main() prints.
+  assert.ok(pending.stdout.trim(), pending.stderr);
 });
 
 test('plan releases plugin changes since the tag as a patch and writes the changelog entry and commit body', t => {
