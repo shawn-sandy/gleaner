@@ -2,7 +2,7 @@
 // Decide whether main holds plugin changes that no release includes yet, for the auto-release and validate workflows.
 // Usage: node scripts/auto-release.mjs pending   exit 0 when commits since the last release tag change the plugin
 //        node scripts/auto-release.mjs plan      also pick the bump, ensure an Unreleased entry, and write outputs
-import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -214,7 +214,8 @@ function main(mode) {
   return 0;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// import.meta.url is the real path, so resolve symlinks in argv too (macOS /var is a link to /private/var).
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   try {
     process.exitCode = main(process.argv[2] ?? '');
   } catch (error) {
