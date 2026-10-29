@@ -1,7 +1,7 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -119,6 +119,15 @@ test('pending and plan find nothing when only docs changed since the release tag
   const plan = run(repo, 'plan');
   assert.equal(plan.status, 0, plan.stderr);
   assert.match(plan.stdout, /^release=false$/m);
+});
+
+test('runs when started through a symlinked path, as macOS temp folders are', t => {
+  const repo = fixture(t);
+  const link = `${repo}-link`;
+  symlinkSync(repo, link);
+  t.after(() => rmSync(link));
+  const pending = run(link, 'pending');
+  assert.equal(pending.status, 1, pending.stderr);
 });
 
 test('plan releases plugin changes since the tag as a patch and writes the changelog entry and commit body', t => {
