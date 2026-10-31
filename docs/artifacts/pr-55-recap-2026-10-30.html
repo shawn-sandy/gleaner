@@ -80,7 +80,7 @@
     <div class="stat"><b>6</b><span>changes</span></div>
     <div class="stat"><b>5</b><span>files, plus this record</span></div>
     <div class="stat"><b>10</b><span>decisions</span></div>
-    <div class="stat"><b>5</b><span>open items</span></div>
+    <div class="stat"><b>4</b><span>open items</span></div>
   </div>
   <p>Gleaner can now turn every saved clip into a browser bookmarks file. Ask for it and you get <code>Gleaner Bookmarks &lt;yyyy-mm-dd&gt;.html</code> as a chat download, with a <code>Gleaner</code> folder holding one subfolder per category. Each bookmark opens the page that was clipped and carries the Saved date, the tags, and the note. The file is a snapshot, like the index sheet.</p>
   <p>The work is <a href="https://github.com/shawn-sandy/gleaner/pull/55">pull request 55</a>: four commits on branch <code>claude/saved-gleans-bookmark-list-e6a0b6</code>, 116 lines added and 5 removed across 5 files. It <span class="status">merged</span> to <code>main</code> on 2026-10-29, and auto-release cut Gleaner 2.13.0 from it because the PR carried the <code>release:minor</code> label. Codex's code review finished with no findings. CodeRabbit left 3 inline review threads, all resolved before merge; the thread list was complete, not truncated. No browser import has been live-tested.</p>
@@ -206,7 +206,6 @@
     <li><strong>Whether the <code>DD</code> description line survives import is unknown.</strong> The note and clip link ride in that line. The docs hedge with "browsers may drop it"; a live import would settle it and let the README tighten or confirm the sentence.</li>
     <li><strong>Safari and Edge tag handling is unverified.</strong> Only Chrome (no tags) and Firefox (reads <code>TAGS</code> since 43) are documented.</li>
     <li><strong>Hand-malformed JSON input is deliberately unhandled.</strong> A <code>null</code> row or a <code>clips</code> value that is not an array is not guarded in <code>renderBookmarksFile</code>, because the model writes that JSON. Pick it up only if that assumption breaks.</li>
-    <li><strong>This record and its gallery copy are uncommitted</strong> in the worktree on branch <code>claude/artifact-tools-team-recap-a65a04</code> until someone decides where they belong.</li>
   </ol>
 
   <h2>Files touched</h2>
