@@ -146,7 +146,7 @@ done
 
 ### Transcripts and missing descriptions
 
-In your own Chrome (the Chrome side panel or Claude in Chrome), Gleaner opens the video's **Show transcript** panel and reads it. YouTube sends the panel empty to the Claude Code Browser pane, even signed in, so Claude Code reads the transcript through Claude in Chrome when it's connected; otherwise a clip is written from the video's description and chapters unless you paste the transcript. If the video has no description and no transcript, Gleaner asks for a short description, which is optional; say "skip" to save it from the title alone.
+In your own Chrome (the Chrome side panel or Claude in Chrome), Gleaner opens the video's **Show transcript** panel and reads it. YouTube sends the panel empty to the Claude Code Browser pane, even signed in, so Claude Code reads the transcript through Claude in Chrome when it's connected, or else through the Playwright browser tools if the session has them; otherwise a clip is written from the video's description and chapters unless you paste the transcript. If the video has no description and no transcript, Gleaner asks for a short description, which is optional; say "skip" to save it from the title alone.
 
 A part can't be clipped without the transcript. If you ask for one anyway, Gleaner asks you to paste the transcript and offers a clip of the whole video instead.
 

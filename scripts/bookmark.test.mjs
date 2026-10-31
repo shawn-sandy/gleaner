@@ -287,3 +287,24 @@ test('page, YouTube, and follow-up instructions route through shared presentatio
   assert.doesNotMatch(contract, /“Use Markdown” or “use a chat preview” changes presentation only/);
   assert.match(contract, /Preview failure must never trigger another save/);
 });
+
+test('YouTube transcript fallback stays behind Chrome and never hides automation', () => {
+  const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
+  const stepFour = youtube.slice(youtube.indexOf('4. **Read the transcript**'), youtube.indexOf('5. **Check the description.**'));
+  assert.ok(stepFour.indexOf('Claude in Chrome') > -1 && stepFour.indexOf('Claude in Chrome') < stepFour.indexOf('Playwright'));
+  assert.match(stepFour, /new tab/i);
+  assert.match(stepFour, /never add[^.]*hide/i);
+  assert.ok(stepFour.indexOf("'ad-showing'") > -1 && stepFour.indexOf("'ad-showing'") < stepFour.indexOf("#description-inline-expander #expand"));
+  assert.ok(stepFour.indexOf('ad: true') > -1 && stepFour.indexOf('ad: true') < stepFour.indexOf("#description-inline-expander #expand"));
+  assert.match(stepFour.slice(stepFour.indexOf('What comes back')), /transcript: null, ad: true/);
+});
+
+test('YouTube transcript script reads both the classic and the modern panel', () => {
+  const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
+  for (const name of [
+    'engagement-panel-searchable-transcript', 'PAmodern_transcript_view',
+    'ytd-transcript-segment-renderer', 'transcript-segment-view-model',
+    '.segment-timestamp', '.ytwTranscriptSegmentViewModelTimestamp',
+    '.segment-text', '.ytAttributedStringHost',
+  ]) assert.ok(youtube.includes(name), name);
+});

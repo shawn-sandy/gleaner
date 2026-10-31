@@ -48,23 +48,27 @@ After writing the video clip, fill glean's [shared bookmark model](../glean/refe
 
    `keywords` and `category` are hints that the video's content overrides. Take at most two tags from `keywords` for glean step 4, matching existing spellings, without going past its 3–6 tags. `category` is a hint for **Category** and **Type**, the way `schemaType` is for a page: `Science & Technology` with a coding title suggests Frontend Dev or AI & Agents, and `Education` with steps suggests a tutorial. Both also help check names in a transcript (see "Transcript").
 
-4. **Read the transcript** in the user's own Chrome: the Chrome side panel or Claude in Chrome. YouTube opens its transcript panel in the built-in browser but sends it empty, signed in or not, so when the video is in the built-in browser and Claude in Chrome is also available, open the Source URL in a new Claude in Chrome tab and run the script there, closing that tab as in "Tabs Gleaner opens" in the glean skill; with only the built-in browser, skip this step. Skip it too in ChatGPT, which "In ChatGPT" covers, and when step 3 fell back to fetching. Run this with the browser's JavaScript tool to open YouTube's "Show transcript" panel and read it. Opening the panel is reading the page the way a viewer does; it submits nothing and changes no setting:
+4. **Read the transcript** in the user's own Chrome: the Chrome side panel or Claude in Chrome. YouTube opens its transcript panel in the built-in browser but sends it empty, signed in or not, so when the video is in the built-in browser and Claude in Chrome is also available, open the Source URL in a new Claude in Chrome tab and run the script there, closing that tab as in "Tabs Gleaner opens" in the glean skill. When neither the side panel nor Claude in Chrome is available or connected, this session's Playwright browser tools (such as `mcp__playwright__*`) are the fallback, whether step 3 used the built-in browser or fetched: open the Source URL in a new tab with the tabs tool, so any page already open there stays as it is, run the script with the evaluate tool as `() => <the script>`, and close that tab with the tabs tool, as in "Tabs Gleaner opens". Use Playwright as it's configured, and never add a flag, setting, or script to hide that the browser is automated; a sign-in page or bot check there means no transcript. With none of these, skip this step. Skip it too in ChatGPT, which "In ChatGPT" covers. Run this with the browser's JavaScript tool to open YouTube's "Show transcript" panel and read it. Opening the panel is reading the page the way a viewer does; it submits nothing and changes no setting. The script waits up to 30 seconds for an ad to finish first, because a panel opened during an ad stays empty:
 
    ```js
    (async () => {
      window.gleanerTranscript = null;
      const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-     const panel = () => document.querySelector('ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-searchable-transcript"][visibility="ENGAGEMENT_PANEL_VISIBILITY_EXPANDED"]');
-     const segments = () => [...(panel()?.querySelectorAll('ytd-transcript-segment-renderer') ?? [])];
+     const panel = () => document.querySelector('ytd-engagement-panel-section-list-renderer:is([target-id="engagement-panel-searchable-transcript"], [target-id="PAmodern_transcript_view"])[visibility="ENGAGEMENT_PANEL_VISIBILITY_EXPANDED"]');
+     const segments = () => [...(panel()?.querySelectorAll('ytd-transcript-segment-renderer, transcript-segment-view-model') ?? [])];
      if (!panel()) {
+       const ad = () => document.getElementById('movie_player')?.classList.contains('ad-showing');
+       await sleep(1000);
+       for (let i = 0; i < 60 && ad(); i++) await sleep(500);
+       if (ad()) return { transcript: null, ad: true };
        document.querySelector('#description-inline-expander #expand')?.click();
        await sleep(300);
        document.querySelector('ytd-video-description-transcript-section-renderer button')?.click();
      }
      for (let i = 0; i < 20 && !segments().length; i++) await sleep(300);
      const lines = segments().map(segment => {
-       const time = segment.querySelector('.segment-timestamp')?.textContent?.trim() ?? '';
-       const text = segment.querySelector('.segment-text')?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+       const time = segment.querySelector('.segment-timestamp, .ytwTranscriptSegmentViewModelTimestamp')?.textContent?.trim() ?? '';
+       const text = segment.querySelector('.segment-text, .ytAttributedStringHost')?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
        return time && text ? `[${time}] ${text}` : '';
      }).filter(line => line);
      if (!lines.length) return { transcript: null, panel: panel() !== null };
@@ -79,10 +83,11 @@ After writing the video clip, fill glean's [shared bookmark model](../glean/refe
 
    What comes back:
    - **A `transcript`:** lines like `[3:10] …` (`[1:15:03] …` past an hour), in the panel's `language`. If `chars` is over 40000, read the rest in pieces with `window.gleanerTranscript.slice(40000, 80000)` and so on, before writing anything.
+   - **`{ transcript: null, ad: true }`:** an ad is still playing, so the panel wasn't opened. Run the script again, up to three more times, then go on without a transcript.
    - **`{ transcript: null, panel: false }`:** the panel didn't open. If the browser's find tool shows a "Show transcript" button under the video, open the panel with the browser's own click tools, the way a viewer does ("…more", then "Show transcript"), and run the script again. With no such button, the video has no transcript: go on without one.
    - **`{ transcript: null, panel: true }`**, or no panel after the clicks: YouTube didn't send the transcript to this browser. The script has already waited a few seconds, so don't retry: go on without a transcript.
 
-   The `language` names the transcript the panel shows, such as `English (auto-generated)`. When it isn't the video's own language, say which language the clip was written from in the confirmation and in the bookmark's `limitations`.
+   The `language`, when the panel gives one, names the transcript it shows, such as `English (auto-generated)`. When it isn't the video's own language, say which language the clip was written from in the confirmation and in the bookmark's `limitations`.
 
    Never download captions or the video with command-line tools or libraries (such as yt-dlp or a transcript package): YouTube blocks or rate-limits them, and the panel and a pasted transcript are the only transcript sources.
 
