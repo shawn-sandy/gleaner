@@ -54,7 +54,7 @@ After writing the video clip, fill glean's [shared bookmark model](../glean/refe
    (async () => {
      window.gleanerTranscript = null;
      const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-     const panel = () => document.querySelector('ytd-engagement-panel-section-list-renderer:is([target-id="engagement-panel-searchable-transcript"], [target-id="PAmodern_transcript_view"])[visibility="ENGAGEMENT_PANEL_VISIBILITY_EXPANDED"]');
+     const panel = () => document.querySelector('ytd-engagement-panel-section-list-renderer:is([target-id="engagement-panel-searchable-transcript"], [target-id="PAmodern_transcript_view"], :has(transcript-segment-view-model))[visibility="ENGAGEMENT_PANEL_VISIBILITY_EXPANDED"]');
      const segments = () => [...(panel()?.querySelectorAll('ytd-transcript-segment-renderer, transcript-segment-view-model') ?? [])];
      if (!panel()) {
        const ad = () => document.getElementById('movie_player')?.classList.contains('ad-showing');
@@ -137,7 +137,7 @@ Adding parts works as in the glean skill's "Collecting parts", using time in pla
 | "add this part", "this bit" while watching | the chapter that contains the current playback position; with no chapters, the ~60 seconds before it |
 
 - **Chapters** are the description lines that start with a timestamp (`0:00 Intro`, `3:10 Generics`).
-- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. For more parts of the same video, reuse `window.gleanerTranscript` in the tab step 4 read it in, and just read the position again; run both scripts again after moving to another video. If Gleaner closed that tab after a save, open the Source URL again and run both scripts there. A reopened tab starts at the link's time, not where the user was watching, so read the position for "this part" only from a tab the user is watching. When the position can't be read (no browser, a script that kept failing, or ChatGPT's browsers without a JavaScript tool), ask for a time range or topic for "this part" instead, and never guess one.
+- **Current position:** read it when the user asks, with `Math.floor(document.getElementById('movie_player').getCurrentTime())`. For more parts of the same video, reuse `window.gleanerTranscript` in the tab step 4 read it in, but read the position only from a tab the user is watching; run both scripts again after moving to another video. If Gleaner closed that tab after a save, open the Source URL again for the transcript. A tab Gleaner opened, such as a reopened or Playwright tab, plays on its own and doesn't show where the user was watching, so never use its position. When no tab the user is watching is available, or the position can't be read (no browser, a script that kept failing, or ChatGPT's browsers without a JavaScript tool), ask for a time range or topic for "this part" instead, and never guess one.
 - **Confirm** with the range and first few words: `Added part 2: generics (3:10–5:40, "So now let's look at…"). Add more, or say "done" to save.`
 
 ## Write the summary

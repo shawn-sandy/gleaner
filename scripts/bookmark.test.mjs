@@ -298,10 +298,11 @@ test('YouTube transcript fallback stays behind Chrome and never hides automation
   assert.match(stepFour, /never add[^.]*hide/i);
   assert.match(stepFour, /fell back to fetching/);
   assert.match(stepFour.slice(stepFour.indexOf('What comes back')), /transcript: null, ad: true/);
+  assert.match(youtube, /read the position only from a tab the user is watching/);
 });
 
 // Runs step 4's script from the skill on a stub page, with timers firing at once.
-const runTranscriptScript = async ({ panelId, segmentTag, timeClass, textClass, ads = 0 }) => {
+const runTranscriptScript = async ({ panelMatch, segmentTag, timeClass, textClass, ads = 0 }) => {
   const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
   const [, script] = youtube.slice(youtube.indexOf('4. **Read the transcript**')).match(/```js\n([\s\S]*?)```/);
   const has = (selector, name) => selector.split(/,\s*/).includes(name);
@@ -316,7 +317,7 @@ const runTranscriptScript = async ({ panelId, segmentTag, timeClass, textClass, 
     querySelector: selector => {
       if (selector.endsWith('transcript-section-renderer button')) return { click: () => { opened = true; } };
       if (selector.endsWith('#expand')) return { click() {} };
-      return opened && selector.includes(`[target-id="${panelId}"]`) ? panel : null;
+      return opened && selector.includes(panelMatch) ? panel : null;
     },
   };
   const result = await runInNewContext(script, { document, window: {}, setTimeout: callback => callback() });
@@ -324,16 +325,17 @@ const runTranscriptScript = async ({ panelId, segmentTag, timeClass, textClass, 
 };
 
 const classicPanel = {
-  panelId: 'engagement-panel-searchable-transcript', segmentTag: 'ytd-transcript-segment-renderer',
+  panelMatch: '[target-id="engagement-panel-searchable-transcript"]', segmentTag: 'ytd-transcript-segment-renderer',
   timeClass: '.segment-timestamp', textClass: '.segment-text',
 };
 const modernPanel = {
-  panelId: 'PAmodern_transcript_view', segmentTag: 'transcript-segment-view-model',
+  panelMatch: '[target-id="PAmodern_transcript_view"]', segmentTag: 'transcript-segment-view-model',
   timeClass: '.ytwTranscriptSegmentViewModelTimestamp', textClass: '.ytAttributedStringHost',
 };
+const unlabeledPanel = { ...modernPanel, panelMatch: ':has(transcript-segment-view-model)' };
 
-test('YouTube transcript script reads both the classic and the modern panel', async () => {
-  for (const layout of [classicPanel, modernPanel]) {
+test('YouTube transcript script reads the classic, modern, and unlabeled panels', async () => {
+  for (const layout of [classicPanel, modernPanel, unlabeledPanel]) {
     const result = await runTranscriptScript(layout);
     assert.equal(result.transcript, '[0:01] hello world');
     assert.equal(result.lines, 1);
