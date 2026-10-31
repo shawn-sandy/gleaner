@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
 import { applyReceipt, present, renderBookmarksFile, renderHtml, renderMarkdown } from '../plugins/gleaner/skills/glean/scripts/bookmark.mjs';
 
@@ -286,4 +287,65 @@ test('page, YouTube, and follow-up instructions route through shared presentatio
   assert.match(contract, /“Use a Markdown preview”/);
   assert.doesNotMatch(contract, /“Use Markdown” or “use a chat preview” changes presentation only/);
   assert.match(contract, /Preview failure must never trigger another save/);
+});
+
+test('YouTube transcript fallback stays behind Chrome and never hides automation', () => {
+  const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
+  const stepFour = youtube.slice(youtube.indexOf('4. **Read the transcript**'), youtube.indexOf('5. **Check the description.**'));
+  assert.match(stepFour, /In Claude, when neither the side panel nor Claude in Chrome/);
+  assert.match(stepFour, /new tab/i);
+  assert.match(stepFour, /close only that tab/i);
+  assert.match(stepFour, /never add[^.]*hide/i);
+  assert.match(stepFour, /fell back to fetching/);
+  assert.match(stepFour.slice(stepFour.indexOf('What comes back')), /transcript: null, ad: true/);
+  assert.match(youtube, /read the position only from a tab the user is watching/);
+});
+
+// Runs step 4's script from the skill on a stub page, with timers firing at once.
+const runTranscriptScript = async ({ panelMatch, segmentTag, timeClass, textClass, ads = 0 }) => {
+  const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
+  const [, script] = youtube.slice(youtube.indexOf('4. **Read the transcript**')).match(/```js\n([\s\S]*?)```/);
+  const has = (selector, name) => selector.split(/,\s*/).includes(name);
+  let opened = false;
+  let adChecks = ads;
+  const segment = {
+    querySelector: selector => has(selector, timeClass) ? { textContent: ' 0:01 ' } : has(selector, textClass) ? { textContent: ' hello\n world ' } : null,
+  };
+  const panel = { querySelector: () => null, querySelectorAll: selector => has(selector, segmentTag) ? [segment] : [] };
+  const document = {
+    getElementById: () => ({ classList: { contains: () => adChecks-- > 0 } }),
+    querySelector: selector => {
+      if (selector.endsWith('transcript-section-renderer button')) return { click: () => { opened = true; } };
+      if (selector.endsWith('#expand')) return { click() {} };
+      return opened && selector.includes(panelMatch) ? panel : null;
+    },
+  };
+  const result = await runInNewContext(script, { document, window: {}, setTimeout: callback => callback() });
+  return { ...result, opened };
+};
+
+const classicPanel = {
+  panelMatch: '[target-id="engagement-panel-searchable-transcript"]', segmentTag: 'ytd-transcript-segment-renderer',
+  timeClass: '.segment-timestamp', textClass: '.segment-text',
+};
+const modernPanel = {
+  panelMatch: '[target-id="PAmodern_transcript_view"]', segmentTag: 'transcript-segment-view-model',
+  timeClass: '.ytwTranscriptSegmentViewModelTimestamp', textClass: '.ytAttributedStringHost',
+};
+const unlabeledPanel = { ...modernPanel, panelMatch: ':has(transcript-segment-view-model)' };
+
+test('YouTube transcript script reads the classic, modern, and unlabeled panels', async () => {
+  for (const layout of [classicPanel, modernPanel, unlabeledPanel]) {
+    const result = await runTranscriptScript(layout);
+    assert.equal(result.transcript, '[0:01] hello world');
+    assert.equal(result.lines, 1);
+  }
+});
+
+test('YouTube transcript script waits for an ad and never opens the panel during one', async () => {
+  const shortAd = await runTranscriptScript({ ...modernPanel, ads: 5 });
+  assert.equal(shortAd.transcript, '[0:01] hello world');
+  const longAd = await runTranscriptScript({ ...modernPanel, ads: Infinity });
+  assert.equal(longAd.ad, true);
+  assert.equal(longAd.opened, false);
 });
