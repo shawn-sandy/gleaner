@@ -289,6 +289,55 @@ test('page, YouTube, and follow-up instructions route through shared presentatio
   assert.match(contract, /Preview failure must never trigger another save/);
 });
 
+test('saves avoid repeating permission prompts for the same access', () => {
+  const glean = read('plugins/gleaner/skills/glean/SKILL.md');
+  const contract = read('plugins/gleaner/skills/preferences/references/contract.md');
+  const prompts = glean.slice(glean.indexOf('### Fewer permission prompts'), glean.indexOf('### Collecting parts'));
+  const drive = glean.slice(glean.indexOf('**Google Drive**\n'), glean.indexOf('**Cowork project**\n'));
+  const notion = glean.slice(glean.indexOf('**Notion**\n'), glean.indexOf('**Artifact**\n'));
+  const sync = contract.slice(contract.indexOf('## Drive synchronization'), contract.indexOf('1. **Select the document.**'));
+  const cloudOnly = contract.slice(contract.indexOf('## Hosts without local file access'));
+
+  assert.doesNotMatch(glean, /scope `once`/);
+  assert.match(prompts, /first call to each[^.]*on its own/i);
+  assert.match(prompts, /declines?[^.]*final/i);
+  assert.match(glean, /fullText contains '<URL>' or fullText contains/);
+  assert.doesNotMatch(glean, /search for `fullText contains '<URL>'` for each URL/);
+  assert.match(drive, /already (have|found)[^.]*folder|folder[^.]*already (have|found)/i);
+  assert.doesNotMatch(drive, /checking each candidate/);
+  assert.match(sync, /once per conversation/i);
+  assert.doesNotMatch(sync, /before glean resolves a save/);
+  assert.match(cloudOnly, /once per conversation/i);
+  // Replacing Notion's Tags options deletes any left out, so that list must never come from a kept copy.
+  assert.match(notion, /fetch[^.]*again[^.]*(tags|options)/i);
+});
+
+test('kept lookups and declines stay scoped so reuse never saves to the wrong place', () => {
+  const glean = read('plugins/gleaner/skills/glean/SKILL.md');
+  const contract = read('plugins/gleaner/skills/preferences/references/contract.md');
+  const prompts = glean.slice(glean.indexOf('### Fewer permission prompts'), glean.indexOf('### Collecting parts'));
+  const stepSix = glean.slice(glean.indexOf('6. **Save it**'), glean.indexOf('**This conversation** (the default)'));
+  const notion = glean.slice(glean.indexOf('**Notion**\n'), glean.indexOf('**Artifact**\n'));
+  const updateFails = glean.slice(glean.indexOf('**If the update fails,**'), glean.indexOf('**Fallback:**'));
+  const cloudOnly = contract.slice(contract.indexOf('## Hosts without local file access'));
+
+  // A second Notion database in one conversation must not inherit the first one's parent.
+  assert.match(notion, /find the database,\*\* unless you already have that same database/i);
+  assert.match(notion, /once per database/i);
+  assert.doesNotMatch(notion, /\*\*Fetch the database first,\*\* once per conversation/);
+  // A declined upload can't be retried as a new clip, which needs that same upload.
+  assert.match(prompts, /decline[\s\S]*Fallback in step 6/);
+  assert.match(prompts, /skip[^.]*calls that only lead to it/i);
+  assert.match(updateFails, /declined/);
+  // Only connector saves prove access by trying; a Cowork folder still has to be confirmed first.
+  assert.match(stepSix, /Recheck access[^.]*for Drive and Notion/i);
+  assert.match(glean, /Confirm you can reach the project's folder/);
+  // A default changed mid-conversation must beat the kept copy, even when the old default never errors.
+  assert.match(prompts, /drop[^.]*preferences[^.]*(update|reset|sync)/i);
+  // Setup must still run its own complete search before it can create a document.
+  assert.match(cloudOnly, /preferences invocation searches again/i);
+});
+
 test('YouTube transcript fallback stays behind Chrome and never hides automation', () => {
   const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
   const stepFour = youtube.slice(youtube.indexOf('4. **Read the transcript**'), youtube.indexOf('5. **Check the description.**'));

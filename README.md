@@ -171,7 +171,7 @@ User preferences live at `$XDG_CONFIG_HOME/agent-preferences/preferences.yaml`, 
 
 `auto` gives each destination's native output: Markdown chat files in ChatGPT, HTML chat files in Claude, or Google Docs in Drive. `markdown` requests a raw `.md` file for the chat, local/Cowork, or a Drive connector supporting raw uploads. Notion pages and HTML artifacts are incompatible; Gleaner explains and asks before saving. Saved local paths are device-specific: an unreachable path prompts for a temporary alternative and never changes the permanent default silently.
 
-Optional sync uses one Google Drive document titled `Agent Preferences`, discovered before creation and selected by you if duplicates exist. Only user preferences synchronize; project overrides and local `sync-state.yaml` metadata never upload. Before saves and during preference invocations, Gleaner compares local/cloud values with the last verified snapshot, propagates one-sided changes, merges independent settings, and asks about conflicting settings. Different existing copies without a baseline require reconciliation before upload. Updates persist locally first, then synchronize when connected; failures remain pending for the next invocation. There is no background service.
+Optional sync uses one Google Drive document titled `Agent Preferences`, discovered before creation and selected by you if duplicates exist. Only user preferences synchronize; project overrides and local `sync-state.yaml` metadata never upload. Before the first save or find of a conversation and during preference invocations, Gleaner compares local/cloud values with the last verified snapshot, propagates one-sided changes, merges independent settings, and asks about conflicting settings. Different existing copies without a baseline require reconciliation before upload. Updates persist locally first, then synchronize when connected; failures remain pending for the next invocation. There is no background service.
 
 Cloud writes require read/update capabilities, a fresh remote check, and readback verification. Connectors without conditional writes cannot fully prevent a simultaneous edit between check and write. Hosts without local files can use Drive as their persistent store; with neither store writable, preferences are clearly labeled session-only. Invalid YAML and unsupported schema versions remain untouched; session settings can continue the save.
 
@@ -566,6 +566,7 @@ Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`,
 - **One highlight at a time.** Chrome doesn't support multiple simultaneous selections; collect parts one by one instead.
 - **Unreadable highlights.** Text inside embedded frames, Chrome's PDF viewer, and apps like Google Docs often can't be read. Describe the part or paste it instead.
 - **Drive capabilities vary.** Adding to a Drive clip in the same session uploads the updated clip and moves the earlier version to Drive’s trash, so its link changes. Updates to older clips are new copies, and index sheets are snapshots. Preference sync needs a connector that can read and update the selected document; create-only connectors leave sync pending.
+- **Permission prompts.** Your app decides when to ask, not Gleaner. Gleaner keeps its calls to a minimum, but a connector can still ask the first time it's used, and some apps ask every time for a save. Where your app offers an "always allow" choice, picking it on the first prompt stops the repeats.
 - **No claude.ai Projects.** Cowork can read them but not write to them.
 - **ChatGPT without a JavaScript tool.** Connected Chrome tabs, and a Work browser without one, can't read highlights, the playback position, or the page facts Gleaner uses to follow an article's later pages and match its canonical URL. Name the part or paste it, and give a video part a time range or topic instead of "this part."
 - **Artifact search is one page at a time.** Gleaner opens each artifact to find its clips, about 50 per request.
@@ -729,6 +730,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Gleaner asks for permission less often, especially on mobile. Preference sync and the Drive lookup for hosts without local files now run once per conversation, Drive saves combine their searches and reuse folders already found, and Notion saves reuse the database already found. A site approval lasts the conversation where the host allows it, and a declined prompt isn't asked again.
 
 **2.13.3** (2026-11-01)
 - ChatGPT checks available browser tools before reading a YouTube video and tries an eligible, untried browser after a failed web fetch before asking for pasted content or a link-only bookmark. Description-based saves still work without a transcript; Claude's browser and Playwright transcript workflows are unchanged.
