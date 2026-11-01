@@ -26,6 +26,7 @@ Gleaner: Here's "Motion timing guidelines" as an HTML file, filed under Design E
 - [Shared preferences](#shared-preferences)
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
+  - [Reading saved clips on ChatGPT mobile](#reading-saved-clips-on-chatgpt-mobile)
   - [Saving parts of pages](#saving-parts-of-pages)
   - [Saving answers](#saving-answers)
   - [Saving YouTube videos](#saving-youtube-videos)
@@ -191,6 +192,30 @@ Every successful save also shows a readable bookmark preview in the conversation
 Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it. A tutorial gets numbered **Steps** in place of key points.
 
 An article split across numbered pages (page 2, page 3, …) is read to the end, up to five pages, and saved as one clip that says how many pages it covers. This needs a browser Gleaner can run a script in: the Chrome side panel, the Claude Code desktop browser, Claude in Chrome, or ChatGPT's Work browser when it has a JavaScript tool.
+
+### Reading saved clips on ChatGPT mobile
+
+**ChatGPT only:** This section applies to the ChatGPT mobile app. It does not change clip display, HTML delivery, or file-opening behavior in Claude, Claude Code, or Cowork.
+
+In ChatGPT mobile, read the formatted clip directly in the conversation. It includes the full saved text, source links, tags, timestamp links when available, and the follow-up prompt. The inline clip is the reading view; the separate **Download Markdown (.md)** link is the file attachment.
+
+| What you see | What it does |
+| --- | --- |
+| Formatted clip in the chat | Lets you read the clip without opening or downloading a file. |
+| **Download Markdown (.md)** link | Provides a copy of the clip. Tapping it may download the file or offer an app to open it; a built-in file preview is not guaranteed on mobile. |
+| Saved destination link, when returned | Opens the stored clip in its destination, subject to that service's mobile app and access. |
+
+When running in ChatGPT, Gleaner cannot force the mobile app to open an attachment automatically or choose your device's default file viewer. File-opening behavior can vary by app version, operating system, and installed viewers. OpenAI's [file documentation](https://learn.chatgpt.com/docs/artifacts-viewer) describes supported previews by surface; it does not establish a guaranteed mobile preview for Markdown attachments.
+
+If you want a separate reading copy, ask ChatGPT to convert the saved clip to PDF or another supported document format when file-generation tools are available. Conversion is a separate request, not a Gleaner format preference, and does not guarantee a mobile viewer or automatic opening. Gleaner's current saved format settings are `auto` and `markdown`; PDF is not a supported default.
+
+Useful requests:
+
+> show the full saved clip here
+>
+> give me a short preview and the Markdown download
+>
+> convert this saved clip to PDF
 
 ### Saving parts of pages
 
