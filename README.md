@@ -195,7 +195,9 @@ An article split across numbered pages (page 2, page 3, …) is read to the end,
 
 ### Reading saved clips on ChatGPT mobile
 
-On mobile, read the formatted clip directly in the conversation. It includes the full saved text, source links, tags, timestamp links when available, and the follow-up prompt. The inline clip is the reading view; the separate **Download Markdown (.md)** link is the file attachment.
+**ChatGPT only:** This section applies to the ChatGPT mobile app. It does not change clip display, HTML delivery, or file-opening behavior in Claude, Claude Code, or Cowork.
+
+In ChatGPT mobile, read the formatted clip directly in the conversation. It includes the full saved text, source links, tags, timestamp links when available, and the follow-up prompt. The inline clip is the reading view; the separate **Download Markdown (.md)** link is the file attachment.
 
 | What you see | What it does |
 | --- | --- |
@@ -203,7 +205,7 @@ On mobile, read the formatted clip directly in the conversation. It includes the
 | **Download Markdown (.md)** link | Provides a copy of the clip. Tapping it may download the file or offer an app to open it; a built-in file preview is not guaranteed on mobile. |
 | Saved destination link, when returned | Opens the stored clip in its destination, subject to that service's mobile app and access. |
 
-Gleaner cannot force the mobile app to open an attachment automatically or choose your device's default file viewer. File-opening behavior can vary by app version, operating system, and installed viewers. OpenAI's [file documentation](https://learn.chatgpt.com/docs/artifacts-viewer) describes supported previews by surface; it does not establish a guaranteed mobile preview for Markdown attachments.
+When running in ChatGPT, Gleaner cannot force the mobile app to open an attachment automatically or choose your device's default file viewer. File-opening behavior can vary by app version, operating system, and installed viewers. OpenAI's [file documentation](https://learn.chatgpt.com/docs/artifacts-viewer) describes supported previews by surface; it does not establish a guaranteed mobile preview for Markdown attachments.
 
 If you want a separate reading copy, ask ChatGPT to convert the saved clip to PDF or another supported document format when file-generation tools are available. Conversion is a separate request, not a Gleaner format preference, and does not guarantee a mobile viewer or automatic opening. Gleaner's current saved format settings are `auto` and `markdown`; PDF is not a supported default.
 
