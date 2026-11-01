@@ -70,6 +70,8 @@ test('images in clip text never load when the clip is shown', async () => {
     // Text that looks like code here but not to a Markdown renderer.
     '\\`![x](https://evil.example/p.png)`', '`a\nb` ![x](https://evil.example/p.png) `c`',
     '```\r```\r![x](https://evil.example/p.png)', '- a\n   ```\n![x](https://evil.example/p.png)\n   ```',
+    // Only spaces and tabs may follow a closing fence, so these lines don't close it.
+    '```\n``` \n```\n![x](https://evil.example/p.png)', '~~~\n~~~\f\n~~~\n![x](https://evil.example/p.png)',
   ]) {
     assert.doesNotMatch(await showClip(attack), /!\[/, attack);
   }

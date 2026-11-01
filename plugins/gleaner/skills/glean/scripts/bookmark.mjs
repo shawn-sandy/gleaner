@@ -125,7 +125,7 @@ function safeClip(markdown) {
   const lines = markdown.split(/\r\n?|\n/).map(line => {
     const [, indent, mark] = line.match(/^( {0,3})(`{3,}(?=[^`]*$)|~{3,})/) ?? [];
     if (fence) {
-      if (mark?.[0] === fence[0] && mark.length >= fence.length && line.trim() === mark) fence = '';
+      if (mark?.[0] === fence[0] && mark.length >= fence.length && /^[ \t]*$/.test(line.slice(indent.length + mark.length))) fence = '';
       return indented ? inertCode(line) : line;
     }
     if (mark) {
