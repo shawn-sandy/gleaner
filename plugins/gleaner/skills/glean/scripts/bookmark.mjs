@@ -103,14 +103,41 @@ export function renderMarkdown(bookmark, { attachmentLinks = false } = {}) {
   ].join('\n\n');
 }
 
+// Clip text paraphrases web pages, so nothing in it may load or run when shown:
+// images become links, links need an HTTP(S) target, and raw HTML shows as text.
+const inert = text => text.replace(/!\[/g, '[')
+  .replace(/\](\(|:)(\s*<?)(\S*)/g, (match, mark, space, target) => webUrl(target) ? match : `]\\${mark}${space}${target}`)
+  .replace(/</g, '&lt;');
+
+// Code keeps its text, and a fence left open is closed so it can't swallow the
+// verified links after the clip.
+// ponytail: line by line, not a CommonMark parser, so a fence nested in a list
+// can hide text from this pass. Use a parser if this ever renders without a model.
+function safeClip(markdown) {
+  let fence = '';
+  const lines = markdown.split('\n').map(line => {
+    const mark = line.match(/^ {0,3}(`{3,}(?=[^`]*$)|~{3,})/)?.[1];
+    if (fence) {
+      if (mark?.[0] === fence[0] && mark.length >= fence.length && line.trim() === mark) fence = '';
+      return line;
+    }
+    if (mark) {
+      fence = mark;
+      return line;
+    }
+    return line.replace(/(`+)(?!`).*?(?<!`)\1(?!`)|[^`]+|`+/g, (part, ticks) => ticks ? part : inert(part));
+  });
+  return [...lines, ...(fence ? [fence] : [])].join('\n');
+}
+
 // What every host shows by default: the whole clip, wherever it was stored.
-// content_markdown is already Markdown, so it goes in as written.
 export function renderClip(bookmark, { attachmentLinks = false } = {}) {
   validate(bookmark);
   if (!['saved', 'chat'].includes(bookmark.status) || !bookmark.content_markdown.trim()) return renderMarkdown(bookmark, { attachmentLinks });
+  const limitations = bookmark.limitations.filter(value => !bookmark.content_markdown.includes(value));
   return [
-    escapeMarkdown(statusText(bookmark)), bookmark.content_markdown,
-    ...(bookmark.limitations.length ? [`### Source limitations\n\n${bookmark.limitations.map(value => escapeMarkdown(value)).join('\n\n')}`] : []),
+    escapeMarkdown(statusText(bookmark)), safeClip(bookmark.content_markdown),
+    ...(limitations.length ? [`### Source limitations\n\n${limitations.map(value => escapeMarkdown(value)).join('\n\n')}`] : []),
     actionList(bookmark, attachmentLinks),
   ].join('\n\n');
 }
@@ -199,8 +226,10 @@ ${[...folders].map(([category, entries]) => `    <DT><H3>${escapeHtml(category)}
 // is always returned for the conversation, even when that component succeeds.
 export async function present(bookmark, { mode = 'auto', nativePreview, attachmentLinks = false } = {}) {
   if (!['auto', 'chat', 'markdown', 'short', 'none'].includes(mode)) throw new Error('invalid presentation mode');
-  const markdown = (mode === 'short' ? renderMarkdown : renderClip)(bookmark, { attachmentLinks });
-  if (mode === 'none') return { markdown: [escapeMarkdown(statusText(bookmark)), bookmark.saved_file ? markdownLink('Saved bookmark', bookmark.saved_file, attachmentLinks) : ''].filter(Boolean).join('\n\n'), native: false, fallback: false };
+  // With nothing saved or attached, the clip shown here is the only copy.
+  const onlyCopy = bookmark.status === 'chat' && !bookmark.saved_file && !bookmark.html_file;
+  const markdown = (mode === 'short' && !onlyCopy ? renderMarkdown : renderClip)(bookmark, { attachmentLinks });
+  if (mode === 'none' && !onlyCopy) return { markdown: [escapeMarkdown(statusText(bookmark)), bookmark.saved_file ? markdownLink('Saved bookmark', bookmark.saved_file, attachmentLinks) : ''].filter(Boolean).join('\n\n'), native: false, fallback: false };
   if (['auto', 'chat'].includes(mode) && typeof nativePreview === 'function' && ['saved', 'chat'].includes(bookmark.status)) {
     try {
       if (await nativePreview(structuredClone(bookmark), markdown) === false) throw new Error('preview declined');

