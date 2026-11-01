@@ -105,27 +105,35 @@ export function renderMarkdown(bookmark, { attachmentLinks = false } = {}) {
 
 // Clip text paraphrases web pages, so nothing in it may load or run when shown:
 // images become links, links need an HTTP(S) target, and raw HTML shows as text.
-const inert = text => text.replace(/!\[/g, '[')
-  .replace(/\](\(|:)(\s*<?)(\S*)/g, (match, mark, space, target) => webUrl(target) ? match : `]\\${mark}${space}${target}`)
+const inert = text => text.replace(/!+(?=\[)/g, '')
+  .replace(/\](\(|:)(?=\s*<?(\S*))/g, (match, mark, target) => webUrl(target) ? match : `]\\${mark}`)
   .replace(/</g, '&lt;');
 
-// Code keeps its text, and a fence left open is closed so it can't swallow the
-// verified links after the clip.
-// ponytail: line by line, not a CommonMark parser, so a fence nested in a list
-// can hide text from this pass. Use a parser if this ever renders without a model.
+// What looks like code here may be prose to a renderer: after an escaped
+// backtick, across lines, in a table cell, or in a fence a list ends early. So
+// it stays as written only if it would be harmless as prose, such as Array<string>.
+const inertCode = text => /!\[|\]\(|\]:|(?<!\w)<|<[^>]*[=/]/.test(text) ? inert(text) : text;
+
+// Only an unindented fence is sure to hold code, since no list or quote can end
+// it. One left open is closed so it can't swallow the verified links after the clip.
+// ponytail: line by line, not a CommonMark parser, so a multi-line construct such
+// as a link title holding a fence can still hide text. Use a parser if this ever
+// renders without a model.
 function safeClip(markdown) {
   let fence = '';
-  const lines = markdown.split('\n').map(line => {
-    const mark = line.match(/^ {0,3}(`{3,}(?=[^`]*$)|~{3,})/)?.[1];
+  let indented = false;
+  const lines = markdown.split(/\r\n?|\n/).map(line => {
+    const [, indent, mark] = line.match(/^( {0,3})(`{3,}(?=[^`]*$)|~{3,})/) ?? [];
     if (fence) {
       if (mark?.[0] === fence[0] && mark.length >= fence.length && line.trim() === mark) fence = '';
-      return line;
+      return indented ? inertCode(line) : line;
     }
     if (mark) {
       fence = mark;
+      indented = indent !== '';
       return line;
     }
-    return line.replace(/(`+)(?!`).*?(?<!`)\1(?!`)|[^`]+|`+/g, (part, ticks) => ticks ? part : inert(part));
+    return line.replace(/(`+)(?!`).*?(?<!`)\1(?!`)|[^`]+|`+/g, (part, ticks) => ticks ? inertCode(part) : inert(part));
   });
   return [...lines, ...(fence ? [fence] : [])].join('\n');
 }
