@@ -51,6 +51,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/auto-release.mjs plan
+      # release.yml publishes the waiting version, then runs this workflow again to release what came after it.
+      - name: Publish a version release.yml missed
+        if: steps.plan.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main
       - if: steps.plan.outputs.release == 'true'
         run: npm ci
       # The release script refuses to run without the Claude CLI, so both strict checks run instead of skipping.

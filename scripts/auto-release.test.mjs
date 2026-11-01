@@ -166,4 +166,50 @@ test('plan leaves a merged version bump to release.yml until it is tagged', t =>
   assert.equal(plan.status, 0, plan.stderr);
   assert.match(plan.stdout, /v99\.0\.0 is not tagged yet, so release\.yml publishes it and then runs this workflow again/);
   assert.match(plan.stdout, /^release=false$/m);
+  assert.doesNotMatch(plan.stdout, /^publish=true$/m);
+});
+
+test('plan publishes a version that later commits passed without a tag, as a [skip ci] bump leaves it', t => {
+  const repo = fixture(t);
+  const path = join(repo, manifest);
+  writeFileSync(path, readFileSync(path, 'utf8').replace(/"version": "[^"]+"/, '"version": "99.0.0"'));
+  git(repo, 'commit', '-q', '-am', 'Gleaner 99.0.0: bump [skip ci]');
+  commit(repo, 'plugins/gleaner/skills/glean/SKILL.md', 'Add a thing');
+  const plan = run(repo, 'plan');
+  assert.equal(plan.status, 0, plan.stderr);
+  assert.match(plan.stdout, /^publish=true$/m);
+  assert.match(plan.stdout, /^release=false$/m);
+});
+
+test('plan leaves a version bump merged with a merge commit to release.yml', t => {
+  const repo = fixture(t);
+  const main = git(repo, 'rev-parse', '--abbrev-ref', 'HEAD');
+  git(repo, 'checkout', '-q', '-b', 'release/99.0.0');
+  const path = join(repo, manifest);
+  writeFileSync(path, readFileSync(path, 'utf8').replace(/"version": "[^"]+"/, '"version": "99.0.0"'));
+  git(repo, 'commit', '-q', '-am', 'Gleaner 99.0.0: bump');
+  git(repo, 'checkout', '-q', main);
+  git(repo, 'merge', '-q', '--no-ff', '-m', 'Merge release/99.0.0', 'release/99.0.0');
+  const plan = run(repo, 'plan');
+  assert.equal(plan.status, 0, plan.stderr);
+  assert.match(plan.stdout, /^release=false$/m);
+  assert.doesNotMatch(plan.stdout, /^publish=true$/m);
+});
+
+test('plan leaves a version bump to release.yml when only docs follow it, as a rebase merge can', t => {
+  const repo = fixture(t);
+  const path = join(repo, manifest);
+  writeFileSync(path, readFileSync(path, 'utf8').replace(/"version": "[^"]+"/, '"version": "99.0.0"'));
+  git(repo, 'commit', '-q', '-am', 'Gleaner 99.0.0: bump');
+  commit(repo, 'docs/notes.md', 'Document something');
+  const plan = run(repo, 'plan');
+  assert.equal(plan.status, 0, plan.stderr);
+  assert.match(plan.stdout, /^release=false$/m);
+  assert.doesNotMatch(plan.stdout, /^publish=true$/m);
+});
+
+test('the auto-release workflow starts release.yml when the plan says to publish', () => {
+  const workflow = parse(readFileSync(join(root, '.github/workflows/auto-release.yml'), 'utf8'));
+  const step = workflow.jobs.release.steps.find((/** @type {{ if?: string }} */ candidate) => candidate.if === "steps.plan.outputs.publish == 'true'");
+  assert.match(step?.run ?? '', /gh workflow run release\.yml/);
 });
