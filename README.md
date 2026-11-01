@@ -705,7 +705,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.13.3** (2026-11-01)
 - ChatGPT checks available browser tools before reading a YouTube video and tries an eligible, untried browser after a failed web fetch before asking for pasted content or a link-only bookmark. Description-based saves still work without a transcript; Claude's browser and Playwright transcript workflows are unchanged.
 
 **2.13.2** (2026-10-31)
