@@ -13,7 +13,8 @@ import { bumps, entry, unreleased } from './changelog.mjs';
 // notes: the change edited README.md, so it wrote its own changelog bullets.
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const manifestPath = resolve(root, 'plugins/gleaner/.claude-plugin/plugin.json');
+const manifestFile = 'plugins/gleaner/.claude-plugin/plugin.json';
+const manifestPath = resolve(root, manifestFile);
 const readmePath = resolve(root, 'README.md');
 
 /** PR labels that choose the bump; with none, a change is a patch. */
@@ -178,8 +179,14 @@ function main(mode) {
   const tag = `v${version}`;
   if (!capture('git', ['tag', '--list', tag]).trim()) {
     // A merged version bump that release.yml has not tagged yet: it publishes that, then runs this workflow again.
-    console.log(`${tag} is not tagged yet, so release.yml publishes it and then runs this workflow again.`);
-    if (mode === 'plan') output('release', 'false');
+    // Later commits on top mean its run was skipped, as [skip ci] does, or failed, so nothing else would start it.
+    // ponytail: a merge in the seconds before a running release.yml tags can start a second one, which fails harmlessly.
+    const missed = capture('git', ['log', '-1', '--format=%H', '-G"version":', '--', manifestFile]).trim() !== capture('git', ['rev-parse', 'HEAD']).trim();
+    console.log(missed ? `${tag} is not tagged and later commits passed it, so this workflow starts release.yml.` : `${tag} is not tagged yet, so release.yml publishes it and then runs this workflow again.`);
+    if (mode === 'plan') {
+      output('release', 'false');
+      if (missed) output('publish', 'true');
+    }
     return mode === 'pending' ? 1 : 0;
   }
   const commits = releasableCommits(tag);
