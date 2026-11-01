@@ -88,13 +88,30 @@ function sections(bookmark) {
   ];
 }
 
+function actionList(bookmark, attachmentLinks) {
+  return `### Actions\n\n${actions(bookmark).map(([label, locator]) => `- ${markdownLink(label, locator, attachmentLinks)}`).join('\n') || 'No verified links or saved paths available.'}`;
+}
+
+// The compact layout, for an explicit short preview or when there's no clip to show.
 export function renderMarkdown(bookmark, { attachmentLinks = false } = {}) {
   validate(bookmark);
   return [
     `## ${escapeMarkdown(bookmark.title)}`, escapeMarkdown(statusText(bookmark)),
     facts(bookmark).map(([key, value]) => `- **${key}:** ${escapeMarkdown(value)}`).join('\n'),
     ...sections(bookmark).map(([heading, values]) => `### ${heading}\n\n${values.map(value => heading === 'Key details' ? `- ${escapeMarkdown(value)}` : escapeMarkdown(value)).join('\n\n')}`),
-    `### Actions\n\n${actions(bookmark).map(([label, locator]) => `- ${markdownLink(label, locator, attachmentLinks)}`).join('\n') || 'No verified links or saved paths available.'}`,
+    actionList(bookmark, attachmentLinks),
+  ].join('\n\n');
+}
+
+// What every host shows by default: the whole clip, wherever it was stored.
+// content_markdown is already Markdown, so it goes in as written.
+export function renderClip(bookmark, { attachmentLinks = false } = {}) {
+  validate(bookmark);
+  if (!['saved', 'chat'].includes(bookmark.status) || !bookmark.content_markdown.trim()) return renderMarkdown(bookmark, { attachmentLinks });
+  return [
+    escapeMarkdown(statusText(bookmark)), bookmark.content_markdown,
+    ...(bookmark.limitations.length ? [`### Source limitations\n\n${bookmark.limitations.map(value => escapeMarkdown(value)).join('\n\n')}`] : []),
+    actionList(bookmark, attachmentLinks),
   ].join('\n\n');
 }
 
@@ -181,8 +198,8 @@ ${[...folders].map(([category, entries]) => `    <DT><H3>${escapeHtml(category)}
 // A host adapter may supply an available native component; ordinary Markdown
 // is always returned for the conversation, even when that component succeeds.
 export async function present(bookmark, { mode = 'auto', nativePreview, attachmentLinks = false } = {}) {
-  if (!['auto', 'chat', 'markdown', 'none'].includes(mode)) throw new Error('invalid presentation mode');
-  const markdown = renderMarkdown(bookmark, { attachmentLinks });
+  if (!['auto', 'chat', 'markdown', 'short', 'none'].includes(mode)) throw new Error('invalid presentation mode');
+  const markdown = (mode === 'short' ? renderMarkdown : renderClip)(bookmark, { attachmentLinks });
   if (mode === 'none') return { markdown: [escapeMarkdown(statusText(bookmark)), bookmark.saved_file ? markdownLink('Saved bookmark', bookmark.saved_file, attachmentLinks) : ''].filter(Boolean).join('\n\n'), native: false, fallback: false };
   if (['auto', 'chat'].includes(mode) && typeof nativePreview === 'function' && ['saved', 'chat'].includes(bookmark.status)) {
     try {

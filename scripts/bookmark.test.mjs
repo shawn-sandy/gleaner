@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
-import { applyReceipt, present, renderBookmarksFile, renderHtml, renderMarkdown } from '../plugins/gleaner/skills/glean/scripts/bookmark.mjs';
+import { applyReceipt, present, renderBookmarksFile, renderClip, renderHtml, renderMarkdown } from '../plugins/gleaner/skills/glean/scripts/bookmark.mjs';
 
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/bookmark.json', import.meta.url), 'utf8'));
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -22,17 +22,59 @@ test('ChatGPT native capability receives shared data and leaves a readable previ
   const result = await present(bookmark, { nativePreview: (data, markdown) => {
     calls++;
     assert.deepEqual(data, bookmark);
-    assert.equal(markdown, renderMarkdown(bookmark));
+    assert.equal(markdown, renderClip(bookmark));
     data.tags.push('#adapter-mutation');
   } });
   assert.equal(calls, 1);
   assert.equal(result.native, true);
   assert.equal(result.fallback, false);
-  assert.match(result.markdown, /### Overview/);
-  assert.match(result.markdown, /### Key details/);
-  assert.match(result.markdown, /### Why it matters/);
+  assert.ok(result.markdown.includes(fixture.content_markdown));
   assert.match(result.markdown, /### Actions/);
   assert.equal(bookmark.tags.includes('#adapter-mutation'), false);
+});
+
+test('every presentation default shows the whole clip, even when it was stored elsewhere', async () => {
+  const bookmark = saved();
+  for (const mode of [undefined, 'auto', 'chat', 'markdown']) {
+    const { markdown } = await present(bookmark, { mode });
+    assert.ok(markdown.includes(fixture.content_markdown), markdown);
+    assert.match(markdown, /Saved: Browser Research/);
+    assert.match(markdown, /Open saved destination/);
+    assert.doesNotMatch(markdown, /### Overview/);
+  }
+});
+
+test('a short preview is opt-in and stays compact', async () => {
+  const { markdown } = await present(saved(), { mode: 'short' });
+  assert.equal(markdown, renderMarkdown(saved()));
+  assert.match(markdown, /### Overview/);
+  assert.equal(markdown.includes(fixture.content_markdown), false);
+});
+
+test('the clip is shown only when one was delivered, and limitations stay visible', async () => {
+  const limited = saved({ ...fixture, limitations: ['Partial article; the rest is behind a sign-in.'] });
+  assert.match((await present(limited)).markdown, /### Source limitations\n\nPartial article/);
+  for (const status of ['failed', 'skipped']) {
+    const { markdown } = await present(saved(fixture, { ...receipt, status, message: 'Not delivered' }));
+    assert.equal(markdown.includes(fixture.content_markdown), false);
+  }
+  assert.match((await present(saved({ ...fixture, content_markdown: ' ' }))).markdown, /### Overview/);
+});
+
+test('no host is told to show less than the full clip by default', () => {
+  const glean = read('plugins/gleaner/skills/glean/SKILL.md');
+  const contract = read('plugins/gleaner/skills/glean/references/bookmark.md');
+  const stepSeven = glean.slice(glean.indexOf('7. **Confirm and preview'), glean.indexOf('**Tagging the chat.**'));
+  const delivery = glean.slice(glean.indexOf('**This conversation** (the default)'), glean.indexOf('**Google Drive**\n'));
+  const present = contract.slice(contract.indexOf('## Present after the save result'), contract.indexOf('## Optional executable renderer'));
+  assert.match(stepSeven, /full clip/);
+  assert.doesNotMatch(stepSeven, /In other hosts/);
+  assert.doesNotMatch(stepSeven, /In ChatGPT, render/);
+  assert.doesNotMatch(delivery, /In other hosts/);
+  assert.doesNotMatch(delivery, /ChatGPT only/);
+  assert.doesNotMatch(present, /ChatGPT only/);
+  assert.doesNotMatch(present, /other hosts keep/i);
+  assert.match(present, /every host/i);
 });
 
 test('Claude Code Markdown and no-component ChatGPT share the same content', async () => {
@@ -199,7 +241,15 @@ test('CLI renders fixture input offline without creating a file or changing the 
   const output = JSON.parse(result.stdout);
   assert.equal(output.bookmark.saved_file, receipt.saved_file);
   assert.match(output.html, /<!doctype html>/);
-  assert.match(output.markdown, /Overview/);
+  assert.ok(output.markdown.includes(fixture.content_markdown));
+});
+
+test('CLI passes the short preview mode through', () => {
+  const result = spawnSync(process.execPath, ['plugins/gleaner/skills/glean/scripts/bookmark.mjs'], {
+    input: JSON.stringify({ bookmark: fixture, receipt, mode: 'short' }), encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(JSON.parse(result.stdout).markdown, /### Overview/);
 });
 
 test('link-only YouTube previews disclose missing content without inventing a summary or stored copy', async () => {
@@ -213,13 +263,16 @@ test('link-only YouTube previews disclose missing content without inventing a su
     attachmentLinks: true, nativePreview: () => { throw new Error('unavailable'); },
   });
   assert.equal(fallback.fallback, true);
-  for (const output of [normal.markdown, fallback.markdown, renderHtml(bookmark)]) {
+  const short = await present(bookmark, { mode: 'short', attachmentLinks: true });
+  for (const output of [normal.markdown, fallback.markdown, short.markdown, renderHtml(bookmark)]) {
     assert.match(output, /Link only; video content was unavailable and has not been summarized/);
+    assert.match(output, /https:\/\/www.youtube.com\/watch\?v=fixture/);
+    assert.doesNotMatch(output, /Access saved HTML|Open saved destination/);
+  }
+  for (const output of [short.markdown, renderHtml(bookmark)]) {
     assert.match(output, /No summary supplied/);
     assert.match(output, /No additional details verified/);
     assert.match(output, /Practical value not established/);
-    assert.match(output, /https:\/\/www.youtube.com\/watch\?v=fixture/);
-    assert.doesNotMatch(output, /Access saved HTML|Open saved destination/);
   }
   assert.match(normal.markdown, /Delivered in this conversation only; not stored/);
   assert.match(normal.markdown, /\[Access saved bookmark\]\(sandbox:\/mnt\/data\/youtube-fixture.md\)/);

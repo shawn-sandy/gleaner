@@ -144,7 +144,7 @@ If you installed the earlier **page-to-project** skill, remove it so the two don
 
 1. Open any article in Chrome.
 2. Open the Claude side panel and say **"save this page."**
-3. In ChatGPT, Gleaner shows the full clip directly in the conversation and includes a separate Markdown (`.md`) download when attachments are supported. In Claude, it gives an HTML (`.html`) file, its tags, and a compact preview; without attachments, it gives the clip as one Markdown code block. ChatGPT without attachments still shows the full readable clip inline once and says no file was attached.
+3. Gleaner shows the full clip directly in the conversation. When attachments are supported, it also includes a separate download: a Markdown (`.md`) file in ChatGPT or an HTML (`.html`) file in Claude. Without attachments, the clip in the conversation is the delivery, and Gleaner says no file was attached.
 4. Download the file, or copy the clip from the conversation, to keep it. To store a copy, say "save to Drive". To store every clip somewhere, set a default with `/gleaner:preferences setup`.
 
 That's it. Everything below is optional.
@@ -187,7 +187,7 @@ Mention the page, article, or doc, or just say "save this" with nothing highligh
 > keep this article for later
 > bookmark this doc
 
-Every successful save also shows a readable bookmark preview in the conversation. ChatGPT, including mobile, shows the full clip as rendered Markdown with its links, notes, and follow-up prompt; a Markdown attachment is a separate download, so reading the clip does not require opening a file. Claude Code and other agents keep the compact Overview, Key details, Why it matters, metadata, and verified links layout. Claude also supplies HTML companions where supported; ChatGPT supplies HTML only when requested or when updating a clip with retained HTML. An explicit HTML download request applies to that save only. See [bookmark previews](docs/bookmark-previews.md) for same-bookmark examples, optional preview suppression, and host limitations.
+Every successful save also shows the full clip in the conversation, wherever it was stored: rendered Markdown with its links, notes, and follow-up prompt, on ChatGPT mobile too. An attachment is a separate download, so reading the clip does not require opening a file. For one save, say "short preview" for the compact Overview, Key details, Why it matters, metadata, and verified links layout, or "no preview" to get just the outcome. Claude also supplies HTML companions where supported; ChatGPT supplies HTML only when requested or when updating a clip with retained HTML. An explicit HTML download request applies to that save only. See [bookmark previews](docs/bookmark-previews.md) for same-bookmark examples, optional preview suppression, and host limitations.
 
 Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it. A tutorial gets numbered **Steps** in place of key points.
 
@@ -479,7 +479,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 **Things to know:**
 - **Separate sign-ins.** The pane has its own browser profile, apart from your Chrome. Sign in to paywalled or members-only sites in the pane once, and the login sticks.
 - **Site approvals.** The first time Gleaner reads a new site, you'll be asked to allow it.
-- **Clips come back in the chat.** In Claude Code, clips come back as an HTML file in the conversation. Say "save it to this project" (or add `--to local`) to save them to `browser-research/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `browser-research/` to `.gitignore`, your call.
+- **Clips come back in the chat.** In Claude Code, clips come back in full in the conversation, with an HTML file to download. Say "save it to this project" (or add `--to local`) to save them to `browser-research/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `browser-research/` to `.gitignore`, your call.
 - **Want Drive instead?** Say "save to Drive." Your claude.ai connectors carry over when you're signed in to Claude Code with your Claude account.
 
 ## Phrase cheat sheet
@@ -730,6 +730,10 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Every save and update now shows the full clip in the conversation on every host, even when it was stored in Drive, Notion, a project folder, or an artifact. ChatGPT already did this; Claude Code, Cowork, and the Chrome side panel used to show a compact preview. Say "short preview" for that layout or "no preview" for just the outcome, for one save. Storage and formats are unchanged.
+- Where the chat can't attach a file, Claude now shows the clip as rendered Markdown, as ChatGPT does, instead of one Markdown code block.
 
 **2.13.4** (2026-11-01)
 - Gleaner asks for permission less often, especially on mobile. Preference sync and the Drive lookup for hosts without local files now run once per conversation, Drive saves combine their searches and reuse folders already found, and Notion saves reuse the database already found. A site approval lasts the conversation where the host allows it, and a declined prompt isn't asked again.
