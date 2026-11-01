@@ -51,7 +51,7 @@ If it isn't clear which tab "the page" is, such as several open tabs with none m
 **Built-in browser specifics:**
 - **Pane closed or no tabs:** if `tabs_context` shows no open tabs and the user didn't give a URL, ask them to open the page in the Browser pane (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows) or paste the URL. Don't guess which page they meant.
 - **Pane hidden:** reading still works while the pane is hidden. Just mention which page you clipped, since the user may not be looking at it.
-- **Site approvals:** if a tool says the site isn't allowed yet, call `request_access` for that site (scope `once`) when the tool exists, wait for the answer, then retry. If access is declined, say so and stop.
+- **Site approvals:** if a tool says the site isn't allowed yet, call `request_access` for that site when the tool exists, using a scope that lasts for this conversation when it offers one, wait for the answer, then retry. If access is declined, say so and stop.
 - **Sign-ins:** the pane has its own browser profile, separate from the user's Chrome. If a page is behind a login or paywall there, clip what's visible and mention that signing in within the pane would get the rest.
 
 **ChatGPT specifics:**
@@ -201,6 +201,15 @@ Read the [shared preferences contract](../preferences/references/contract.md) di
 
 Offer first-save preference setup as defined in the shared contract. Ask about sync conflicts and incompatible formats before saving. Otherwise ask one short question only when acting would likely do the wrong thing, such as when two very different readings are equally plausible, or a named destination doesn't exist. Otherwise act, and say in the confirmation what you assumed so the user can correct it ("Saved the whole page — say 'just the highlighted part' if you meant only that").
 
+### Fewer permission prompts
+
+A host can ask the user to approve each connector or browser call, and on a phone every prompt is another tap. These rules apply to every Gleaner skill on every surface:
+
+- **One call first.** Make the first call to each connector or browser tool on its own and wait for it, so an "always allow" answer covers the calls after it. Never send several calls to a tool the user hasn't answered for yet.
+- **Don't look up the same thing twice.** Keep preferences, folder IDs, database IDs, and data source URLs for the rest of this conversation, and reuse them for later saves, adds, and finds. If a kept value stops working, look it up again once. Drop kept preferences after a preferences update, reset, or sync, and when the user states a new default.
+- **No call just for an extra.** Something optional, such as matching tag spellings, uses what other calls already returned.
+- **A decline is final for this conversation.** When the user declines a prompt or a tool says access was refused, don't call that tool or ask again unless the user asks you to, and skip any calls that only lead to it. Say what couldn't be done in one line. A save or update goes straight to the Fallback in step 6; anything else uses that route's own fallback.
+
 ### Collecting parts
 
 A part is a piece of text plus its page title, URL, topic, and note. It can also be an answer you gave about a page. Parts live in this conversation until the clip is saved or cleared, and they can come from different pages and tabs.
@@ -242,7 +251,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
 2. **Resolve preferences, then pick the destination.**
-   - Read the shared preferences contract, load valid stores, run enabled sync, and follow its first-save setup rule when unconfigured (it skips the prompt while the default is This conversation). Resolve destination and format with their scopes before any duplicate check. Invalid configuration stays untouched; offer explicit session settings to continue.
+   - Read the shared preferences contract, load valid stores, run enabled sync when due, and follow its first-save setup rule when unconfigured (it skips the prompt while the default is This conversation). Resolve destination and format with their scopes before any duplicate check. Invalid configuration stays untouched; offer explicit session settings to continue.
    - The following environment defaults apply only when no higher-precedence setting exists or setup is skipped. A configured destination uses its verified ID/path throughout this save, never a fresh lookup by label. Check format support before proceeding; `markdown` means raw Markdown, not Notion content or HTML.
    - Keep the resolved clip base path or remote ID for duplicate checks, recent-tag reads, category organization, and the final save. A temporary alternative requires the user's choice and a fresh duplicate check; never modify the permanent default because it is unreachable.
    - **Adding to a clip saved this session** (see Clips saved this session): after preference sync, retain that clip’s verified destination and format as the session override and skip the duplicate check below. Changed persistent defaults do not move an existing clip. An explicit different destination makes a new clip using the rules below; an incompatible format change requires a choice before updating.
@@ -255,7 +264,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - **The URLs to match:** the page URL with tracking parameters such as `utm_*` stripped, plus the page facts' `canonical` when there is one. A clip whose Source is either one is a match.
      - This conversation: skip the check, since nothing is stored to search.
-     - Drive: search for `fullText contains '<URL>'` for each URL to match (escape single quotes). Keep only results inside the destination folder or its category subfolders, and skip trashed files.
+     - Drive: make one search covering every URL to match, `fullText contains '<URL>' or fullText contains '<other URL>'` (escape single quotes). Keep only results inside the destination folder or its category subfolders, and skip trashed files.
      - Cowork project or This project: search the resolved clip base path for each URL to match (the environment default is `browser-research/`).
      - Notion: query the destination database for pages whose **Source** property equals one of the URLs to match. Use a structured rows query with a property filter rather than SQL, which is rate-limited on some Notion plans.
      - Artifact: list the user's artifacts and read the ones titled like this page (clips are named after it). A match is a Gleaner clip (its page has the `Gleaner clip` generator line) whose Source row is one of the URLs to match.
@@ -385,12 +394,12 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
      - `Other`: anything that doesn't fit; mention it so the user can add a category
    - **Folder names:** in Drive, the category name is used as-is (`AI & Agents`). In local folders (Cowork project or This project), use its kebab-case form: `ai-agents`, `design-engineering`, `frontend-dev`, `tools-workflow`, `content-writing`, `business-career`, `other`. The **Category:** line in the clip always uses the readable name.
    - **Type:** the kind of page (article, docs, video, webinar, tutorial, release-notes, repo, tool, other). The page facts' `schemaType` is a hint: `HowTo` suggests tutorial, `VideoObject` video, `SoftwareApplication` tool, and `SoftwareSourceCode` repo. When the hint and the page's content disagree, the content decides.
-   - **Tags:** 3–6 lowercase, kebab-case tags with a `#` prefix (for example `#cowork #prompting #claude-opus`). Prefer specific names (products, libraries, techniques) over generic words. Reuse existing tags when they fit: if possible, look at a few recent clips in the destination and match their spelling instead of inventing near-duplicates.
+   - **Tags:** 3–6 lowercase, kebab-case tags with a `#` prefix (for example `#cowork #prompting #claude-opus`). Prefer specific names (products, libraries, techniques) over generic words. Reuse existing tags when they fit: match the spelling in clips you've already read, a Notion database's Tags options, or recent clips in a local destination, instead of inventing near-duplicates. Don't make a connector call just for this.
    - If the user gives a category or tags, use theirs.
 
 5. **Name the file** `<yyyy-mm-dd>-<short-kebab-title>` (kebab-case, max ~60 characters). For a part clip, base the name on the topic tying the parts together.
 
-6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`). Use the destination and format already resolved in step 2. The name-based discovery and default paths below apply only to an unconfigured or explicit destination without a verified locator. For configured Drive/Notion destinations use the retained ID; for configured local/Cowork destinations use the retained base path and append only the category folder. Recheck access, never substitute a same-named resource.
+6. **Save it** into a subfolder named after the category (for example `Browser Research/AI & Agents/`). Use the destination and format already resolved in step 2. The name-based discovery and default paths below apply only to an unconfigured or explicit destination without a verified locator. For configured Drive/Notion destinations use the retained ID; for configured local/Cowork destinations use the retained base path and append only the category folder. Recheck access, never substitute a same-named resource; for Drive and Notion the save's own first call does that, so make no separate check.
 
    Apply the host-specific HTML delivery rules in [the bookmark contract](references/bookmark.md#store-with-the-existing-workflow), preserving this primary destination and format. Record verified save results before rendering the conversation preview.
 
@@ -403,9 +412,10 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
    **Google Drive**
    - **Other Drive connectors** (such as ChatGPT's): the Drive queries and parameters in this skill, here and in step 2 and the Clip index, are the Claude connector's. Use your connector's equivalents by the names this session shows. If it has no equivalent for a check, such as the duplicate search, say so in one line and skip that check. If it can't convert an upload to a Google Doc or Sheet, or the conversion fails, upload the raw file with `.md` (or `.csv` for a snapshot sheet) added to the title; use the fallback below only if that upload also fails.
+   - Skip the next two lookups for any folder you already have an ID for from this conversation.
    - Find the destination folder: search Drive for a folder with that exact title (`mimeType = 'application/vnd.google-apps.folder'`, owned by the user, not trashed). If several match, ask which one. If none exist, create it in My Drive.
    - Inside it, find or create the category subfolder the same way (search with `parentId` set to the destination folder).
-   - Determine the final upload title before checking for a collision: raw Markdown uses `<name>.md`; converted Docs keep `<name>`. Check that exact title in the category subfolder. If it exists, try `<name>-2.md`, `<name>-3.md`, and so on for Markdown, or `<name>-2`, `<name>-3` for converted Docs, checking each candidate. If conversion falls back to raw Markdown, repeat this check with the `.md` filename before uploading. Never overwrite.
+   - Determine the final upload title before checking for a collision: raw Markdown uses `<name>.md`; converted Docs keep `<name>`. Make one search of the category subfolder for titles containing `<name>` (`parentId = '<folder ID>' and title contains '<name>'`), read every result page, and check against those results. If the title is taken, use the first free one of `<name>-2.md`, `<name>-3.md`, and so on for Markdown, or `<name>-2`, `<name>-3` for converted Docs. If conversion falls back to raw Markdown, recheck those same results with the `.md` filename before uploading. Never overwrite.
    - Upload the summary into the category subfolder with `contentMimeType: text/markdown`. If the resolved format is `markdown` (Gleaner's default), set `disableConversionToGoogleType: true` so it stays a `.md` file; if it is `auto`, let Drive convert it to a Google Doc so headings and lists render. Use the final collision-checked title without adding another extension.
    - If the Drive connector isn't available or the upload fails, say so and use the fallback below.
 
@@ -418,7 +428,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - If the working directory is a git repository, don't commit or stage anything; mention that the clip is a new untracked file so the user can decide whether to commit it or add `browser-research/` to `.gitignore`.
 
    **Notion**
-   - **Find the database.** Search Notion for a database titled `Browser Research` (or the name the user gave). If several match, ask which one.
+   - **Find the database,** unless you already have that same database from this conversation. Search Notion for a database titled `Browser Research` (or the name the user gave). If several match, ask which one.
    - **No database yet:** ask once where to create it ("Which Notion page should hold your Browser Research database?"), then create it there with these properties:
 
      | Property | Type | Values |
@@ -435,8 +445,8 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
      With the Notion connector's `create-database`, pass the schema as SQL DDL, for example `CREATE TABLE ("Name" TITLE, "Category" SELECT('AI & Agents':purple, …), "Type" SELECT(…), "Tags" MULTI_SELECT(), "Note" RICH_TEXT, "Source" URL, "Saved" DATE, "Scope" RICH_TEXT, "Supersedes" URL)`.
      If the database exists but is missing a property, add it rather than failing; never rename or delete the user's existing properties.
-   - **Fetch the database first** to get its data source URL (`collection://…`), then create pages with that data source as the parent.
-   - **Add new tags before saving.** Notion rejects a multi-select value that isn't already an option. If any of the clip's tags are new, update the Tags property with `ALTER COLUMN "Tags" SET MULTI_SELECT(…)` listing **every existing option plus the new ones**, since options left out of the list are deleted. Then create the page.
+   - **Fetch the database first,** once per database in this conversation, to get its data source URL (`collection://…`), then create pages with that data source as the parent.
+   - **Add new tags before saving.** Notion rejects a multi-select value that isn't already an option. If any of the clip's tags are new, fetch the database again for its current Tags options if this save hasn't, since a kept list could delete options added elsewhere. Then update the Tags property with `ALTER COLUMN "Tags" SET MULTI_SELECT(…)` listing **every existing option plus the new ones**, since options left out of the list are deleted. Then create the page. If Notion still rejects a tag as not an option, it was removed elsewhere: fetch the database, add the tag the same way, and create the page again, once.
    - **Property values:** Tags without the `#`; Saved as `date:Saved:start` (YYYY-MM-DD) with `date:Saved:is_datetime` 0; leave empty properties out rather than sending blank strings.
    - **Create the page** in that database. Fill the properties from the clip's header lines, and put the summary body (from `## TL;DR` down, or from `## Parts` when there is no TL;DR) in the page content using Notion-flavored Markdown: outside code, put a backslash before any of these characters: \\ * ~ $ [ ] < > { } | ^ and the backtick, and keep code (such as TypeScript generics) in code spans or blocks. Leave the header lines out of the body, since the properties carry them. Don't put clips in category subfolders; the Category property does that job.
    - **Duplicates:** never edit or delete a page from an earlier session. An updated copy is a new page with **Supersedes** set.
@@ -513,7 +523,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Notion:** add any new tags to the Tags options first (as above), update the page's properties, then replace the page's content with the updated body, written as above (with the Notion connector's `update-page`, the `replace_content` command).
    - **Artifact:** write the updated page to the same scratch file and publish that path again without a `url`, which updates the same artifact at the same link.
    - **Google Drive:** the connector can't change a file's content, so upload the updated clip to its category folder under the same title (no `-2`), then move the earlier version to the trash with `trash_file`, where it can be restored for 30 days. Trash it only after the upload succeeds, and only the version this session saved. If your connector can replace a file's content, do that instead. If trashing fails, say the earlier version is still there.
-   - **If the update fails,** say so, then save the updated clip as a new clip with a **Supersedes:** line pointing to the earlier version, or use the fallback below if that fails too.
+   - **If the update fails,** say so, then save the updated clip as a new clip with a **Supersedes:** line pointing to the earlier version, or use the fallback below if that fails too. If the user declined or access was refused, go straight to the fallback below.
 
    **Fallback:** give the clip in this conversation (see This conversation above) and say plainly where it was *not* saved. Never claim a save that didn't happen.
 
@@ -530,7 +540,7 @@ The clips themselves are the index: each one carries its source URL, date, categ
 When the user asks to find or list clips ("show my clip index", "what did I save about Cowork?", "list my #prompting clips", "clips from this week"):
 
 1. **Gather.**
-   - Load the shared contract and resolve explicit scope or preferences, synchronizing when enabled without prompting for first-save setup. Search the verified destination ID/base path; the default names below apply only when no configured destination exists. Keep artifact search opt-in as before.
+   - Load the shared contract and resolve explicit scope or preferences, synchronizing when enabled and due, without prompting for first-save setup. Search the verified destination ID/base path; the default names below apply only when no configured destination exists. Keep artifact search opt-in as before.
    - Drive: find the `Browser Research` folder and its category subfolders, then search inside them, skipping trashed files. Use `parentId` to list a category, `fullText contains '<tag or keyword>'` for tags, topics, and notes. For date ranges, use the **Saved:** line: a clip updated later in its session is a newer file, so `createdTime` can only rule out files created before the range starts. Page through all results.
    - Cowork project or This project: search `browser-research/` recursively.
    - Notion: query the `Browser Research` database, filtering on its properties (Category, Tags, Saved date) or searching page text. When the user asks for their index and uses Notion, also link the database itself, since it's a live, filterable index.
