@@ -55,6 +55,7 @@ If it isn't clear which tab "the page" is, such as several open tabs with none m
 - **Sign-ins:** the pane has its own browser profile, separate from the user's Chrome. If a page is behind a login or paywall there, clip what's visible and mention that signing in within the pane would get the rest.
 
 **ChatGPT specifics:**
+- **Discover before fetching:** check this session's available browser tools and follow their skill or tool guidance before choosing retrieval. Honor the browser selection rules above; a Work browser that can navigate may open a supplied URL even with no matching tab, while connected tabs require a matching existing tab. For YouTube, resolve retrieval through the youtube skill's ChatGPT reference before asking about unavailable content; a failed fetch alone does not rule out an eligible, untried browser.
 - **Finding the tab:** list the tabs first, then read the chosen one with `get_tab_context` and its tab ID. For a document it may return a Library file instead of text; read that file with the session's file tool.
 - **No highlights** (connected tabs, or a Work browser with no JavaScript tool): for a part, use the topic the user named or ask them to paste the text. Don't suggest highlighting.
 - **URLs:** the Work browser can open the URL. Connected tabs can't open pages: if a tab with that URL is open, read it; otherwise fetch the URL with the session's web tool and say it was read without a browser.

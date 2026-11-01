@@ -2,11 +2,19 @@
 
 Use this reference only when the active assistant host is ChatGPT, including mobile. Browser capabilities alone do not select it. Keep Claude's existing extraction, transcript, fallback, and saving instructions unchanged.
 
+## Resolve retrieval before asking
+
+For an explicit link-only request, skip content retrieval and use "An explicitly chosen link-only bookmark" below. For supplied descriptions or transcripts, use "Follow the user's choice" without fetching again. Otherwise:
+
+1. **Discover browser capabilities before choosing retrieval.** Check the tools available in this session and read the applicable browser skill or tool guidance. Do not infer browser availability from mobile, Work mode, an extension, or a failed web fetch. An eligible browser is one the session can use for this URL within the user's browser choice and the host's tool, permission, and connection requirements; an unavailable, disconnected, prohibited, or declined route is not eligible. Do not sign in or change settings to make a route eligible.
+2. **Use the eligible browser first.** Follow glean's "Where Gleaner runs" and "ChatGPT specifics": honor a named browser/tab; otherwise prefer Work, then connected tabs, among surfaces identifying this video. A Work browser that can navigate may open the supplied Source URL even when no video tab is open; connected tabs can only read a matching existing tab. Keep reads on this video, and never switch to an unrelated page just to obtain JavaScript access. Read the description and use "In ChatGPT" in the YouTube skill to read or open **Show transcript** when supported. If no eligible browser can read the video, use the session's web tool as in "No browser".
+3. **Treat a fetch failure as a failure of that route only.** If a fetch was attempted first and is throttled, blocked, or returns no usable content, check for an eligible, untried browser before asking for pasted text or a link-only choice. Try that route using step 2. Do not repeat the failed fetch, retry a browser route already exhausted by the YouTube skill, or bypass a sign-in wall, bot check, permission refusal, or explicit browser choice. If the browser also fails, proceed to the decision below; do not cycle between routes.
+
 ## Decide whether to ask
 
-Use the YouTube skill's available browser or web tools first, unless the user has already supplied usable content for this video. If a usable description or transcript was read or supplied, continue the normal summary workflow. A missing transcript alone does not interrupt a description-based save. Chapters alone support chapter labels and links, not a summary of unseen dialogue; use the existing "No description" rule for content that was read but contains no usable description or transcript.
+If a usable description or transcript was read or supplied, continue the normal summary workflow, retaining resolved preferences and duplicate checks. A missing transcript alone does not interrupt a description-based save; state that the summary uses the description and no transcript was read. Chapters alone support chapter labels and links, not a summary of unseen dialogue; use the existing "No description" rule for content that was read but contains no usable description or transcript.
 
-When access fails or the returned page does not expose the description or transcript, stop before creating or changing a clip. This differs from successfully reading a page and confirming that its description is empty or boilerplate, which uses "No description" above. Do not treat a URL, title, access-error page, or unrelated search snippet as summarized video content. Do not repeat a blocked fetch or imply that opening YouTube in an inaccessible mobile app gives ChatGPT access to it.
+Only after eligible retrieval routes have failed or are unavailable, when no usable description or transcript can be read, stop before creating or changing a clip. This differs from successfully reading a page and confirming that its description is empty or boilerplate, which uses "No description" above. Do not treat a URL, title, access-error page, or unrelated search snippet as summarized video content. Do not imply that opening YouTube in an inaccessible mobile app gives ChatGPT access to it.
 
 First check the conversation's existing clip record using the canonical video Source URL. If there is no existing clip, ask once:
 
@@ -16,7 +24,7 @@ If the clip already exists in this conversation, ask instead:
 
 > I couldn't read this video's content. Your existing clip is unchanged. Paste its description or transcript to update it, or say "keep it as is."
 
-Say "YouTube blocked access" only when the tool result establishes that cause. Otherwise say the content could not be read. With no accessible video tab, offer pasted text directly; do not require desktop Chrome, an extension, or Work mode. If the user already explicitly requested a link-only bookmark, that choice is sufficient: do not ask again.
+Report only observed failures: distinguish fetch throttling, unavailable browser tools, browser access errors, and a missing transcript. Say "YouTube blocked access" only when the tool result establishes that cause; a fetch failure does not establish a browser failure. Otherwise say the content could not be read. Once eligible retrieval routes are exhausted, offer pasted text directly; do not require desktop Chrome, an extension, or Work mode. If the user already explicitly requested a link-only bookmark, that choice is sufficient: do not ask again.
 
 ## Follow the user's choice
 
