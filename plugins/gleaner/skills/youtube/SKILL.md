@@ -116,11 +116,11 @@ With no browser available, fetch the Source URL with WebFetch for the title, cha
 
 ### In ChatGPT
 
-In every ChatGPT session, with or without JavaScript, read the [blocked-content fallback](references/chatgpt-blocked-content.md) before handling unavailable video content or repairing an existing link-only clip. Its ask-before-saving rule applies when access prevents reading either a usable description or transcript; it takes precedence over "No description" for that case only. Claude Code and other Claude surfaces do not use this reference.
+In every ChatGPT session, with or without JavaScript, read the [blocked-content fallback](references/chatgpt-blocked-content.md) before choosing a retrieval method or repairing an existing link-only clip. Discover eligible browser tools first; a failed web fetch alone does not authorize the blocked-content question while an eligible browser remains untried. Its ask-before-saving rule applies only after eligible retrieval routes fail or are unavailable and access prevents reading either a usable description or transcript; it takes precedence over "No description" for that case only. Claude Code and other Claude surfaces do not use this reference.
 
 ChatGPT's connected Chrome tabs have no JavaScript tool, and the Work browser has one only if this session shows it. Without one, the scripts and the playback position don't work. In place of steps 2 and 3:
 
-- **Read the video's tab** as in the glean skill's "ChatGPT specifics". If no open tab shows the video, the Work browser can open the Source URL; connected tabs can't, so follow "No browser", fetching with the session's web tool.
+- **Read the video's tab** as in the glean skill's "ChatGPT specifics". If no open tab shows the video, use an eligible Work browser to open the Source URL. Connected tabs cannot navigate; when only connected tabs are eligible and none shows the video, follow "No browser", fetching with the session's web tool. Apply the blocked-content reference's retrieval checks before asking if that fetch fails.
 - **Use what the tab returns.** Take the title, channel, published date, length, and description from it, and leave out of the clip's header lines anything it doesn't show. If it also returns timestamped transcript lines, the transcript panel is open: use them as the transcript, with `transcript panel` as its source.
 - **Parts** work by time range or topic, from transcript lines; with none, a part can't be clipped (see "Transcript"). "This part" or "this bit" can't use the playback position, so ask for a time range or topic instead, and never guess one.
 

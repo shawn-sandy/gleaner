@@ -28,7 +28,9 @@ Google Drive requires a connected Drive app with permission to create files in t
 
 For YouTube, write the clip from the video's description and chapters, and use timestamped transcript text only if the connected browser shows it or the user supplies it. When it shows none, a Work browser that can click opens **Show transcript** itself; with connected tabs, ask the user to open **Show transcript** under the video and read the tab again before asking for a paste. When the video has no description, ask for an optional short one; do not invent quotes or key moments.
 
-If access fails and neither a usable description nor transcript can be read, follow the [ChatGPT blocked-content fallback](../plugins/gleaner/skills/youtube/references/chatgpt-blocked-content.md): ask before creating or changing a clip. Pasted text can supply the summary without another fetch; "save link only" explicitly chooses an unsummarized bookmark. With no accessible tab, including on mobile, ask for pasted text directly rather than requiring a desktop browser. A readable description still saves normally when only the transcript is unavailable. Repair a same-session clip at its retained destination; explain and ask first if storage requires a replacement copy. A revised chat attachment replaces the earlier copy logically, without claiming the old attachment was edited or removed.
+Discover eligible browser tools before choosing retrieval. A Work browser that can navigate may open the supplied video URL with no matching tab; connected tabs require a matching existing tab. If a web fetch fails, try an eligible, untried browser before treating the content as unavailable, while honoring a named browser and the host's tool requirements. Do not repeat a blocked fetch or cycle between failed routes. This is a ChatGPT-specific rule; Claude's browser and Playwright transcript routes are unchanged.
+
+Only after eligible retrieval routes fail or are unavailable and neither a usable description nor transcript can be read, follow the [ChatGPT blocked-content fallback](../plugins/gleaner/skills/youtube/references/chatgpt-blocked-content.md): ask before creating or changing a clip. Pasted text can supply the summary without another fetch; an explicit "save link only" request needs no content retrieval. Once eligible routes are exhausted, including on mobile, ask for pasted text directly rather than requiring a desktop browser. A readable description still saves normally when only the transcript is unavailable. Repair a same-session clip at its retained destination; explain and ask first if storage requires a replacement copy. A revised chat attachment replaces the earlier copy logically, without claiming the old attachment was edited or removed.
 
 ## Conversation previews
 
@@ -53,6 +55,11 @@ Every successful save or update displays the full clip directly in the ChatGPT c
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
 - [ ] With Drive connected but no preferences or destination request, a save stays in the chat. An explicit Drive request uses `Browser Research/<Category>`; a configured folder ID or explicit folder name takes precedence, without changing persistent defaults.
 - [ ] A video saves from its description with a **Channel** line, and one with no description asks for an optional short one
+- [ ] Available browser capabilities are discovered before retrieval; a Work browser opens a supplied video URL even with no video tab open, while connected tabs read only matching existing tabs
+- [ ] After a throttled fetch, an eligible, untried browser reads the description or transcript and the clip saves normally; no premature blocked-content question appears
+- [ ] An explicitly named browser, a declined permission, and host tool requirements remain respected during fallback; failed routes are not retried in a loop
+- [ ] If all eligible routes fail, ask once and create or change no clip; report fetch throttling separately from observed browser errors
+- [ ] An initial explicit link-only request skips content retrieval while retaining preferences, duplicate checks, storage, and preview handling
 - [ ] On ChatGPT mobile with no browser access and an unreadable YouTube URL, one question offers pasted content or an explicit link-only bookmark; no clip is created or changed before a choice, and no desktop switch is required
 - [ ] A verified access-denied result is reported accurately; a generic fetch failure is not asserted to be a YouTube block
 - [ ] Pasted descriptions and transcripts produce supported summaries without another fetch; missing timestamps or passages never produce invented time links or parts
@@ -64,5 +71,6 @@ Every successful save or update displays the full clip directly in the ChatGPT c
 - [ ] An unavailable/failed stored update leaves the original intact and asks before creating another copy or changing delivery; an upload-and-retire update asks first and reports any retirement failure accurately
 - [ ] Earlier-session clips are never overwritten; a no-new-copy constraint is respected, and unavailable duplicate checks are disclosed without a "no duplicates" claim
 - [ ] Claude marketplace validation and existing workflows still work
+- [ ] In Claude, browser-first reading, the Claude in Chrome and Playwright transcript fallbacks (including after fetched details), ad waiting, long transcripts, and cleanup of only Gleaner-opened tabs remain unchanged; ChatGPT's blocked-content question never applies
 
 Marketplace import, browser, and Drive behavior require live manual testing. Repository validation alone does not establish runtime compatibility.

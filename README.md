@@ -705,6 +705,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- ChatGPT checks available browser tools before reading a YouTube video and tries an eligible, untried browser after a failed web fetch before asking for pasted content or a link-only bookmark. Description-based saves still work without a transcript; Claude's browser and Playwright transcript workflows are unchanged.
+
 **2.13.2** (2026-10-31)
 - In Claude Code without Claude in Chrome, a YouTube clip can now be written from the video's transcript if the session has the Playwright browser tools. Gleaner opens the video in a new Playwright tab, reads YouTube's **Show transcript** panel, and closes the tab, using Playwright as it's configured. Chrome stays the first choice.
 - Gleaner waits for a YouTube ad to finish before opening the transcript panel, since a panel opened during an ad stays empty and the clip would lose its transcript.
