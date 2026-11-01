@@ -317,6 +317,7 @@ test('kept lookups and declines stay scoped so reuse never saves to the wrong pl
   const contract = read('plugins/gleaner/skills/preferences/references/contract.md');
   const prompts = glean.slice(glean.indexOf('### Fewer permission prompts'), glean.indexOf('### Collecting parts'));
   const stepSix = glean.slice(glean.indexOf('6. **Save it**'), glean.indexOf('**This conversation** (the default)'));
+  const drive = glean.slice(glean.indexOf('**Google Drive**\n'), glean.indexOf('**Cowork project**\n'));
   const notion = glean.slice(glean.indexOf('**Notion**\n'), glean.indexOf('**Artifact**\n'));
   const updateFails = glean.slice(glean.indexOf('**If the update fails,**'), glean.indexOf('**Fallback:**'));
   const cloudOnly = contract.slice(contract.indexOf('## Hosts without local file access'));
@@ -336,6 +337,12 @@ test('kept lookups and declines stay scoped so reuse never saves to the wrong pl
   assert.match(prompts, /drop[^.]*preferences[^.]*(update|reset|sync)/i);
   // Setup must still run its own complete search before it can create a document.
   assert.match(cloudOnly, /preferences invocation searches again/i);
+  // A one-time site grant is used up by its first read, so a later read has to be able to renew it.
+  assert.doesNotMatch(glean, /Ask once per site/);
+  // A taken title can sit past the first page, which would make it look free.
+  assert.match(drive, /read every result page/i);
+  // A tag removed elsewhere still looks like an option in a kept list, until Notion rejects it.
+  assert.match(notion, /still rejects a tag[^.]*once/i);
 });
 
 test('YouTube transcript fallback stays behind Chrome and never hides automation', () => {
