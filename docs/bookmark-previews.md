@@ -57,7 +57,7 @@ Claude Code request:
 /gleaner:glean https://example.com/harness --to ./notes
 ```
 
-Claude Code shows the fixture's full `content_markdown` the same way. Its outcome and actions reflect the filesystem result:
+Claude Code shows the fixture's full `content_markdown` the same way. This example leaves the clip out and shows only the outcome and actions, which reflect the filesystem result:
 
 ```text
 Saved "Example Harness — Agent Skills" to notes/ai-agents/2026-10-23-example-harness.md.

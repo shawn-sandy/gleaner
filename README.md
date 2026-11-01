@@ -187,7 +187,7 @@ Mention the page, article, or doc, or just say "save this" with nothing highligh
 > keep this article for later
 > bookmark this doc
 
-Every successful save also shows the full clip in the conversation, wherever it was stored: rendered Markdown with its links, notes, and follow-up prompt, on ChatGPT mobile too. An attachment is a separate download, so reading the clip does not require opening a file. For one save, say "short preview" for the compact Overview, Key details, Why it matters, metadata, and verified links layout, or "no preview" to get just the outcome. Claude also supplies HTML companions where supported; ChatGPT supplies HTML only when requested or when updating a clip with retained HTML. An explicit HTML download request applies to that save only. See [bookmark previews](docs/bookmark-previews.md) for same-bookmark examples, optional preview suppression, and host limitations.
+Every successful save also shows the full clip in the conversation, wherever it was stored: rendered Markdown with its links, notes, and follow-up prompt, on ChatGPT mobile too. An attachment is a separate download, so reading the clip does not require opening a file. For one save, say "short preview" for the compact Overview, Key details, Why it matters, metadata, and verified links layout, or "no preview" to get just the outcome. With nothing saved or attached, the clip is shown anyway, since it's the only copy. Claude also supplies HTML companions where supported; ChatGPT supplies HTML only when requested or when updating a clip with retained HTML. An explicit HTML download request applies to that save only. See [bookmark previews](docs/bookmark-previews.md) for same-bookmark examples, optional preview suppression, and host limitations.
 
 Gleaner reads the whole page, skips navigation, ads, and comments, and writes a plain-language summary of up to ~400 words: a TL;DR, key points, notable details (code, numbers, names), and takeaways. Technical terms are explained the first time they appear, and each key point is a full sentence that says why it matters. When the TL;DR alone can't explain the main idea, a short **How it works** paragraph follows it. A tutorial gets numbered **Steps** in place of key points.
 
@@ -479,7 +479,7 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 **Things to know:**
 - **Separate sign-ins.** The pane has its own browser profile, apart from your Chrome. Sign in to paywalled or members-only sites in the pane once, and the login sticks.
 - **Site approvals.** The first time Gleaner reads a new site, you'll be asked to allow it.
-- **Clips come back in the chat.** In Claude Code, clips come back in full in the conversation, with an HTML file to download. Say "save it to this project" (or add `--to local`) to save them to `browser-research/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `browser-research/` to `.gitignore`, your call.
+- **Clips come back in the chat.** In Claude Code, clips come back in full in the conversation, with an HTML file to download where the chat can attach one. Say "save it to this project" (or add `--to local`) to save them to `browser-research/<category>/` in the folder Claude Code is working in. Gleaner never commits them; commit the clips or add `browser-research/` to `.gitignore`, your call.
 - **Want Drive instead?** Say "save to Drive." Your claude.ai connectors carry over when you're signed in to Claude Code with your Claude account.
 
 ## Phrase cheat sheet
