@@ -179,10 +179,12 @@ function main(mode) {
   const tag = `v${version}`;
   if (!capture('git', ['tag', '--list', tag]).trim()) {
     // A merged version bump that release.yml has not tagged yet: it publishes that, then runs this workflow again.
-    // Later commits on top mean its run was skipped, as [skip ci] does, or failed, so nothing else would start it.
-    // ponytail: a merge in the seconds before a running release.yml tags can start a second one, which fails harmlessly.
-    const missed = capture('git', ['log', '-1', '--format=%H', '-G"version":', '--', manifestFile]).trim() !== capture('git', ['rev-parse', 'HEAD']).trim();
-    console.log(missed ? `${tag} is not tagged and later commits passed it, so this workflow starts release.yml.` : `${tag} is not tagged yet, so release.yml publishes it and then runs this workflow again.`);
+    // Plugin changes on top mean its run was skipped, as [skip ci] does, or failed, so nothing else would start it.
+    // -m with --first-parent finds the merge commit of a merged bump, which a plain -G search skips.
+    // ponytail: a plugin merge in the seconds before a running release.yml tags can start a second one, which fails harmlessly.
+    const versionCommit = capture('git', ['log', '-1', '--first-parent', '-m', '--format=%H', '-G"version":', '--', manifestFile]).trim();
+    const missed = releasableCommits(versionCommit).length > 0;
+    console.log(missed ? `${tag} is not tagged and later plugin changes passed it, so Auto release starts release.yml.` : `${tag} is not tagged yet, so release.yml publishes it and then runs this workflow again.`);
     if (mode === 'plan') {
       output('release', 'false');
       if (missed) output('publish', 'true');
