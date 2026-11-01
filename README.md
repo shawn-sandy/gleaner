@@ -731,7 +731,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.13.4** (2026-11-01)
 - Gleaner asks for permission less often, especially on mobile. Preference sync and the Drive lookup for hosts without local files now run once per conversation, Drive saves combine their searches and reuse folders already found, and Notion saves reuse the database already found. A site approval lasts the conversation where the host allows it, and a declined prompt isn't asked again.
 
 **2.13.3** (2026-11-01)
