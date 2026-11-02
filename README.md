@@ -747,6 +747,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**2.14.2** (2026-11-02)
+- Fetch pasted URLs first from phone and web chats (#67).
+
 **2.14.1** (2026-11-02)
 - An optional clip list gives every clip you save a row in one place you choose: a Google Sheet in a Drive folder, a Notion database, or a `Clip List.md` file in a local or Cowork folder. Clips given in the chat get a row too. Turn it on with `/gleaner:preferences setup` or "keep my clip list in Notion"; it stays off until you do. See [Clip list](#clip-list).
 - Fewer browser prompts from the Claude phone and web apps. When you give a URL there and the browser is on your computer, Gleaner reads the page with one web fetch instead of opening it in Chrome or the built-in browser, which can ask you to approve each step. It still opens the browser when the fetch can't read the page, or when you ask for the browser, a highlight, or a video's transcript or part. YouTube clips saved this way are written from the video's description, and the confirmation says how to get the transcript.
