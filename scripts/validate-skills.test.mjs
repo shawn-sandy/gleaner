@@ -136,6 +136,36 @@ test('ignores examples and remote URLs but checks encoded local file links', t =
   assert.equal(result.status, 0, result.stdout + result.stderr);
 });
 
+// Written directly, since the shipped example may not hold these lines.
+const clipListUser = list => `schema_version: 1
+destinations:
+  research: { provider: drive, label: Browser Research, remote_id: folder-id }
+  notes: { provider: local, label: Local notes, path: /Users/example/notes }
+  web: { provider: artifact, label: Private artifacts, remote_id: workspace-id }
+default_destination: research
+skills:
+  gleaner:${list === undefined ? ' {}' : `\n    clip_list: ${list}`}
+`;
+const clipListCases = [
+  ['dangling clip list alias', clipListUser('missing'), 'schema_version: 1\n', /invalid clip list reference/],
+  ['artifact clip list', clipListUser('web'), 'schema_version: 1\n', /invalid clip list provider/],
+  ['non-string clip list', clipListUser('[research]'), 'schema_version: 1\n', /clip list must/],
+  ['project override turning the user clip list into an artifact', clipListUser('research'),
+    'schema_version: 1\ndestinations:\n  research: { provider: artifact, label: Web, remote_id: workspace-id }\n', /invalid clip list provider/],
+  ['valid drive clip list', clipListUser('research'), 'schema_version: 1\n', null],
+  ['project clip list naming a user alias', clipListUser(), 'schema_version: 1\nskills:\n  gleaner:\n    clip_list: notes\n', null],
+];
+for (const [name, user, project, message] of clipListCases) {
+  test(`${message ? 'rejects' : 'accepts'} ${name}`, t => {
+    const directory = fixture(t);
+    writeFileSync(join(directory, example), user);
+    writeFileSync(join(directory, projectExample), project);
+    const result = run(directory);
+    assert.equal(result.status, message ? 1 : 0, result.stdout + result.stderr);
+    if (message) assert.match(result.stderr, message);
+  });
+}
+
 test('accepts sparse reset and preserves opaque namespace data in validation', t => {
   const directory = fixture(t);
   writeFileSync(join(directory, example), 'schema_version: 1\nskills:\n  unknown_skill:\n    nested: [one, two]\n');
