@@ -5,6 +5,8 @@ import { spawnSync } from 'node:child_process';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
 import { applyReceipt, present, renderBookmarksFile, renderClip, renderHtml, renderMarkdown } from '../plugins/gleaner/skills/glean/scripts/bookmark.mjs';
+// A namespace import, so a missing export fails its own tests instead of the whole file.
+import * as helper from '../plugins/gleaner/skills/glean/scripts/bookmark.mjs';
 
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/bookmark.json', import.meta.url), 'utf8'));
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -397,6 +399,117 @@ test('CLI renders a bookmarks file from clip index rows', () => {
   const output = JSON.parse(result.stdout);
   assert.equal(output.html, renderBookmarksFile(clips).html);
   assert.deepEqual(output.skipped, ['Local answer', 'Unsafe source']);
+});
+
+const columns = ['Date', 'Title', 'Category', 'Type', 'Tags', 'Note', 'Source URL', 'Clip link', 'Saved in'];
+const cell = (row, name) => row.cells[columns.indexOf(name)];
+
+test('clip list row links a saved Drive clip and names its destination', () => {
+  const row = helper.renderListRow(saved({ ...fixture, note: 'for the harness post' }));
+  assert.equal(row.cells.length, columns.length);
+  assert.equal(cell(row, 'Date'), fixture.saved_at);
+  assert.equal(cell(row, 'Title'), fixture.title);
+  assert.equal(cell(row, 'Note'), 'for the harness post');
+  assert.equal(cell(row, 'Source URL'), fixture.url);
+  assert.equal(cell(row, 'Clip link'), receipt.saved_file);
+  assert.equal(cell(row, 'Saved in'), fixture.destination.label);
+  assert.ok(row.line.startsWith('| ') && row.line.endsWith(' |'));
+  assert.ok(row.line.includes(`(${receipt.saved_file})`));
+  const local = helper.renderListRow(saved(fixture, { status: 'saved', message: 'Notes', saved_file: '/work/notes/clip.md' }));
+  assert.equal(cell(local, 'Clip link'), '/work/notes/clip.md');
+  const windows = helper.renderListRow(saved(fixture, { status: 'saved', message: 'Notes', saved_file: 'C:\\Users\\me\\notes\\clip.md' }));
+  assert.equal(cell(windows, 'Clip link'), 'C:\\Users\\me\\notes\\clip.md');
+  const unc = helper.renderListRow(saved(fixture, { status: 'saved', message: 'Notes', saved_file: '\\\\server\\share\\clip.md' }));
+  assert.equal(cell(unc, 'Clip link'), '\\\\server\\share\\clip.md');
+  assert.equal(cell(helper.renderListRow(saved(fixture, { ...receipt, saved_file: 'javascript:alert(1)' })), 'Clip link'), '');
+});
+
+test('clip list row for a chat clip never holds a scratch link and uses the conversation link', () => {
+  const chat = saved(fixture, { status: 'chat', message: 'Attached.', saved_file: 'sandbox:/mnt/data/clip.md', html_file: 'sandbox:/mnt/data/clip.html' });
+  const row = helper.renderListRow(chat);
+  assert.equal(cell(row, 'Clip link'), '');
+  assert.equal(cell(row, 'Source URL'), fixture.url);
+  assert.equal(cell(row, 'Saved in'), 'This conversation');
+  assert.doesNotMatch(row.line, /sandbox:/);
+  const linked = helper.renderListRow(chat, { conversationUrl: 'https://claude.ai/chat/fixture' });
+  assert.equal(cell(linked, 'Clip link'), 'https://claude.ai/chat/fixture');
+  assert.equal(cell(helper.renderListRow(chat, { conversationUrl: 'javascript:alert(1)' }), 'Clip link'), '');
+});
+
+test('a Fallback row says This conversation, not the destination that failed', () => {
+  const fallback = saved(fixture, { status: 'chat', message: 'Not saved to Drive; copy the clip above.', destination_url: receipt.destination_url });
+  assert.equal(fallback.destination.provider, 'drive');
+  const row = helper.renderListRow(fallback);
+  assert.equal(cell(row, 'Saved in'), 'This conversation');
+});
+
+test('failed and skipped saves get no clip list row', () => {
+  for (const status of ['failed', 'skipped']) {
+    assert.equal(helper.renderListRow(saved(fixture, { ...receipt, status, message: status })), null);
+  }
+});
+
+test('clip list rows stay on one line and never start a cell with formula text', () => {
+  const bookmark = saved({ ...fixture, title: '=HYPERLINK("https://evil.example","x")\n| injected | row', category: '+Design', tags: ['@scope', '#ok'], note: '-1+2' });
+  const row = helper.renderListRow(bookmark);
+  for (const value of row.cells) {
+    assert.doesNotMatch(value, /[\r\n]/);
+    assert.doesNotMatch(value, /^[=+\-@]/);
+  }
+  assert.ok(cell(row, 'Title').startsWith("'="));
+  assert.equal(cell(row, 'Note'), "'-1+2");
+  assert.doesNotMatch(row.line, /[\r\n]/);
+  // Nine columns make ten unescaped pipes; page text must not add a column.
+  assert.equal(row.line.match(/(?<!\\)\|/g).length, columns.length + 1);
+});
+
+test('clip list rows drop a non-HTTP Source and leave a missing Source empty', () => {
+  const answer = helper.renderListRow(saved({ ...fixture, url: null, source_type: 'other' }));
+  assert.equal(cell(answer, 'Source URL'), '');
+  assert.throws(() => helper.renderListRow({ ...saved(), url: 'javascript:alert(1)' }), /HTTP/);
+});
+
+test('CLI returns the clip list row and forwards the conversation link', () => {
+  const cli = input => {
+    const result = spawnSync(process.execPath, ['plugins/gleaner/skills/glean/scripts/bookmark.mjs'], { input: JSON.stringify(input), encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    return JSON.parse(result.stdout).list_row;
+  };
+  assert.equal(cli({ bookmark: fixture, receipt }).cells[7], receipt.saved_file);
+  assert.equal(cli({ bookmark: fixture, receipt: { ...receipt, status: 'skipped', message: 'Duplicate exists' } }), null);
+  assert.equal(cli({ bookmark: fixture, receipt: { status: 'chat', message: 'Given here.' }, conversationUrl: 'https://claude.ai/chat/fixture' }).cells[7], 'https://claude.ai/chat/fixture');
+});
+
+test('clip list instructions keep the list out of saves, duplicates, and finds', () => {
+  const glean = read('plugins/gleaner/skills/glean/SKILL.md');
+  const contract = read('plugins/gleaner/skills/preferences/references/contract.md');
+  const stepSix = glean.slice(glean.indexOf('6. **Save it**'), glean.indexOf('7. **Confirm and preview.**'));
+  const list = stepSix.slice(stepSix.indexOf('**Clip list.**'));
+  const duplicates = glean.slice(glean.indexOf('**Check for an existing clip'), glean.indexOf('3. **Write the summary**'));
+  const index = glean.slice(glean.indexOf('## Clip index'), glean.indexOf('### Snapshot sheet'));
+
+  assert.match(list, /clip_list/);
+  assert.match(list, /append_values/);
+  // Both stored searches would otherwise match the list's Source URLs as a clip.
+  assert.ok(duplicates.match(/Clip List/g)?.length >= 2, duplicates);
+  assert.match(index, /Clip List/);
+  assert.doesNotMatch(glean, /no separate index/i);
+  // The clip is already safe, so a lost row must not cost the user a second copy.
+  assert.match(list, /never[^.]*Fallback/i);
+  assert.match(list, /don't save it anywhere[^.]*don't list this[^.]*skip/i);
+  // Otherwise adding five parts to one clip writes five rows.
+  assert.match(list, /update adds one only when the clip's link changed/i);
+  assert.match(list, /never rewrite/i);
+  // Notion's Clip is a URL property, so a local path needs its own text property.
+  assert.match(list.slice(list.indexOf('**Notion:**')), /Clip is a URL property[^.]*web link; a local[^.]*Path text property/);
+  // A user-picked list database may lack a column, and the row write would fail on it.
+  assert.match(list.slice(list.indexOf('**Notion:**')), /lacks any of these properties, add it/);
+  assert.match(glean.slice(glean.indexOf('7. **Confirm and preview.**'), glean.indexOf('**Tagging the chat.**')), /clip list row[^.]*couldn't be added/i);
+
+  assert.match(contract, /`clip_list`/);
+  assert.match(contract.match(/^- `skills\.gleaner\.clip_list`:.*$/m)?.[0] ?? '', /`artifact` alias is not a valid list location/);
+  assert.match(contract, /`Clip List` database[^.]*yes|yes[^.]*`Clip List` database/i);
+  assert.match(contract, /setup must not create/);
 });
 
 test('page, YouTube, and follow-up instructions route through shared presentation', () => {

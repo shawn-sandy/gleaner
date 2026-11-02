@@ -230,6 +230,29 @@ ${[...folders].map(([category, entries]) => `    <DT><H3>${escapeHtml(category)}
   return { html, skipped };
 }
 
+// One clip list row, the same in a Sheet, a Notion database, and Clip List.md;
+// null when nothing was delivered. A chat clip links only its conversation, never
+// a scratch or attachment file, and a Fallback is labeled where it actually went.
+// cells start formula text with an apostrophe so a Sheet keeps it as text.
+export function renderListRow(bookmark, { conversationUrl } = {}) {
+  validate(bookmark);
+  if (!['saved', 'chat'].includes(bookmark.status)) return null;
+  const locator = bookmark.status === 'chat' ? conversationUrl : bookmark.saved_file;
+  // A saved clip may link an absolute local path; a chat clip only an HTTP(S) conversation.
+  const clipLink = webUrl(locator) || (bookmark.status === 'saved' && /^(?:\/(?!\/)|[A-Za-z]:[\\/]|\\\\[^\\])/.test(locator ?? '')) ? locator : '';
+  const values = [
+    bookmark.saved_at, bookmark.title, bookmark.category, bookmark.source_type, bookmark.tags.join(' '),
+    typeof bookmark.note === 'string' ? bookmark.note : '', bookmark.url ?? '', clipLink,
+    bookmark.status === 'chat' ? 'This conversation' : bookmark.destination.label,
+  ].map(value => oneLine(value).trim());
+  // A pipe inside a link would split the table row, so it is percent-encoded.
+  const link = (label, locator) => !locator ? '' : webUrl(locator) ? markdownLink(label, locator).replace(/\|/g, '%7C') : escapeMarkdown(locator);
+  return {
+    cells: values.map(value => /^[=+\-@]/.test(value) ? `'${value}` : value),
+    line: `| ${[...values.slice(0, 6).map(escapeMarkdown), link('Source', values[6]), link('Clip', values[7]), escapeMarkdown(values[8])].join(' | ')} |`,
+  };
+}
+
 // A host adapter may supply an available native component; ordinary Markdown
 // is always returned for the conversation, even when that component succeeds.
 export async function present(bookmark, { mode = 'auto', nativePreview, attachmentLinks = false } = {}) {
@@ -250,14 +273,14 @@ export async function present(bookmark, { mode = 'auto', nativePreview, attachme
 }
 
 // Optional CLI: node bookmark.mjs < input.json > output.json
-// Input: { bookmark, receipt, mode?, attachmentLinks? }, or { clips } for a
-// bookmarks file; output is data, never a saved-file receipt.
+// Input: { bookmark, receipt, mode?, attachmentLinks?, conversationUrl? }, or
+// { clips } for a bookmarks file; output is data, never a saved-file receipt.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const input = JSON.parse(readFileSync(0, 'utf8'));
   if (Array.isArray(input.clips)) {
     process.stdout.write(JSON.stringify(renderBookmarksFile(input.clips), null, 2));
   } else {
     const bookmark = applyReceipt(input.bookmark, input.receipt);
-    process.stdout.write(JSON.stringify({ bookmark, html: renderHtml(bookmark), ...await present(bookmark, { mode: input.mode, attachmentLinks: input.attachmentLinks }) }, null, 2));
+    process.stdout.write(JSON.stringify({ bookmark, html: renderHtml(bookmark), ...await present(bookmark, { mode: input.mode, attachmentLinks: input.attachmentLinks }), list_row: renderListRow(bookmark, { conversationUrl: input.conversationUrl }) }, null, 2));
   }
 }
