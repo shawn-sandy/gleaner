@@ -18,7 +18,7 @@ After writing the video clip, fill glean's [shared bookmark model](../glean/refe
 
 1. **Find the video ID** in the URL the user gave or the tab they're on: `youtube.com/watch?v=<id>`, `youtu.be/<id>`, `youtube.com/shorts/<id>`, `youtube.com/live/<id>`, or `m.youtube.com`. The clip's **Source** is always `https://www.youtube.com/watch?v=<id>`, with `t=`, `list=`, `si=`, and tracking parameters dropped, so the duplicate check matches the same video saved from any link.
 
-2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the glean skill), adding back any `t=` from the user's link so the player starts where they meant. The scripts below need the regular player. In ChatGPT's browsers without a JavaScript tool, follow "In ChatGPT" below instead of this step and the next two.
+2. **Open it.** If the tab isn't already that video's `/watch` page (a Shorts page, a different video, or no tab), open the Source URL in the current browser (see "Where Gleaner runs" in the glean skill), adding back any `t=` from the user's link so the player starts where they meant. The scripts below need the regular player. For a URL given in a phone, web, or cloud chat whose browser is on the user's computer, read "No browser" first. In ChatGPT's browsers without a JavaScript tool, follow "In ChatGPT" below instead of this step and the next two.
 
 3. **Read the video's details** by running this with the browser's JavaScript tool:
 
@@ -113,6 +113,8 @@ Never summarize what you didn't read. A clip says only what its sources say: the
 ### No browser
 
 With no browser available, fetch the Source URL with WebFetch for the title, channel, and description, and use them as the script's details. Say the video's details were read without a browser.
+
+The same goes for a URL given in a Claude phone or web chat, or a cloud session, that reaches a browser on the user's computer, as in "A URL from a phone or the web" in the glean skill: fetch first, skip steps 2 and 3, and skip step 4 unless its Playwright fallback applies. Use the browser for steps 2 to 4 only when the fetch doesn't return the title, or when the user asks for the transcript or a part (which needs transcript lines), and only if the browser hasn't already been tried for this video. When such a clip is saved without a transcript and Claude in Chrome is reachable, end the confirmation with a line saying that asking for the transcript opens the video in Chrome on their computer and may ask them to approve a few browser steps, instead of the line about saving again from Chrome.
 
 ### In ChatGPT
 

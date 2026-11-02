@@ -731,6 +731,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- Fewer browser prompts from the Claude phone and web apps. When you give a URL there and the browser is on your computer, Gleaner reads the page with one web fetch instead of opening it in Chrome or the built-in browser, which can ask you to approve each step. It still opens the browser when the fetch can't read the page, or when you ask for the browser, a highlight, or a video's transcript or part. YouTube clips saved this way are written from the video's description, and the confirmation says how to get the transcript.
+- A site approval in the built-in browser is now requested for the whole site instead of once, since a clip reads the page more than once.
+
 **2.14.0** (2026-11-02)
 - Every save and update now shows the full clip in the conversation on every host, even when it was stored in Drive, Notion, a project folder, or an artifact. ChatGPT already did this; Claude Code, Cowork, and the Chrome side panel used to show a compact preview. Say "short preview" for that layout or "no preview" for just the outcome, for one save. Storage and formats are unchanged.
 - Where the chat can't attach a file, Claude now shows the clip as rendered Markdown, as ChatGPT does, instead of one Markdown code block.
