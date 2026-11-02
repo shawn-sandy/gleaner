@@ -239,7 +239,7 @@ export function renderListRow(bookmark, { conversationUrl } = {}) {
   if (!['saved', 'chat'].includes(bookmark.status)) return null;
   const locator = bookmark.status === 'chat' ? conversationUrl : bookmark.saved_file;
   // A saved clip may link an absolute local path; a chat clip only an HTTP(S) conversation.
-  const clipLink = webUrl(locator) || (bookmark.status === 'saved' && /^(?:\/(?!\/)|[A-Za-z]:[\\/])/.test(locator ?? '')) ? locator : '';
+  const clipLink = webUrl(locator) || (bookmark.status === 'saved' && /^(?:\/(?!\/)|[A-Za-z]:[\\/]|\\\\[^\\])/.test(locator ?? '')) ? locator : '';
   const values = [
     bookmark.saved_at, bookmark.title, bookmark.category, bookmark.source_type, bookmark.tags.join(' '),
     typeof bookmark.note === 'string' ? bookmark.note : '', bookmark.url ?? '', clipLink,

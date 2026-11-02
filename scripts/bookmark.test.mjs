@@ -419,6 +419,8 @@ test('clip list row links a saved Drive clip and names its destination', () => {
   assert.equal(cell(local, 'Clip link'), '/work/notes/clip.md');
   const windows = helper.renderListRow(saved(fixture, { status: 'saved', message: 'Notes', saved_file: 'C:\\Users\\me\\notes\\clip.md' }));
   assert.equal(cell(windows, 'Clip link'), 'C:\\Users\\me\\notes\\clip.md');
+  const unc = helper.renderListRow(saved(fixture, { status: 'saved', message: 'Notes', saved_file: '\\\\server\\share\\clip.md' }));
+  assert.equal(cell(unc, 'Clip link'), '\\\\server\\share\\clip.md');
   assert.equal(cell(helper.renderListRow(saved(fixture, { ...receipt, saved_file: 'javascript:alert(1)' })), 'Clip link'), '');
 });
 
