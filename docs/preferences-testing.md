@@ -22,6 +22,27 @@ These are maintainer-run scenarios, not claims of live testing. Use disposable l
 | Shared page/video flow | Save a page and YouTube video with identical settings, including `markdown` and an explicit override. Observe the same resolved ID/path and format in duplicate checks, organization, and writes. |
 | Setup side effects | Choose a nonexistent Notion database or Drive folder. Setup does not create it; offer an existing destination or temporary normal save flow. Artifact persistence requires verified publishing scope, never an existing clip ID. |
 
+## Clip list
+
+Set `skills.gleaner.clip_list` through the preferences skill for each case. Record the list's ID or path, each row written, and whether its links open.
+
+| Scenario | Expected result |
+| --- | --- |
+| Off by default | With no `clip_list`, save a page, a chat clip, and a YouTube video. No list file, Sheet, or database is created and no row is written anywhere. |
+| Drive | Point the list at a Drive folder with no `Clip List` Sheet. The first save searches the folder completely, creates the Sheet once, and appends a row with `append_values`; a second save appends without another search. Disconnect the Sheets connector: the clip still saves, no list rewrite or trash happens, and one line says the row wasn't added. |
+| Sheets apostrophe | Save a page whose title starts with `=` and one starting with `@`. Both stay text in the Sheet, never formulas. Record whether the leading apostrophe is hidden (the connector parsed input like the Sheets UI) or shown literally. |
+| Notion with a list database | Point the list at an existing `Clip List` database. Each save creates one row there and none in the clip database. Pointing the list at the clip database is refused. Save a clip to a local folder too: its path lands in the Path text property and Clip stays empty. |
+| Notion creation, yes and no | With no list database, choose Notion for the list. Setup asks once; on a yes it creates `Clip List` under the named page, verifies it, and stores the alias. On a no it creates nothing and the list stays off. No other database is created in either case. |
+| Local and Cowork | Point the list at a local folder and at a Cowork folder. The first save creates `Clip List.md` with a heading and header row; later saves append rows and never rewrite earlier ones. |
+| Chat save | Save to the conversation in ChatGPT and in Claude. The row says This conversation, links the conversation when the host gives a link, and never holds a `sandbox:` or scratch path. |
+| Fallback | Make a Drive save fail so the clip falls back to the chat. The row says This conversation, not Drive. |
+| Decline | Decline the list write's permission prompt. The clip's save result is unchanged, no Fallback starts, one line says the row wasn't added, and later saves in that conversation don't ask again. |
+| Skip | Save with "don't save it anywhere" and with "don't list this". Neither adds a row. |
+| Same-session update | Add two parts to a local clip saved this session: no new rows. Add a part to a Drive clip: one new row with the new link. |
+| Duplicate check and finds | Save a page already listed. The list is not reported as a duplicate, and "what did I save about X?" returns clips, never the list. |
+| YouTube and follow-up | Save a video, then ask for follow-ups on a saved clip. Each save adds its row like a page save. |
+| Validation | Set `clip_list` to a missing alias and to an artifact alias in a scratch copy; `node scripts/validate-skills.mjs` fails naming the clip list. |
+
 ## Sync matrix
 
 Use valid schema-1 documents. Establish B by a verified sync unless the case specifies none. Change independent defaults, destination records, and unknown namespaces; compare parsed values rather than YAML formatting.

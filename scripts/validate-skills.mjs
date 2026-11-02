@@ -166,6 +166,14 @@ function preferences(data, inherited = {}) {
     text(alias, 'default destination');
     requireValue(Object.hasOwn(destinations, alias), `invalid destination reference: ${alias}`);
   }
+  // The clip list resolves like default_destination, but only to a store a row can be appended to.
+  const ownList = data.skills?.gleaner?.clip_list;
+  if (ownList !== undefined) text(ownList, 'clip list');
+  const list = ownList === undefined ? inherited.skills?.gleaner?.clip_list : ownList;
+  if (list !== undefined) {
+    requireValue(Object.hasOwn(destinations, list), `invalid clip list reference: ${list}`);
+    requireValue(['drive', 'notion', 'cowork', 'local'].includes(destinations[list].provider), `invalid clip list provider: ${destinations[list].provider}`);
+  }
 }
 
 check('shared bookmark contract and renderer references', () => {

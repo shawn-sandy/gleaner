@@ -23,7 +23,8 @@ destinations:
 default_destination: research
 default_format: auto
 skills:
-  gleaner: {}
+  gleaner:
+    clip_list: research
   youtube: {}
   another_skill:
     detail: preserved data

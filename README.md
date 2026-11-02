@@ -39,6 +39,7 @@ Gleaner: Here's "Motion timing guidelines" as an HTML file, filed under Design E
   - [Finding your clips](#finding-your-clips)
   - [Index spreadsheet](#index-spreadsheet)
   - [Bookmarks file](#bookmarks-file)
+  - [Clip list](#clip-list)
   - [Following up on a clip](#following-up-on-a-clip)
   - [Using Gleaner in Claude Code desktop](#using-gleaner-in-claude-code-desktop)
 - [Phrase cheat sheet](#phrase-cheat-sheet)
@@ -159,13 +160,14 @@ Use `/gleaner:preferences setup`, `show`, `update`, `reset`, or `sync`, or ask n
 set up my save preferences
 always save here
 use markdown by default
+keep my clip list in Notion
 show my preferences
 reset my project format override
 sync my preferences
 save this page here
 ```
 
-Gleaner doesn't stop your first save to ask about setup, because its default, the chat, needs nothing stored; it mentions setup once instead. Run `/gleaner:preferences setup` to choose a default destination, format (left unset by default, so chat clips are Markdown in ChatGPT and HTML in Claude, and stored clips are Markdown wherever the destination supports it), and optional Drive sync. Choose “just this save” to continue with session settings and the existing environment defaults. Setup verifies an existing destination; it does not move clips or create research databases. “Always save here” persists at user scope; “save this here” and `--to` apply to that save only. Explicit project or session requests use that scope. Reset removes an override so the next default applies.
+Gleaner doesn't stop your first save to ask about setup, because its default, the chat, needs nothing stored; it mentions setup once instead. Run `/gleaner:preferences setup` to choose a default destination, format (left unset by default, so chat clips are Markdown in ChatGPT and HTML in Claude, and stored clips are Markdown wherever the destination supports it), and optional Drive sync. Choose “just this save” to continue with session settings and the existing environment defaults. Setup verifies an existing destination; it does not move clips or create research databases. Setup can also turn on an optional [clip list](#clip-list); the only thing it ever creates is a Notion `Clip List` database, and only after you say yes. “Always save here” persists at user scope; “save this here” and `--to` apply to that save only. Explicit project or session requests use that scope. Reset removes an override so the next default applies.
 
 User preferences live at `$XDG_CONFIG_HOME/agent-preferences/preferences.yaml`, falling back to `~/.config/agent-preferences/preferences.yaml`. Project overrides live at `.agent-preferences/preferences.yaml` under the session project root. Resolution is explicit request (`--to` beats words), session, project, user, then existing skill defaults. Show reports each effective value and its scope, persistence location, and sync status. Page and YouTube saves use the same resolved preferences.
 
@@ -335,7 +337,7 @@ Folders are created the first time they're needed. Stored clips are saved as Mar
 
 `Browser Research` is the folder default when Drive is selected without a configured folder or an explicit folder name. Connecting Drive alone keeps the chat default; saved destination preferences and per-save requests still take precedence.
 
-A clip in the conversation isn't stored anywhere, so a follow-up in a later session can't read it. Download or copy it, or name a stored destination. The chat itself is tagged, though, so where your host can search past conversations a later search can point you back to it (see [Finding your clips](#finding-your-clips)).
+A clip in the conversation isn't stored anywhere, so a follow-up in a later session can't read it. Download or copy it, or name a stored destination. A [clip list](#clip-list), when you've set one up, still gets its row. The chat itself is tagged, though, so where your host can search past conversations a later search can point you back to it (see [Finding your clips](#finding-your-clips)).
 
 If a destination can't be reached, Gleaner gives you the clip as a file and says plainly that it wasn't saved. It never claims a save that didn't happen.
 
@@ -446,6 +448,20 @@ Creates a new Google Sheet, `Clip Index <date>`, in Browser Research with every 
 Gives you `Gleaner Bookmarks <date>.html`, a file you can import into Chrome, Firefox, Safari, or Edge. Your clips land in a `Gleaner` folder, one subfolder per category, and each bookmark opens the page you clipped (or the clip itself, for an answer saved without a page). The file also holds each clip's tags, note, and a link back to the clip, but browsers may drop the note and link on import, and Chrome has no tags. Clips with no web link to open, such as an answer without a page saved only to a local folder, are left out, and Gleaner says how many.
 
 Like the index sheet, it's a **snapshot**. Importing a newer file won't update the bookmarks you imported before. Clips kept only in a past conversation can't be found, so they can't be included.
+
+### Clip list
+
+> keep my clip list in Notion
+
+A clip list is one place that lists every clip you save, wherever it went, including clips given in the chat. It's off until you choose where it lives with `/gleaner:preferences setup` or a request like the one above. After that, every new clip, updated copy, chat clip, and YouTube save adds a row, as does a follow-up saved as a new copy, with the date, title, category, type, tags, note, source link, clip link, and where the clip was saved. A chat clip's row links the conversation when your host gives a link, and is otherwise left without a clip link.
+
+| List location | What Gleaner keeps there |
+| --- | --- |
+| Google Drive folder | A Google Sheet named `Clip List`, created on the first row. Rows are added with the Google Sheets connector, so that connector must be connected too. |
+| Notion | A separate `Clip List` database. If you don't have one, setup asks whether to create it, and creates it only on a yes, under the page you name. |
+| Local or Cowork folder | A `Clip List.md` table in that folder, created on the first row. Gleaner only adds rows to it. |
+
+Say "don't list this" to save a clip without a row, and "stop my clip list" to turn it off; neither deletes anything. A row that can't be added never changes the save: the clip is already kept, and Gleaner says the row is missing in one line. Finds still search your clips, not the list, and the list never counts as a duplicate. Updating a clip in the same session adds a row only when its link changed, so the newest row for a clip is the current one; on Drive an older row can point to the earlier version in the trash.
 
 ### Following up on a clip
 
@@ -732,6 +748,7 @@ MIT © Shawn Sandy
 ## Changelog
 
 **Unreleased**
+- An optional clip list gives every clip you save a row in one place you choose: a Google Sheet in a Drive folder, a Notion database, or a `Clip List.md` file in a local or Cowork folder. Clips given in the chat get a row too. Turn it on with `/gleaner:preferences setup` or "keep my clip list in Notion"; it stays off until you do. See [Clip list](#clip-list).
 - Fewer browser prompts from the Claude phone and web apps. When you give a URL there and the browser is on your computer, Gleaner reads the page with one web fetch instead of opening it in Chrome or the built-in browser, which can ask you to approve each step. It still opens the browser when the fetch can't read the page, or when you ask for the browser, a highlight, or a video's transcript or part. YouTube clips saved this way are written from the video's description, and the confirmation says how to get the transcript.
 - A site approval in the built-in browser is now requested for the whole site instead of once, since a clip reads the page more than once.
 
