@@ -453,7 +453,7 @@ Like the index sheet, it's a **snapshot**. Importing a newer file won't update t
 
 > keep my clip list in Notion
 
-A clip list is one place that lists every clip you save, wherever it went, including clips given in the chat. It's off until you choose where it lives with `/gleaner:preferences setup` or a request like the one above. After that, every save, updated copy, chat clip, YouTube save, and follow-up save adds a row with the date, title, category, type, tags, note, source link, clip link, and where the clip was saved. A chat clip's row links the conversation when your host gives a link, and is otherwise left without a clip link.
+A clip list is one place that lists every clip you save, wherever it went, including clips given in the chat. It's off until you choose where it lives with `/gleaner:preferences setup` or a request like the one above. After that, every new clip, updated copy, chat clip, and YouTube save adds a row, as does a follow-up saved as a new copy, with the date, title, category, type, tags, note, source link, clip link, and where the clip was saved. A chat clip's row links the conversation when your host gives a link, and is otherwise left without a clip link.
 
 | List location | What Gleaner keeps there |
 | --- | --- |

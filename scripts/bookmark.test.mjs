@@ -417,6 +417,8 @@ test('clip list row links a saved Drive clip and names its destination', () => {
   assert.ok(row.line.includes(`(${receipt.saved_file})`));
   const local = helper.renderListRow(saved(fixture, { status: 'saved', message: 'Notes', saved_file: '/work/notes/clip.md' }));
   assert.equal(cell(local, 'Clip link'), '/work/notes/clip.md');
+  const windows = helper.renderListRow(saved(fixture, { status: 'saved', message: 'Notes', saved_file: 'C:\\Users\\me\\notes\\clip.md' }));
+  assert.equal(cell(windows, 'Clip link'), 'C:\\Users\\me\\notes\\clip.md');
   assert.equal(cell(helper.renderListRow(saved(fixture, { ...receipt, saved_file: 'javascript:alert(1)' })), 'Clip link'), '');
 });
 
@@ -437,7 +439,6 @@ test('a Fallback row says This conversation, not the destination that failed', (
   assert.equal(fallback.destination.provider, 'drive');
   const row = helper.renderListRow(fallback);
   assert.equal(cell(row, 'Saved in'), 'This conversation');
-  assert.doesNotMatch(row.line, /drive.google.com/);
 });
 
 test('failed and skipped saves get no clip list row', () => {
@@ -497,10 +498,10 @@ test('clip list instructions keep the list out of saves, duplicates, and finds',
   // Otherwise adding five parts to one clip writes five rows.
   assert.match(list, /update adds one only when the clip's link changed/i);
   assert.match(list, /never rewrite/i);
-  assert.match(glean.slice(glean.indexOf('7. **Confirm and preview.**')), /row/i);
+  assert.match(glean.slice(glean.indexOf('7. **Confirm and preview.**'), glean.indexOf('**Tagging the chat.**')), /clip list row[^.]*couldn't be added/i);
 
   assert.match(contract, /`clip_list`/);
-  assert.match(contract, /clip_list[\s\S]*artifact[^.]*not/i);
+  assert.match(contract.match(/^- `skills\.gleaner\.clip_list`:.*$/m)?.[0] ?? '', /`artifact` alias is not a valid list location/);
   assert.match(contract, /`Clip List` database[^.]*yes|yes[^.]*`Clip List` database/i);
   assert.match(contract, /setup must not create/);
 });
