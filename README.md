@@ -731,7 +731,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.14.0** (2026-11-02)
 - Every save and update now shows the full clip in the conversation on every host, even when it was stored in Drive, Notion, a project folder, or an artifact. ChatGPT already did this; Claude Code, Cowork, and the Chrome side panel used to show a compact preview. Say "short preview" for that layout or "no preview" for just the outcome, for one save. Storage and formats are unchanged.
 - Where the chat can't attach a file, Claude now shows the clip as rendered Markdown, as ChatGPT does, instead of one Markdown code block.
 
