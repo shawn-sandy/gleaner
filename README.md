@@ -747,7 +747,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.14.1** (2026-11-02)
 - An optional clip list gives every clip you save a row in one place you choose: a Google Sheet in a Drive folder, a Notion database, or a `Clip List.md` file in a local or Cowork folder. Clips given in the chat get a row too. Turn it on with `/gleaner:preferences setup` or "keep my clip list in Notion"; it stays off until you do. See [Clip list](#clip-list).
 
 **2.14.0** (2026-11-02)
