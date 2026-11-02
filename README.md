@@ -641,6 +641,8 @@ gleaner/
 │   └── gleaner/
 │       ├── .claude-plugin/
 │       │   └── plugin.json         # plugin manifest (version lives here)
+│       ├── assets/
+│       │   └── icon.png            # 1,024 px plugin icon for Anthropic's directory, from gleaner-symbol.svg
 │       └── skills/
 │           ├── README.md           # usage guide for all four skills
 │           ├── follow-up/
@@ -746,6 +748,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- Anthropic's plugin directory can now show Gleaner's icon.
 
 **2.14.2** (2026-11-02)
 - Fetch pasted URLs first from phone and web chats (#67).

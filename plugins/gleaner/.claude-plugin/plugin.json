@@ -10,6 +10,7 @@
   "homepage": "https://github.com/shawn-sandy/gleaner",
   "repository": "https://github.com/shawn-sandy/gleaner",
   "license": "MIT",
+  "icon": "./assets/icon.png",
   "keywords": [
     "artifacts",
     "chrome",
