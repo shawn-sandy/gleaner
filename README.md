@@ -747,6 +747,9 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- The plugin manifest now names Gleaner's icon, for its listing in Anthropic's plugin directory.
+
 **2.14.2** (2026-11-02)
 - Fetch pasted URLs first from phone and web chats (#67).
 
