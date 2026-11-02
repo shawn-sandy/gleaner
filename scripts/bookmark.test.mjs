@@ -500,6 +500,8 @@ test('clip list instructions keep the list out of saves, duplicates, and finds',
   // Otherwise adding five parts to one clip writes five rows.
   assert.match(list, /update adds one only when the clip's link changed/i);
   assert.match(list, /never rewrite/i);
+  // Notion's Clip is a URL property, so a local path needs its own text property.
+  assert.match(list.slice(list.indexOf('**Notion:**')), /Clip is a URL property[^.]*web link; a local[^.]*Path text property/);
   assert.match(glean.slice(glean.indexOf('7. **Confirm and preview.**'), glean.indexOf('**Tagging the chat.**')), /clip list row[^.]*couldn't be added/i);
 
   assert.match(contract, /`clip_list`/);
