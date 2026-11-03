@@ -760,7 +760,13 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 
 MIT © Shawn Sandy
 
+See the [Gleaner privacy policy](plugins/gleaner/PRIVACY.md) for how the plugin uses source content, clips, preferences, and connected services.
+
 ## Changelog
+
+**Unreleased**
+- Add OpenAI directory metadata with a short subtitle, starter prompts, and a linked privacy policy covering clips, preferences, indexes, connected services, and referral attribution.
+- Provide a skills-only OpenAI submission ZIP built from the current plugin version, with local listing checks. Public directory scans and live ChatGPT acceptance remain separate checks.
 
 **2.15.2** (2026-11-03)
 - ChatGPT can maintain one persistent `Gleaner Clip Index.md` file on request, updating existing rows when clips change and retaining the same file identity. Project instructions can request it across chats; adding or refreshing a project source remains manual. Claude clip lists are unchanged.

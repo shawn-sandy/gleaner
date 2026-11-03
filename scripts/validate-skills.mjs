@@ -99,6 +99,42 @@ check('marketplace and plugin manifests', () => {
   requireValue(names.has('gleaner'), 'marketplace must register gleaner');
 });
 
+check('OpenAI public listing', () => {
+  const listing = JSON.parse(read(`${plugin}/openai-listing.json`));
+  object(listing, 'OpenAI listing');
+  for (const [field, max] of [['displayName', 30], ['shortDescription', 30], ['developerName', 80]]) {
+    text(listing[field], `OpenAI ${field}`, max);
+    requireValue(!/[\r\n]/.test(listing[field]), `OpenAI ${field} must fit on one line`);
+  }
+  text(listing.longDescription, 'OpenAI longDescription', 4000);
+  requireValue(listing.category === 'Productivity', 'Gleaner listing category must be Productivity');
+  for (const field of ['websiteURL', 'privacyPolicyURL', 'supportURL']) {
+    text(listing[field], `OpenAI ${field}`, 1024);
+    const url = new URL(listing[field]);
+    requireValue(url.protocol === 'https:' && !url.username && !url.password, `OpenAI ${field} must use HTTPS without credentials`);
+  }
+  requireValue(listing.privacyPolicyURL === 'https://github.com/shawn-sandy/gleaner/blob/main/plugins/gleaner/PRIVACY.md',
+    'OpenAI privacy URL must reference the published bundled policy');
+  text(read(`${plugin}/PRIVACY.md`), 'Gleaner privacy policy');
+  references(`${plugin}/PRIVACY.md`);
+  localPath(resolve(root, plugin), listing.logo);
+  requireValue(Array.isArray(listing.capabilities) && listing.capabilities.length <= 20, 'OpenAI capabilities must be a list of at most 20 entries');
+  for (const capability of listing.capabilities) {
+    text(capability, 'OpenAI capability', 120);
+    requireValue(!/[\r\n]/.test(capability), 'OpenAI capabilities must fit on one line');
+  }
+  requireValue(Array.isArray(listing.defaultPrompt) && listing.defaultPrompt.length > 0 && listing.defaultPrompt.length <= 3,
+    'Gleaner must provide one to three starter prompts');
+  const prompts = new Set();
+  for (const prompt of listing.defaultPrompt) {
+    text(prompt, 'OpenAI starter prompt', 128);
+    requireValue(!/[\r\n]/.test(prompt), 'OpenAI starter prompts must fit on one line');
+    const normalized = prompt.normalize('NFKC').trim().replace(/\s+/g, ' ');
+    requireValue(!prompts.has(normalized), 'OpenAI starter prompts must be unique');
+    prompts.add(normalized);
+  }
+});
+
 for (const name of skills) {
   const directory = `${plugin}/skills/${name}`;
   check(`${name} Skill frontmatter`, () => {

@@ -12,6 +12,39 @@ Gleaner is distributed from the same GitHub repository as its Claude plugin. The
 
 Workspace menus, marketplace availability, and import permissions depend on the account and admin policy. If marketplace import is unavailable, use the individual Skill installation flow instead.
 
+## Public OpenAI directory submission
+
+Workspace import is separate from public directory review. Gleaner has four skills and no bundled MCP server, so use OpenAI's **Skills only** route. The [official submission guide](https://developers.openai.com/plugins/deploy/submission), [Claude package conversion guide](https://developers.openai.com/plugins/guides/submit-claude-plugin), and [submission validation reference](https://developers.openai.com/plugins/deploy/submission-errors) describe the current requirements.
+
+The public listing is maintained in [openai-listing.json](../plugins/gleaner/openai-listing.json). Its subtitle must fit the final directory limit of 30 characters, not merely the upload limit of 240. The [privacy policy](../plugins/gleaner/PRIVACY.md) ships with the package and is linked from the listing. Before submission, verify that the public policy link opens without signing in and describes the exact package being uploaded. Although the skills-only uploader treats listing URLs as optional, the [plugin guidelines](https://developers.openai.com/plugins/plugin-guidelines) require a published privacy policy.
+
+Build from a clean checkout of the intended release with Node.js 22 or newer, npm, and the `zip` command available:
+
+```bash
+npm ci
+npm run validate
+npm test
+npm run package:openai -- /tmp/gleaner-submission.zip
+```
+
+Choose a new output path for each build; the packager refuses to overwrite a ZIP. It validates the source, copies only skills, assets, the plugin README, privacy policy, and license, and creates an OpenAI compatibility manifest using the Claude manifest's current identity and version plus the directory listing. It excludes the marketplace wrapper and development configuration. It does not change the Claude manifest or maintain another release version.
+
+Upload that exact ZIP, review the imported metadata, and complete all required skill scans. Select the verified publisher in the portal. Do not infer account verification, public approval, or runtime compatibility from a successful local build.
+
+### Clean ChatGPT acceptance record
+
+Test the exact uploaded package in a fresh chat, without relying on this repository, an earlier installation, saved preferences, or prior conversation state. Record the package version and checksum, host, scenario, observed result, and limitations. The tests below are manual runtime checks, not results established by the repository suite:
+
+- Discover all four skills and confirm the Gleaner listing, logo, subtitle, starter prompts, and privacy link.
+- Save supplied sample text in the conversation: verify the full inline clip, supported Markdown attachment, and accurate storage receipt.
+- Read an authorized public page using available browser tools; distinguish fetched content from an inaccessible active tab.
+- With browser or video content unavailable, verify that no summary or timestamp is invented and no clip is created before any required choice.
+- Use a dedicated test folder for an explicitly requested Drive save, then update the same-session clip and verify the reported files and links. Test Notion separately if that capability will be advertised for the target host.
+- With persistent preferences absent, confirm chat delivery remains the default. Test opt-in preferences and synchronization only with disposable settings and an explicitly chosen test account or document.
+- Exercise requested clip-index maintenance and follow-ups, preserving existing content and reporting unavailable capabilities accurately.
+
+Mark a case blocked when the host lacks the needed connection or permission. A locally extracted archive or fixture test is not a live ChatGPT acceptance run. Submission, policy attestations, approval, and publication remain separate portal steps.
+
 ## Browser compatibility
 
 - **Connected Chrome tabs:** list accessible tabs, choose the named or active tab, and read its text. Tab access does not imply selection/highlight or JavaScript access. A pasted URL can be fetched separately if it is not in an accessible tab.

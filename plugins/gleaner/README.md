@@ -26,6 +26,8 @@ You don't have to pick a skill: describe what you want and Claude loads the righ
 
 ## Install and learn more
 
+Read the [Gleaner privacy policy](PRIVACY.md) for data use, storage, referral attribution, retention, and deletion controls.
+
 To install it in Claude Code from its own marketplace, run this in a session (Claude Code 2.1.275 or later):
 
 ```text
