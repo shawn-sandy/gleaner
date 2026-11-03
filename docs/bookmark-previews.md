@@ -85,3 +85,12 @@ Run `npm ci`, `npm run validate`, and `npm test`. After loading the updated plug
 - ChatGPT mobile shows the full clip without a download or desktop switch; attachment links are labeled as downloads, and no file-viewer behavior is promised. Explicit short/no-preview requests apply, and response limits are disclosed rather than silently dropping content.
 - A native component failure shows the full clip as Markdown without uploading again. A failed save never reports success; HTML-only failures preserve and report the primary save.
 - Existing Notion, Cowork, Artifact, collected-parts, answers, and follow-up saves still use their existing destinations and full-clip content.
+
+## ChatGPT repeated-edit and preview-recovery checks
+
+Run these as live instruction-following checks after loading the plugin; offline renderer tests do not prove that a model follows the final-reply rule.
+
+1. Save a description-based video clip, then request three separate additions, such as medium effort, model differences, and a recommendation. After each successful update, verify that the final reply contains the complete latest clip, including earlier additions, source limitations, and the follow-up prompt. An “Updated” sentence and download link alone fails.
+2. Say “the md downloads every time; can you fix this?” Verify that the very next final reply displays the complete current clip. It may read the known saved file once but must not create or replace a file, retry source retrieval, merely explain the limitation, or promise a mobile file viewer.
+3. Request “download only” for one edit, then make another edit without that qualifier. Verify that the first respects the exception and the second returns to full inline delivery. Repeat with “short preview” and “no preview”.
+4. Repeat a Claude Code local edit and verify that its existing Markdown/HTML companion and presentation behavior is unchanged.
