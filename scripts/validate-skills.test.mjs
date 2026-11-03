@@ -95,6 +95,47 @@ for (const file of [glean, metadata, preferencesMetadata, contract, example, pro
   });
 }
 
+const manifest = 'plugins/gleaner/.claude-plugin/plugin.json';
+const tooLong = 'x'.repeat(501);
+for (const [name, file, edit] of [
+  ['plugin description', manifest, data => { data.description = tooLong; }],
+  ['marketplace description', marketplace, data => { data.plugins[0].description = tooLong; }],
+]) {
+  test(`rejects a ${name} over 500 characters`, t => {
+    const directory = fixture(t);
+    const data = JSON.parse(readFileSync(join(directory, file), 'utf8'));
+    edit(data);
+    writeFileSync(join(directory, file), JSON.stringify(data, null, 2));
+    const result = run(directory);
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.match(result.stderr, /description must be a nonempty string of at most 500 characters/);
+  });
+}
+
+test('rejects a glean description over 500 characters', t => {
+  const directory = fixture(t);
+  const path = join(directory, glean);
+  writeFileSync(path, readFileSync(path, 'utf8').replace(/^description: (.*)$/m, (line, text) => `description: ${text} ${'x'.repeat(500 - text.length)}`));
+  const result = run(directory);
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(result.stderr, /description must be a nonempty string of at most 500 characters/);
+});
+
+// Each pattern removes only its own trigger, so "glean" goes while "glean it" stays.
+for (const [trigger, pattern] of [['glean', /\bglean\b(?!\s+it\b)/gi], ['glean it', /\bglean\s+it\b/gi], ['Gleaner', /\bGleaner\b/gi]]) {
+  test(`rejects a glean description without the "${trigger}" trigger`, t => {
+    const directory = fixture(t);
+    const path = join(directory, glean);
+    const source = readFileSync(path, 'utf8');
+    const line = source.match(/^description: .*$/m)[0];
+    assert.match(line, pattern, `fixture description holds ${trigger}`);
+    writeFileSync(path, source.replace(line, line.replace(pattern, 'clip')));
+    const result = run(directory);
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.match(result.stderr, new RegExp(`description must name the "${trigger}" trigger`));
+  });
+}
+
 test('rejects reference definitions and symlinks outside the repository', t => {
   const directory = fixture(t);
   symlinkSync(join(root, 'LICENSE'), join(directory, 'outside'));
