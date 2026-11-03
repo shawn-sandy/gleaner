@@ -751,7 +751,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.0** (2026-11-02)
 - Anthropic's plugin directory can now show Gleaner's icon.
 - Clips now end with a **Further reading** section: 2–5 links the page itself points to, such as docs, repos, and related articles, each with a few words on what it adds. Those links, and a video clip's Links, carry `utm_source=gleaner` so sites can see the visit came from a Gleaner clip. Source links are unchanged.
 
