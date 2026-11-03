@@ -762,6 +762,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+
+- Give YouTube, Preferences, and Follow-up the same Gleaner icons as Glean in clients that display skill icons.
+
 **2.15.2** (2026-11-03)
 - ChatGPT can maintain one persistent `Gleaner Clip Index.md` file on request, updating existing rows when clips change and retaining the same file identity. Project instructions can request it across chats; adding or refreshing a project source remains manual. Claude clip lists are unchanged.
 

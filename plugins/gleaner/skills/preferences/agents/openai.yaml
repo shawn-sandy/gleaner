@@ -1,4 +1,6 @@
 interface:
   display_name: Gleaner Preferences
   short_description: Manage shared save defaults and optional Drive sync
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.png"
   default_prompt: Show my effective save preferences and sync status.
