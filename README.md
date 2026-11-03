@@ -752,7 +752,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.1** (2026-11-03)
 - The glean skill's description now names "glean" and "glean it" as ways to ask for it, alongside saving, bookmarking, and filing a page.
 - The plugin, marketplace, and glean skill descriptions are each at most 500 characters. Validation now fails if any of them grows past that, or if the glean skill's description drops "glean", "glean it", or "Gleaner".
 
