@@ -84,13 +84,14 @@ check('marketplace and plugin manifests', () => {
   for (const entry of marketplace.plugins) {
     object(entry, 'plugin entry');
     text(entry.name, 'plugin entry name');
+    text(entry.description, 'plugin entry description', 500);
     requireValue(!names.has(entry.name), `duplicate plugin: ${entry.name}`);
     names.add(entry.name);
     const directory = localPath(root, entry.source, 'directory');
     const manifest = JSON.parse(readFileSync(localPath(directory, '.claude-plugin/plugin.json'), 'utf8'));
     object(manifest, 'plugin manifest');
     requireValue(manifest.name === entry.name, 'marketplace and plugin names must match');
-    text(manifest.description, 'plugin.description');
+    text(manifest.description, 'plugin.description', 500);
     requireValue(typeof manifest.version === 'string' && /^\d+\.\d+\.\d+(?:-[\w.-]+)?(?:\+[\w.-]+)?$/.test(manifest.version),
       'plugin.version must be a semantic version');
     if (entry.name === 'gleaner') requireValue(directory === realpathSync(resolve(root, plugin)), 'Gleaner source must point to plugins/gleaner');
@@ -109,6 +110,13 @@ for (const name of skills) {
     text(data.description, 'description', 1024);
     if (data['argument-hint'] !== undefined) text(data['argument-hint'], 'argument-hint');
     requireValue(source.slice(match[0].length).trim(), 'Skill body must not be empty');
+    if (name === 'glean') {
+      text(data.description, 'description', 500);
+      // A bare "glean" must stand on its own, not only inside "glean it".
+      for (const [trigger, pattern] of [['glean', /\bglean\b(?!\s+it\b)/i], ['glean it', /\bglean\s+it\b/i], ['Gleaner', /\bGleaner\b/i]]) {
+        requireValue(pattern.test(data.description), `description must name the "${trigger}" trigger`);
+      }
+    }
   });
   check(`${name} ChatGPT metadata`, () => {
     const data = yaml(read(`${directory}/agents/openai.yaml`));

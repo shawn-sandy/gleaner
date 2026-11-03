@@ -752,6 +752,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+- The glean skill's description now names "glean" and "glean it" as ways to ask for it, alongside saving, bookmarking, and filing a page.
+- The plugin, marketplace, and glean skill descriptions are each at most 500 characters. Validation now fails if any of them grows past that, or if the glean skill's description drops "glean", "glean it", or "Gleaner".
+
 **2.15.0** (2026-11-02)
 - Anthropic's plugin directory can now show Gleaner's icon.
 - Clips now end with a **Further reading** section: 2–5 links the page itself points to, such as docs, repos, and related articles, each with a few words on what it adds. Those links, and a video clip's Links, carry `utm_source=gleaner` so sites can see the visit came from a Gleaner clip. Source links are unchanged.
