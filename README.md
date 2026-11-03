@@ -762,7 +762,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.4** (2026-11-03)
 
 - Strengthen ChatGPT inline delivery after every clip edit: show the complete updated clip, and recover missing previews immediately in the conversation without creating another file. Markdown attachment links remain downloads; the plugin cannot change the mobile file viewer.
 
