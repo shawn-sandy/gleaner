@@ -645,6 +645,7 @@ gleaner/
 │       │   └── plugin.json         # plugin manifest (version lives here)
 │       ├── assets/
 │       │   └── icon.png            # 1,024 px plugin icon for Anthropic's directory, from gleaner-symbol.svg
+│       ├── README.md               # plugin README, shown as the Anthropic directory listing's description
 │       └── skills/
 │           ├── README.md           # usage guide for all four skills
 │           ├── follow-up/
