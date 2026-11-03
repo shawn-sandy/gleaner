@@ -1,7 +1,7 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -120,6 +120,42 @@ test('the validate workflow still warns about an owed release when an earlier st
   assert.ok(step, 'no validate.yml step runs release-notes.mjs Unreleased');
   // A step-level if with no status function gets an implicit success(), which skips the step after a failure.
   assert.match(step.if, /\b(always|cancelled|failure)\(\)/);
+});
+
+test('every workflow that pushes a release bumps plugin.json first, and every published release is tagged from it', () => {
+  const directory = join(root, '.github/workflows');
+  const workflows = readdirSync(directory).filter(name => /\.ya?ml$/.test(name)).map(name => ({ name, workflow: parse(readFileSync(join(directory, name), 'utf8')) }));
+  const pushers = [];
+  const publishers = [];
+  for (const { name, workflow } of workflows) {
+    for (const job of Object.values(workflow.jobs)) {
+      /** @type {{ run?: string, if?: string }[]} */
+      const steps = job.steps ?? [];
+      // Whole-line shell comments dropped, so a commented-out command does not count.
+      const runs = steps.map(step => (step.run ?? '').split('\n').filter(line => !/^\s*#/.test(line)).join('\n'));
+      // One script in step order, so a bump after the push fails even within a single step.
+      const script = runs.join('\n');
+      const push = script.search(/\bgit push\b/);
+      if (push !== -1) {
+        pushers.push(name);
+        const bump = script.search(/\bnpm run release\b/);
+        assert.ok(bump !== -1 && bump < push, `${name} pushes without running npm run release first`);
+        // A bump step with its own condition could be skipped on a run where the push still happens.
+        const pushStep = steps[runs.findIndex(run => /\bgit push\b/.test(run))];
+        const bumpStep = steps[runs.findIndex(run => /\bnpm run release\b/.test(run))];
+        assert.ok(bumpStep?.if === undefined || bumpStep.if === pushStep?.if, `${name} runs npm run release under a different condition than its push`);
+      }
+      const publish = runs.find(run => /\bgh release create\b/.test(run));
+      if (publish) {
+        publishers.push(name);
+        assert.match(publish, /version=\$\(node -p "require\('\.\/plugins\/gleaner\/\.claude-plugin\/plugin\.json'\)\.version"\)/, `${name} does not read the version from plugin.json`);
+        assert.match(publish, /gh release create "v\$version"/, `${name} does not tag the plugin.json version`);
+      }
+    }
+  }
+  // Guards against the checks above passing vacuously because a workflow was renamed or its push moved.
+  assert.deepEqual(pushers.sort(), ['auto-release.yml', 'cut-release.yml']);
+  assert.deepEqual(publishers, ['release.yml']);
 });
 
 test('bumps, dates the changelog, validates, and commits on a release branch from main', t => {
