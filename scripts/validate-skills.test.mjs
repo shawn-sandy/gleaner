@@ -71,7 +71,7 @@ const cases = [
   ['broken sibling reference', glean, '../youtube/SKILL.md', '../missing/SKILL.md', /ENOENT/],
   ['invalid display metadata', metadata, 'display_name: Gleaner YouTube', 'display_name: false', /display_name must/],
   ['missing metadata field', metadata, 'short_description:', 'other:', /short_description must/],
-  ['missing icon', metadata, 'interface:', 'interface:\n  icon_small: ./missing.svg', /ENOENT/],
+  ['missing icon', metadata, './assets/icon-small.png', './missing.svg', /ENOENT/],
   ['malformed JSON', marketplace, '"name":', 'name:', /JSON/],
   ['wrong plugin source', marketplace, './plugins/gleaner', './plugins/missing', /ENOENT/],
   ['marketplace version', marketplace, '"name": "shawn-sandy",', '"name": "shawn-sandy", "version": "1.0.0",', /version belongs/],

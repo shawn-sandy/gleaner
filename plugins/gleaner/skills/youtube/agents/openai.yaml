@@ -1,3 +1,5 @@
 interface:
   display_name: Gleaner YouTube
   short_description: Save YouTube videos as tagged clips with sourced timestamps
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.png"
