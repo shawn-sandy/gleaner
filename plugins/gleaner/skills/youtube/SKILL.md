@@ -14,7 +14,7 @@ Before any video save, run glean step 2 including its shared preferences contrac
 
 After writing the video clip, fill glean's [shared bookmark model](../glean/references/bookmark.md) from those same details. Preserve the canonical Source, Channel, Video basis, chapters, description links, and any Key moments taken from a transcript in the full clip; the transcript itself is source material, not clip content. Put the description/title-only limitation in `limitations`, and leave unverified key points or practical value empty. Finish with glean steps 6 and 7, including host-specific file delivery (Markdown in ChatGPT, HTML in Claude by default) and the automatic conversation preview; no separate video renderer or extraction is needed.
 
-**ChatGPT video edits:** after each addition or correction to a saved video clip, display the complete updated clip in the final reply under glean step 7. Reuse the current source material; a change summary and Markdown download alone do not complete the update. For a preview complaint, use the bookmark contract’s presentation recovery without saving again.
+**ChatGPT video edits:** after each addition or correction to a saved video clip, display the complete updated clip in the final reply under glean step 7, subject to the bookmark contract’s per-request short-preview, download-only, and no-preview exceptions. When attachments are unavailable and the conversation is the destination, show the full clip as the delivery itself. Reuse the current source material; a change summary and Markdown download alone do not complete the update. For a preview complaint, use the bookmark contract’s presentation recovery without saving again.
 
 ## Get the video
 
