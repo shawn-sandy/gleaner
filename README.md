@@ -23,6 +23,10 @@ Gleaner: Here's "Motion timing guidelines" as an HTML file, filed under Design E
 - [ChatGPT marketplace](#chatgpt-marketplace)
 - [Install](#install)
 - [Quick start](#quick-start)
+- [Prompt examples](#prompt-examples)
+  - [Pages, passages, and videos](#pages-passages-and-videos)
+  - [Answers, conversations, and sessions](#answers-conversations-and-sessions)
+  - [Destinations, updates, and finding clips](#destinations-updates-and-finding-clips)
 - [Shared preferences](#shared-preferences)
 - [Usage guide](#usage-guide)
   - [Saving a whole page](#saving-a-whole-page)
@@ -151,6 +155,57 @@ If you installed the earlier **page-to-project** skill, remove it so the two don
 That's it. Everything below is optional.
 
 ---
+
+## Prompt examples
+
+Use these as starting points and replace bracketed text with your topic, URL, or excerpt. In ChatGPT, select or mention Gleaner (for example, `@gleaner`) with the request. In Claude, ask naturally with the plugin enabled, or use `/gleaner:glean` in Claude Code. These are plain-language examples, not additional slash commands.
+
+### Pages, passages, and videos
+
+| Goal | Example prompt |
+| --- | --- |
+| Save a page | Save this page: [URL]. |
+| Keep a specific section | Clip the section about [topic] from this page. |
+| Collect several parts | Add the section about [topic]. Then add the table about [topic]. |
+| Save collected parts | Done, save these parts as one clip. |
+| Save a video | Save this YouTube video: [URL]. |
+| Clip a video segment | Save the part from 03:10 to 05:20 about [topic] from this video: [URL]. |
+| Add a reason | Save this article with the note: “For my accessibility review.” |
+
+Video segments require readable transcript lines. Without them, paste the relevant transcript; a description-only clip cannot establish what was said at a specific time.
+
+### Answers, conversations, and sessions
+
+Chat clipping works with messages available in the current conversation and does not need a browser. You can save one answer or a discussion as a clip.
+
+| Goal | Example prompt |
+| --- | --- |
+| Save one answer | Save your last answer, keeping its steps and code intact. |
+| Save a topic discussion | Save our back-and-forth about [topic], including my questions and your answers. |
+| Save the available session | Save all the questions and answers available in this session as one clip. State if any earlier messages are unavailable. |
+| Save a session excerpt | Save our discussion from my question about [starting topic] through your answer about [ending topic]. |
+| Save a session summary | Summarize the available discussion into decisions, open questions, and next steps, then save that summary as a clip. |
+| Save a pasted chat | Save this pasted conversation as a clip: [paste excerpt]. |
+| Keep a discussion separate | Save our discussion about [topic] as a new clip, separate from the page clip. |
+
+**Session limits:** A session clip covers only messages the assistant can actually read. It is not a guaranteed full-chat export or a backup of attachments, audio, tool output, or hidden messages. Earlier or other conversations may be unavailable; paste or attach their transcript when needed. Gleaner must not reconstruct missing messages from memory. Saved answers keep their steps and code; later corrections or extensions use the final version, so a discussion clip is not necessarily a verbatim message-by-message archive.
+
+For a summary, ask for the summary explicitly, as in the example above. This creates a summary to save rather than promising an exact transcript. Saving an assistant's answer preserves it; it does not independently verify its claims.
+
+### Destinations, updates, and finding clips
+
+| Goal | Example prompt |
+| --- | --- |
+| Save a discussion to Drive | Save our discussion about [topic] as a Google Doc in Drive. |
+| Store the clip just shown | Save that clip to Drive. |
+| Request Markdown | Save this as Markdown and show the full clip here. |
+| Add to a clip | Add your explanation about [topic] to the clip we saved in this conversation. |
+| Find clips | Show my saved clips about [topic]. |
+| Maintain the ChatGPT index | Refresh my clip index. |
+| Get next steps | Suggest follow-ups for this Gleaner clip. |
+| Export bookmarks | Export my saved clips as browser bookmarks. |
+
+Destinations require the relevant tools and access. Saved preferences apply unless the request overrides them. Finding clips in other conversations depends on the host's available search tools; saving a session does not grant access to chat history.
 
 ## Shared preferences
 
