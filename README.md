@@ -463,6 +463,16 @@ A clip list is one place that lists every clip you save, wherever it went, inclu
 
 Say "don't list this" to save a clip without a row, and "stop my clip list" to turn it off; neither deletes anything. A row that can't be added never changes the save: the clip is already kept, and Gleaner says the row is missing in one line. Finds still search your clips, not the list, and the list never counts as a duplicate. Updating a clip in the same session adds a row only when its link changed, so the newest row for a clip is the current one; on Drive an older row can point to the earlier version in the trash.
 
+### ChatGPT clip index file
+
+> Keep a Gleaner Clip Index.md file in ChatGPT and update it whenever I save or update a clip.
+
+Gleaner creates one persistent Markdown index when ChatGPT file tools are available, then updates that same file. Each row records the date, title, category, type, tags, note, source, saved clip link, and destination. Updating a clip refreshes its row instead of adding another. Individual clips keep their selected save destination; the index holds links, not copies of their full content.
+
+To use it across chats, add that instruction to your ChatGPT project's instructions and include the index's saved-file link. Add the index to the project's Sources yourself if you want it there. Gleaner does not create projects, move chats, or claim that a Library file is automatically a project source. Automatic refresh of a project-uploaded copy is not guaranteed; replace a stale project copy yourself.
+
+To collect older clips, ask "rebuild my Gleaner clip index from my saved clips." Gleaner reports which locations it could search. Without persistent read/create/replace tools, it can return a downloadable snapshot, but cannot claim it updated one persistent file. This ChatGPT-only feature does not change Claude's clip lists or save flow.
+
 ### Following up on a clip
 
 Ask right after a save, or point at any saved clip by link, path, or topic:
@@ -751,6 +761,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- ChatGPT can maintain one persistent `Gleaner Clip Index.md` file on request, updating existing rows when clips change and retaining the same file identity. Project instructions can request it across chats; adding or refreshing a project source remains manual. Claude clip lists are unchanged.
 
 **2.15.1** (2026-11-03)
 - The glean skill's description now names "glean" and "glean it" as ways to ask for it, alongside saving, bookmarking, and filing a page.
