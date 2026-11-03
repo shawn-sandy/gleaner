@@ -546,13 +546,15 @@ You can also skip the browsing and pass a link: **"save https://example.com/arti
 …
 ## Takeaways
 …
+## Further reading
+…
 
 ---
 
 To get follow-ups, paste this into a new chat: …
 ```
 
-Clips are written for a smart reader who is new to the topic: short sentences, technical terms explained the first time they appear, and key points as full sentences that start with a bold claim. **How it works** is optional: one short paragraph, added only when the TL;DR can't explain the main idea on its own. A tutorial gets a numbered **Steps** section in place of Key points, one action per step.
+Clips are written for a smart reader who is new to the topic: short sentences, technical terms explained the first time they appear, and key points as full sentences that start with a bold claim. **How it works** is optional: one short paragraph, added only when the TL;DR can't explain the main idea on its own. A tutorial gets a numbered **Steps** section in place of Key points, one action per step. **Further reading** lists 2–5 links the page itself points to, such as docs, repos, and related articles, each with a few words on what it adds; it's left out when the page has none worth keeping. Each of those links carries `utm_source=gleaner`, so the site can see the visit came from your clip; the Source link stays as it was.
 
 **Part clip** adds a `**Scope:** 2 parts from 1 page` line, and its body is a **Parts** section with one heading per part (titled by your note or topic), a link to its source, its own note, and 2–4 bullets.
 
@@ -560,9 +562,9 @@ Clips are written for a smart reader who is new to the topic: short sentences, t
 
 **A page clip you add to** in the same session keeps its summary and gains a Parts section before its Takeaways, with a Scope line such as `whole page + 2 parts`. Its TL;DR and Takeaways are rewritten to cover the new parts.
 
-**Video clip** adds a `**Channel:**` line that links the channel and a `**Video:**` line (publish date, length, and what it was written from), and swaps Key points for **Key moments**, the video's chapters, each linking to its second in the video, and adds a **Links** section with the description's useful links. A video part's heading links to where it starts, such as `3:10–5:40`.
+**Video clip** adds a `**Channel:**` line that links the channel and a `**Video:**` line (publish date, length, and what it was written from), and swaps Key points for **Key moments**, the video's chapters, each linking to its second in the video, and adds a **Links** section with the description's useful links, tagged the same way as Further reading. A video part's heading links to where it starts, such as `3:10–5:40`.
 
-**A clip you follow up on** gets a `## Follow-ups` section after its Takeaways: a dated, numbered list for each round of suggestions, with earlier rounds kept as they were.
+**A clip you follow up on** gets a `## Follow-ups` section after its Takeaways and any Further reading: a dated, numbered list for each round of suggestions, with earlier rounds kept as they were.
 
 Files are named `yyyy-mm-dd-short-title`. If a name is taken, Gleaner adds `-2`, `-3`, and so on.
 
@@ -751,6 +753,7 @@ MIT © Shawn Sandy
 
 **Unreleased**
 - Anthropic's plugin directory can now show Gleaner's icon.
+- Clips now end with a **Further reading** section: 2–5 links the page itself points to, such as docs, repos, and related articles, each with a few words on what it adds. Those links, and a video clip's Links, carry `utm_source=gleaner` so sites can see the visit came from a Gleaner clip. Source links are unchanged.
 
 **2.14.2** (2026-11-02)
 - Fetch pasted URLs first from phone and web chats (#67).
