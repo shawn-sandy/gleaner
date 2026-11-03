@@ -21,6 +21,8 @@ This skill does not write to claude.ai Projects; those can only be read from Cow
 
 ## Shared bookmark workflow
 
+**ChatGPT completion rule:** For every save and every later edit (including “add”, “expand”, “correct”, and “update”), include the complete current clip as readable Markdown in the final reply unless this request explicitly asks for short, download-only, or no preview; when the conversation is the only destination (no attachment is possible), the full clip is the delivery itself and those requests do not suppress it, as the bookmark contract says. A successful file write plus an “Updated” sentence and download link is unfinished delivery. Apply this rule again on each edit, even when an earlier reply showed the full clip.
+
 For every save or update, read [the shared bookmark and presentation contract](references/bookmark.md). **Extraction** uses steps 1–5 to build one bookmark model and full clip. **Storage** uses step 6 and the unchanged preferences contract. **Presentation** uses step 7 to show that same clip in full in the active conversation, even when its file is saved elsewhere. Keep source retrieval and summarization shared across hosts; only rendering uses the active session's capabilities.
 
 Existing save invocations, including `@gleaner save <URL>`, `@gleaner glean <URL>`, `/glean <URL>` where that alias is supported, and `/gleaner:glean <URL>`, all follow this workflow. These examples do not register new slash commands in hosts that lack them.
@@ -564,6 +566,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - Confirm with the artifact's link.
 
    **Updating a clip saved this session** (see Clips saved this session): write the whole updated clip (step 3) and save it in place of the version saved earlier in this conversation, under the same name. Only a clip saved in this conversation is ever replaced. A `## Follow-ups` section, added by Gleaner's follow-up skill (`../follow-up/SKILL.md`), stays the clip's last section, just above the follow-up prompt's divider, unchanged; this applies to video clips too.
+   - **ChatGPT update delivery:** after the write succeeds, continue to step 7 in the same reply and display the whole updated clip inline, including all earlier sections and the new material, subject to the bookmark contract’s per-request preview exceptions. When attachments are unavailable and the conversation is the destination, show the full clip as the delivery itself. Outside those exceptions, do not stop at a change summary or download link. A preview complaint is a request to display the current clip immediately; follow the recovery rule in the bookmark contract.
    - **This conversation:** give the whole updated clip again the same way, under the same file name, and say it replaces the earlier copy above.
    - **Local folders** (Cowork project, This project, or a path): overwrite that file at the same path. After a category change, write it to the new category's folder and delete the old file.
    - **Notion:** add any new tags to the Tags options first (as above), update the page's properties, then replace the page's content with the updated body, written as above (with the Notion connector's `update-page`, the `replace_content` command).
