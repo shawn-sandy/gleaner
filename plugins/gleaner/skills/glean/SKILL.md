@@ -108,10 +108,18 @@ Page text leaves out a few facts that live in the page's markup. This script onl
   const modified = item?.dateModified ?? document.querySelector('meta[property="article:modified_time"]')?.getAttribute('content');
   const root = document.querySelector('main, article, [role="main"]') ?? document.body;
   // Links the main content points readers to, once each, skipping site chrome, anchors back into this page, and long tool links.
-  // Same page as in "Same page": drop a section anchor and a trailing slash, but keep a routing fragment such as #/docs/2.
-  /** @param {string} href */
-  const bare = href => href.replace(/#(?![/!]).*$/, '').replace(/\/$/, '');
-  const thisPage = bare(here.href);
+  // Same page as in "Same page": drop utm_* parameters, a section anchor, and a trailing slash, but keep a routing fragment such as #/docs/2.
+  /** @param {URL} url */
+  const bare = url => {
+    const copy = new URL(url);
+    const params = new URLSearchParams(copy.search);
+    [...params.keys()].filter(key => key.startsWith('utm_')).forEach(key => params.delete(key));
+    copy.search = params.toString();
+    if (!/^#[/!]/.test(copy.hash)) copy.hash = '';
+    copy.pathname = copy.pathname.replace(/\/+$/, '') || '/';
+    return copy.href;
+  };
+  const thisPage = bare(here);
   /** @type {Set<string>} */
   const seen = new Set();
   /** @type {{ text: string, url: string, offsite: boolean }[]} */
@@ -120,7 +128,7 @@ Page text leaves out a few facts that live in the page's markup. This script onl
     const text = (a.textContent ?? '').replace(/\s+/g, ' ').trim().slice(0, 100);
     try {
       const url = new URL(a.getAttribute('href') ?? '', location.href);
-      if (!/^https?:$/.test(url.protocol) || !text || url.href.length > 300 || bare(url.href) === thisPage || seen.has(url.href)) return [];
+      if (!/^https?:$/.test(url.protocol) || !text || url.href.length > 300 || bare(url) === thisPage || seen.has(url.href)) return [];
       seen.add(url.href);
       return [{ text, url: url.href, offsite: host(url) !== host(here) }];
     } catch { return []; }
