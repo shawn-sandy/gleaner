@@ -46,6 +46,11 @@ test('valid repository passes without Claude and reports the skip', t => {
 });
 
 const cases = [
+  ['missing OpenAI composer icon', 'plugins/gleaner/openai-listing.json', '"composerIcon":', '"unusedIcon":', /OpenAI composerIcon/],
+  ['nonexistent OpenAI composer icon', 'plugins/gleaner/openai-listing.json', '"composerIcon": "./assets/icon.png"', '"composerIcon": "./assets/missing.png"', /ENOENT/],
+  ['OpenAI subtitle exceeds final directory limit', 'plugins/gleaner/openai-listing.json', 'Save and organize web research', 'A'.repeat(31), /OpenAI shortDescription/],
+  ['insecure OpenAI privacy URL', 'plugins/gleaner/openai-listing.json', 'https://github.com/shawn-sandy/gleaner/blob/30dd4fb4ab3deda20fb20c1557f40c9cd3998c49/plugins/gleaner/PRIVACY.md', 'http://github.com/shawn-sandy/gleaner/blob/30dd4fb4ab3deda20fb20c1557f40c9cd3998c49/plugins/gleaner/PRIVACY.md', /OpenAI privacyPolicyURL/],
+  ['OpenAI starter prompt exceeds final directory limit', 'plugins/gleaner/openai-listing.json', 'Find the clips I saved about accessibility.', 'A'.repeat(129), /OpenAI starter prompt/],
   ['broken bookmark renderer reference', 'plugins/gleaner/skills/glean/references/bookmark.md', '../scripts/bookmark.mjs', '../scripts/missing.mjs', /ENOENT/],
   ['broken contract reference', glean, '../preferences/references/contract.md', '../preferences/references/missing.md', /ENOENT|shared contract/],
   ['broken contract example link', contract, 'examples/user.yaml', 'examples/missing.yaml', /ENOENT/],
@@ -71,7 +76,7 @@ const cases = [
   ['broken sibling reference', glean, '../youtube/SKILL.md', '../missing/SKILL.md', /ENOENT/],
   ['invalid display metadata', metadata, 'display_name: Gleaner YouTube', 'display_name: false', /display_name must/],
   ['missing metadata field', metadata, 'short_description:', 'other:', /short_description must/],
-  ['missing icon', metadata, 'interface:', 'interface:\n  icon_small: ./missing.svg', /ENOENT/],
+  ['missing icon', metadata, './assets/icon-small.png', './missing.svg', /ENOENT/],
   ['malformed JSON', marketplace, '"name":', 'name:', /JSON/],
   ['wrong plugin source', marketplace, './plugins/gleaner', './plugins/missing', /ENOENT/],
   ['marketplace version', marketplace, '"name": "shawn-sandy",', '"name": "shawn-sandy", "version": "1.0.0",', /version belongs/],
@@ -87,7 +92,7 @@ for (const [name, file, from, to, message] of cases) {
   });
 }
 
-for (const file of [glean, metadata, preferencesMetadata, contract, example, projectExample, 'LICENSE']) {
+for (const file of [glean, metadata, preferencesMetadata, contract, example, projectExample, 'LICENSE', 'plugins/gleaner/PRIVACY.md', 'plugins/gleaner/openai-listing.json']) {
   test(`rejects missing required file: ${file}`, t => {
     const directory = fixture(t);
     rmSync(join(directory, file));

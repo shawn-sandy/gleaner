@@ -1,0 +1,22 @@
+{
+  "displayName": "Gleaner",
+  "shortDescription": "Save and organize web research",
+  "longDescription": "Save web pages, selected passages, YouTube descriptions or available transcripts, and answers as tagged research clips. Keep clips in the conversation or save them through your connected Google Drive, Notion, or supported project files. Find saved research, add follow-ups, and manage optional save preferences. Browser, storage, and persistent-file capabilities depend on your host and connected services; Gleaner does not grant access to them.",
+  "developerName": "Shawn Sandy",
+  "category": "Productivity",
+  "capabilities": [
+    "Summarize web research into tagged clips",
+    "Save and find clips in user-selected destinations",
+    "Manage optional save preferences and clip indexes"
+  ],
+  "websiteURL": "https://github.com/shawn-sandy/gleaner",
+  "privacyPolicyURL": "https://github.com/shawn-sandy/gleaner/blob/30dd4fb4ab3deda20fb20c1557f40c9cd3998c49/plugins/gleaner/PRIVACY.md",
+  "supportURL": "https://github.com/shawn-sandy/gleaner/issues",
+  "defaultPrompt": [
+    "Save this page as a tagged research clip in this conversation.",
+    "Find the clips I saved about accessibility.",
+    "Suggest three follow-ups for my most recent clip."
+  ],
+  "logo": "./assets/icon.png",
+  "composerIcon": "./assets/icon.png"
+}
