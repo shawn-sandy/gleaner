@@ -46,6 +46,8 @@ test('valid repository passes without Claude and reports the skip', t => {
 });
 
 const cases = [
+  ['missing OpenAI composer icon', 'plugins/gleaner/openai-listing.json', '"composerIcon":', '"unusedIcon":', /OpenAI composerIcon/],
+  ['nonexistent OpenAI composer icon', 'plugins/gleaner/openai-listing.json', '"composerIcon": "./assets/icon.png"', '"composerIcon": "./assets/missing.png"', /ENOENT/],
   ['OpenAI subtitle exceeds final directory limit', 'plugins/gleaner/openai-listing.json', 'Save and organize web research', 'A'.repeat(31), /OpenAI shortDescription/],
   ['insecure OpenAI privacy URL', 'plugins/gleaner/openai-listing.json', 'https://github.com/shawn-sandy/gleaner/blob/main/plugins/gleaner/PRIVACY.md', 'http://github.com/shawn-sandy/gleaner/blob/main/plugins/gleaner/PRIVACY.md', /OpenAI privacyPolicyURL/],
   ['OpenAI starter prompt exceeds final directory limit', 'plugins/gleaner/openai-listing.json', 'Find the clips I saved about accessibility.', 'A'.repeat(129), /OpenAI starter prompt/],

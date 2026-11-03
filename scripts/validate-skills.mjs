@@ -117,7 +117,11 @@ check('OpenAI public listing', () => {
     'OpenAI privacy URL must reference the published bundled policy');
   text(read(`${plugin}/PRIVACY.md`), 'Gleaner privacy policy');
   references(`${plugin}/PRIVACY.md`);
-  localPath(resolve(root, plugin), listing.logo);
+  for (const field of ['logo', 'composerIcon']) {
+    text(listing[field], `OpenAI ${field}`);
+    requireValue(listing[field].startsWith('./assets/'), `OpenAI ${field} must use bundled assets`);
+    localPath(resolve(root, plugin), listing[field]);
+  }
   requireValue(Array.isArray(listing.capabilities) && listing.capabilities.length <= 20, 'OpenAI capabilities must be a list of at most 20 entries');
   for (const capability of listing.capabilities) {
     text(capability, 'OpenAI capability', 120);

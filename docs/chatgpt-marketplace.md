@@ -27,7 +27,7 @@ npm test
 npm run package:openai -- /tmp/gleaner-submission.zip
 ```
 
-Choose a new output path for each build; the packager refuses to overwrite a ZIP. It validates the source, copies only skills, assets, the plugin README, privacy policy, and license, and creates an OpenAI compatibility manifest using the Claude manifest's current identity and version plus the directory listing. It excludes the marketplace wrapper and development configuration. It does not change the Claude manifest or maintain another release version.
+Choose a new output path for each build; the packager refuses to overwrite a ZIP. It validates the source, copies skills, assets, the privacy policy, and license, generates an OpenAI README, and creates an OpenAI compatibility manifest using the Claude manifest's current identity and version plus the directory listing. It excludes the marketplace wrapper, development configuration, and repository-only skills overview. A checked staging conversion removes Claude live-artifact creation, reading, search, and update instructions while retaining HTML downloads and shared clipping and storage behavior. Existing artifact preference records remain recognizable but unsupported, requiring a temporary compatible destination without rewriting stored defaults. Source changes that invalidate a conversion stop the build for review. It does not change the Claude manifest or maintain another release version.
 
 Upload that exact ZIP, review the imported metadata, and complete all required skill scans. Select the verified publisher in the portal. Do not infer account verification, public approval, or runtime compatibility from a successful local build.
 
@@ -35,7 +35,7 @@ Upload that exact ZIP, review the imported metadata, and complete all required s
 
 Test the exact uploaded package in a fresh chat, without relying on this repository, an earlier installation, saved preferences, or prior conversation state. Record the package version and checksum, host, scenario, observed result, and limitations. The tests below are manual runtime checks, not results established by the repository suite:
 
-- Discover all four skills and confirm the Gleaner listing, logo, subtitle, starter prompts, and privacy link.
+- Discover all four skills and confirm the Gleaner listing, logo, composer icon, subtitle, starter prompts, and privacy link.
 - Save supplied sample text in the conversation: verify the full inline clip, supported Markdown attachment, and accurate storage receipt.
 - Read an authorized public page using available browser tools; distinguish fetched content from an inaccessible active tab.
 - With browser or video content unavailable, verify that no summary or timestamp is invented and no clip is created before any required choice.

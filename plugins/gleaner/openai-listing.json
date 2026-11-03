@@ -17,5 +17,6 @@
     "Find the clips I saved about accessibility.",
     "Suggest three follow-ups for my most recent clip."
   ],
-  "logo": "./assets/icon.png"
+  "logo": "./assets/icon.png",
+  "composerIcon": "./assets/icon.png"
 }

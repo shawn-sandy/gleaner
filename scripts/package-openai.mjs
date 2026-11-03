@@ -4,12 +4,14 @@ import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { adaptOpenAIContent } from './openai-content.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const plugin = resolve(root, 'plugins/gleaner');
 const [destination, ...extra] = process.argv.slice(2);
 let staging;
 
+/** Reject symlinks and special files before copying a package subtree. */
 function regularTree(path) {
   const stat = lstatSync(path);
   if (stat.isFile()) return;
@@ -32,12 +34,13 @@ try {
     regularTree(resolve(plugin, entry));
     cpSync(resolve(plugin, entry), resolve(staging, entry), { recursive: true });
   }
+  adaptOpenAIContent(staging, listing);
   cpSync(resolve(root, 'LICENSE'), resolve(staging, 'LICENSE'));
   mkdirSync(resolve(staging, '.codex-plugin'));
   writeFileSync(resolve(staging, '.codex-plugin/plugin.json'), `${JSON.stringify({
     name: source.name,
     version: source.version,
-    description: source.description,
+    description: listing.longDescription,
     author: source.author,
     homepage: source.homepage,
     repository: source.repository,
