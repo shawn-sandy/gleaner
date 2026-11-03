@@ -113,7 +113,7 @@ check('OpenAI public listing', () => {
     const url = new URL(listing[field]);
     requireValue(url.protocol === 'https:' && !url.username && !url.password, `OpenAI ${field} must use HTTPS without credentials`);
   }
-  requireValue(listing.privacyPolicyURL === 'https://github.com/shawn-sandy/gleaner/blob/main/plugins/gleaner/PRIVACY.md',
+  requireValue(listing.privacyPolicyURL === 'https://github.com/shawn-sandy/gleaner/blob/30dd4fb4ab3deda20fb20c1557f40c9cd3998c49/plugins/gleaner/PRIVACY.md',
     'OpenAI privacy URL must reference the published bundled policy');
   text(read(`${plugin}/PRIVACY.md`), 'Gleaner privacy policy');
   references(`${plugin}/PRIVACY.md`);

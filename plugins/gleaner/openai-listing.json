@@ -10,7 +10,7 @@
     "Manage optional save preferences and clip indexes"
   ],
   "websiteURL": "https://github.com/shawn-sandy/gleaner",
-  "privacyPolicyURL": "https://github.com/shawn-sandy/gleaner/blob/main/plugins/gleaner/PRIVACY.md",
+  "privacyPolicyURL": "https://github.com/shawn-sandy/gleaner/blob/30dd4fb4ab3deda20fb20c1557f40c9cd3998c49/plugins/gleaner/PRIVACY.md",
   "supportURL": "https://github.com/shawn-sandy/gleaner/issues",
   "defaultPrompt": [
     "Save this page as a tagged research clip in this conversation.",
