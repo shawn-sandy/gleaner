@@ -129,8 +129,9 @@ test('every workflow that pushes a release bumps plugin.json first, and every pu
   const publishers = [];
   for (const { name, workflow } of workflows) {
     for (const job of Object.values(workflow.jobs)) {
-      /** @type {string[]} */
-      const runs = (job.steps ?? []).map((/** @type {{ run?: string }} */ step) => step.run ?? '');
+      /** @type {{ run?: string, if?: string }[]} */
+      const steps = job.steps ?? [];
+      const runs = steps.map(step => step.run ?? '');
       // One script in step order, so a bump after the push fails even within a single step.
       const script = runs.join('\n');
       const push = script.search(/\bgit push\b/);
@@ -138,6 +139,10 @@ test('every workflow that pushes a release bumps plugin.json first, and every pu
         pushers.push(name);
         const bump = script.search(/\bnpm run release\b/);
         assert.ok(bump !== -1 && bump < push, `${name} pushes without running npm run release first`);
+        // A bump step with its own condition could be skipped on a run where the push still happens.
+        const pushStep = steps.find(step => /\bgit push\b/.test(step.run ?? ''));
+        const bumpStep = steps.find(step => /\bnpm run release\b/.test(step.run ?? ''));
+        assert.ok(bumpStep?.if === undefined || bumpStep.if === pushStep?.if, `${name} runs npm run release under a different condition than its push`);
       }
       const publish = runs.find(run => /\bgh release create\b/.test(run));
       if (publish) {
