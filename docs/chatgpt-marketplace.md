@@ -79,6 +79,8 @@ Marketplace import, browser, and Drive behavior require live manual testing. Rep
 ## Maintained clip index acceptance checks
 
 - Request a ChatGPT clip index, save two different clips, and confirm one persistent index identity has two rows with verified links.
+- Save two different chat-only clips with the same conversation URL, then update the first: confirm two persistent Clip IDs, only the first row changes, and both remain after a new-session refresh. Migrate a legacy table with shared conversation links without collapsing rows.
+- Request create, refresh, and rebuild directly without saving a new clip: confirm each writes or retains the same index identity, an empty creation is labeled empty, and a rebuild preserves rows it cannot rediscover.
 - Edit a clip's tags or content without changing its link, then repeat the update: confirm one refreshed row and no duplicate.
 - Start a fresh project chat with the saved index link and maintenance instruction; confirm it reads and replaces that index rather than creating another file.
 - Save distinct parts or an intentional new copy from the same source; confirm their rows remain separate. Save the same YouTube source through a Shorts URL and watch URL; confirm identity matching does not create an unintended duplicate.

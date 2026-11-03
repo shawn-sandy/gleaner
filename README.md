@@ -467,11 +467,11 @@ Say "don't list this" to save a clip without a row, and "stop my clip list" to t
 
 > Keep a Gleaner Clip Index.md file in ChatGPT and update it whenever I save or update a clip.
 
-Gleaner creates one persistent Markdown index when ChatGPT file tools are available, then updates that same file. Each row records the date, title, category, type, tags, note, source, saved clip link, and destination. Updating a clip refreshes its row instead of adding another. Individual clips keep their selected save destination; the index holds links, not copies of their full content.
+Gleaner creates one persistent Markdown index when ChatGPT file tools are available, then updates that same file. Each row records a persistent Clip ID, date, title, category, type, tags, note, source, saved clip link, and destination. Conversation links identify the chat, not a clip; several clips in one chat keep separate rows. Updating a clip refreshes its row instead of adding another. Individual clips keep their selected save destination; the index holds links, not copies of their full content.
 
 To use it across chats, add that instruction to your ChatGPT project's instructions and include the index's saved-file link. Add the index to the project's Sources yourself if you want it there. Gleaner does not create projects, move chats, or claim that a Library file is automatically a project source. Automatic refresh of a project-uploaded copy is not guaranteed; replace a stale project copy yourself.
 
-To collect older clips, ask "rebuild my Gleaner clip index from my saved clips." Gleaner reports which locations it could search. Without persistent read/create/replace tools, it can return a downloadable snapshot, but cannot claim it updated one persistent file. This ChatGPT-only feature does not change Claude's clip lists or save flow.
+Create or refresh the file directly with "create my clip index" or "refresh my clip index"; neither requires saving another clip. To collect older clips, ask "rebuild my Gleaner clip index from my saved clips." Gleaner reports which locations it could search. Without persistent read/create/replace tools, it can return a downloadable snapshot, but cannot claim it updated one persistent file. This ChatGPT-only feature does not change Claude's clip lists or save flow.
 
 ### Following up on a clip
 

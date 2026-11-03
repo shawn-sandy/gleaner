@@ -173,9 +173,11 @@ Users speak naturally; don't wait for exact phrasing. Read each request for an *
 | **Save answer** | Saves an answer you gave in this conversation as a clip now; adds it as a part instead while parts are being collected, or to the page's clip if one was saved this session | "save that answer", "keep that explanation", "save those steps", "save what you just told me", "explain the auth flow and save it" |
 | **Save clip** | Saves all collected parts (plus a current highlight not yet added) as one clip | "save this clip", "that's it, save them", "done", "wrap it up", "save what I've got" |
 | **Manage parts** | Lists, removes, edits, or discards parts | "what have I got so far?", "drop the second one", "change part 1's note to …", "start over" |
+| **Maintain ChatGPT index** | Create, refresh, or rebuild the persistent index directly through [ChatGPT clip index](references/chatgpt-clip-index.md), without saving a new clip | "create my clip index", "update my clip index", "refresh my clip index", "rebuild my clip index from saved clips" |
 | **Find clips** | Searches saved clips, or exports them as an index sheet or a bookmarks file (see Clip index) | "what did I save about Cowork?", "show my clips from this week", "anything on view transitions?", "export my clips as bookmarks" |
 
 **Deciding between them:**
+- In ChatGPT, an explicit create, update, refresh, or rebuild request for the maintained index takes the **Maintain ChatGPT index** route directly. A request merely to show or find clips keeps **Find clips**. On Claude, retain the existing search/export flow; do not use the ChatGPT file workflow.
 - A request naming the whole thing ("this page", "this article", "the whole doc") is **Save page**, even with text highlighted.
 - A request naming a piece ("this part", "this bit", "this section", "this paragraph", "this quote", "this table", "the part about X") is **Add part**.
 - A bare "save this", "keep this", or "clip this" is **Save clip** when parts are collected or text is highlighted (~40+ characters), otherwise **Save page**. If you had just answered a question, mention in the confirmation that "save that answer" saves the answer instead.
