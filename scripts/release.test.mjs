@@ -131,7 +131,8 @@ test('every workflow that pushes a release bumps plugin.json first, and every pu
     for (const job of Object.values(workflow.jobs)) {
       /** @type {{ run?: string, if?: string }[]} */
       const steps = job.steps ?? [];
-      const runs = steps.map(step => step.run ?? '');
+      // Whole-line shell comments dropped, so a commented-out command does not count.
+      const runs = steps.map(step => (step.run ?? '').split('\n').filter(line => !/^\s*#/.test(line)).join('\n'));
       // One script in step order, so a bump after the push fails even within a single step.
       const script = runs.join('\n');
       const push = script.search(/\bgit push\b/);
@@ -140,8 +141,8 @@ test('every workflow that pushes a release bumps plugin.json first, and every pu
         const bump = script.search(/\bnpm run release\b/);
         assert.ok(bump !== -1 && bump < push, `${name} pushes without running npm run release first`);
         // A bump step with its own condition could be skipped on a run where the push still happens.
-        const pushStep = steps.find(step => /\bgit push\b/.test(step.run ?? ''));
-        const bumpStep = steps.find(step => /\bnpm run release\b/.test(step.run ?? ''));
+        const pushStep = steps[runs.findIndex(run => /\bgit push\b/.test(run))];
+        const bumpStep = steps[runs.findIndex(run => /\bnpm run release\b/.test(run))];
         assert.ok(bumpStep?.if === undefined || bumpStep.if === pushStep?.if, `${name} runs npm run release under a different condition than its push`);
       }
       const publish = runs.find(run => /\bgh release create\b/.test(run));
