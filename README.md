@@ -762,7 +762,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.3** (2026-11-03)
 
 - Give YouTube, Preferences, and Follow-up the same Gleaner icons as Glean in clients that display skill icons.
 
