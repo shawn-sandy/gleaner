@@ -21,7 +21,7 @@ This skill does not write to claude.ai Projects; those can only be read from Cow
 
 ## Shared bookmark workflow
 
-**ChatGPT completion rule:** For every save and every later edit (including “add”, “expand”, “correct”, and “update”), include the complete current clip as readable Markdown in the final reply unless this request explicitly asks for short, download-only, or no preview. A successful file write plus an “Updated” sentence and download link is unfinished delivery. Apply this rule again on each edit, even when an earlier reply showed the full clip.
+**ChatGPT completion rule:** For every save and every later edit (including “add”, “expand”, “correct”, and “update”), include the complete current clip as readable Markdown in the final reply unless this request explicitly asks for short, download-only, or no preview; when the conversation is the only destination (no attachment is possible), the full clip is the delivery itself and those requests do not suppress it, as the bookmark contract says. A successful file write plus an “Updated” sentence and download link is unfinished delivery. Apply this rule again on each edit, even when an earlier reply showed the full clip.
 
 For every save or update, read [the shared bookmark and presentation contract](references/bookmark.md). **Extraction** uses steps 1–5 to build one bookmark model and full clip. **Storage** uses step 6 and the unchanged preferences contract. **Presentation** uses step 7 to show that same clip in full in the active conversation, even when its file is saved elsewhere. Keep source retrieval and summarization shared across hosts; only rendering uses the active session's capabilities.
 
