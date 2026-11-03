@@ -17,17 +17,26 @@ You don't have to pick a skill: describe what you want and Claude loads the righ
 
 ## What Gleaner reads, writes, and sends
 
-- **Reads** the page you ask it to keep, in the browser you're using: the Chrome side panel, Claude in Chrome, or the Claude Code desktop browser. Given a URL, it opens the page there or reads it with a web fetch. For a YouTube video it reads the video's description and YouTube's own transcript panel.
-- **Writes** each clip only where you choose: a file in the conversation by default, or a destination you have connected yourself (Google Drive, Notion, a Cowork project folder, the current Claude Code project, or a private claude.ai artifact). It never deletes or changes clips saved in earlier sessions.
-- **Stores preferences** in a local file, by default `~/.config/agent-preferences/preferences.yaml`, with an optional project override. Syncing them through Google Drive happens only when you turn it on.
-- **Sends** clip content only to the destination you choose, through your own connection to it. Gleaner has no server of its own, no MCP server, no hooks, and no analytics. A bundled helper script that formats clips runs locally and makes no network calls.
+- **Reads pages** you ask it to keep, in the browser you're using: the Chrome side panel, Claude in Chrome, the Claude Code desktop browser, or ChatGPT's connected Chrome tabs and Work browser. Given a URL it opens the page there, or reads it with the session's web fetch. For a YouTube video it reads the video's description and YouTube's own transcript panel, through Playwright browser tools when that's the only way a Claude Code session can open it.
+- **Reads your saved clips** when you search them or save again: it searches the destination you name (Google Drive, Notion, a project folder, or artifacts) and, where your host offers it, your past conversations, and checks for an existing clip of the same page before saving.
+- **Writes clips** only where you choose: a file in the conversation by default, or a destination you have connected yourself (Google Drive, Notion, a Cowork project folder, the current Claude Code project, or a private claude.ai artifact). It creates category folders as needed. Updating a clip saved in the same session replaces that clip's earlier version (on Drive, by moving it to the trash). Clips saved in earlier sessions are never edited or deleted; an update saves a new copy that links to the original.
+- **Writes indexes you ask for:** an opt-in clip list that gets one new row per save (a `Clip List` Google Sheet, a `Clip List.md` file, or a Notion database), and, on request, a dated `Clip Index` Google Sheet in Drive. In a Notion clip database it adds any missing properties and new tag options, and never renames or deletes existing ones.
+- **Stores preferences** in a local file, `$XDG_CONFIG_HOME/agent-preferences/preferences.yaml` when that is set and `~/.config/agent-preferences/preferences.yaml` otherwise, with a `sync-state.yaml` file and a `preferences.lock` folder beside it. A project can override them in `.agent-preferences/preferences.yaml` at its root.
+- **Sends** clip content only to the destinations you choose, through your own connections to them. If you turn on preference sync, it uploads your preferences to a Google Drive document titled `Agent Preferences`, creating it if none exists. Gleaner has no server of its own, no MCP server, no hooks, and no analytics. A bundled helper script that formats clips runs locally and makes no network calls.
 
 ## Install and learn more
 
-To install it in Claude Code from its own marketplace, run this in a session:
+To install it in Claude Code from its own marketplace, run this in a session (Claude Code 2.1.275 or later):
 
 ```text
 /plugin install gleaner --marketplace shawn-sandy/gleaner
+```
+
+On earlier versions, add the marketplace first:
+
+```text
+/plugin marketplace add shawn-sandy/gleaner
+/plugin install gleaner@shawn-sandy
 ```
 
 The [Gleaner repository](https://github.com/shawn-sandy/gleaner) has install steps, the full usage guide, troubleshooting, and the changelog.
