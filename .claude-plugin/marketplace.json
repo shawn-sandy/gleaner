@@ -9,7 +9,7 @@
     {
       "name": "gleaner",
       "source": "./plugins/gleaner",
-      "description": "Save web pages, passages, answers, and YouTube videos as tagged clips. Get Markdown in ChatGPT or HTML in Claude; save to Drive, Notion, Cowork, Claude Code, or private claude.ai artifacts. ChatGPT supports editable Pages on explicit request when Page tools are available. Shared local-first preferences and optional Drive sync. Reads the Chrome side panel, Claude Code desktop browser, and ChatGPT connected Chrome tabs and Work browser.",
+      "description": "Gleaner's web clipper. Save pages, passages, answers, or YouTube videos as tagged clips in Drive, Notion, local files, or Claude HTML. ChatGPT defaults to editable Pages when Page tools are available and no destination or raw-file request wins, preserving in-chat output. Use for glean, glean it, saving, bookmarking, filing, or finding clips. Reads connected Chrome tabs, Work browser, and Claude browsers.",
       "category": "productivity",
       "tags": [
         "artifacts",

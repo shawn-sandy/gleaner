@@ -21,7 +21,7 @@ The rename does not change existing clips or plain-language requests such as "sa
 
 ## preferences: shared save settings
 
-Gleaner skips the setup prompt on your first save, since its default, the chat, needs nothing stored; it mentions setup once instead. Run `/gleaner:preferences setup` to choose a verified default destination, a format (left unset by default, so chat clips are Markdown in ChatGPT and HTML in Claude, and stored clips are Markdown where supported; `default_format` is written only if you pick `auto` or `markdown`), and optional Drive sync, or choose “just this save” to keep session settings. Existing environment defaults remain when setup is skipped. Both page and video saves use the same preferences.
+Gleaner skips first-save setup for its built-in defaults: an editable Page in ChatGPT and chat delivery in Claude. Page creation requires no setup or test Page; creation and readback establish the save. It mentions preference setup once instead. Run `/gleaner:preferences setup` to choose a verified default destination, a format (left unset by default, so chat clips are Markdown in ChatGPT and HTML in Claude, and stored clips are Markdown where supported; `default_format` is written only if you pick `auto` or `markdown`), and optional Drive sync, or choose “just this save” to keep session settings. Existing environment defaults remain when setup is skipped. Both page and video saves use the same preferences.
 
 ```text
 /gleaner:preferences setup
@@ -39,7 +39,7 @@ Preferences use local user storage and optional project overrides. Drive sync ru
 ## Before you start
 
 - **A page Claude can see.** Use the Claude side panel in Chrome, or the Browser pane in Claude Code desktop (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows). In ChatGPT, use connected Chrome tabs or the Work browser. Or skip browsing and put a URL in the request.
-- **A destination, if you want one stored.** Until you set your own with preferences, ChatGPT gives you the clip as a Markdown file in the conversation and Claude gives you an HTML file. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
+- **A destination.** Unconfigured ChatGPT saves use a private editable Page with full in-chat content and a verified Page link when required tools and access are available. Explicit/saved destinations and raw-file requests win. Missing required Page tools before a write allow explained Markdown chat/file fallback only for the built-in default; an explicit or retained Page requires an alternative choice. Claude keeps its HTML chat delivery. Other destinations need their connector or app; see [Choosing where clips go](../../../README.md#choosing-where-clips-go).
 
 ## glean: pages, parts, answers, and search
 
@@ -185,4 +185,4 @@ See [the cross-platform examples](../../../docs/bookmark-previews.md) for the sa
 
 ## Editable Pages in ChatGPT
 
-With Page creation, read, and edit tools available, ask “save this clip as an editable ChatGPT Page” or use `--to page`. Later additions update the same Page and preserve manual edits. Verified Page saves return a short confirmation and Page link; ask “show the full clip here” to read it in chat or “export the current Page as Markdown” for a file. Persistent Page defaults and traditional chat Canvas are not supported. Existing Claude destinations and presentation do not change. See [Page workflow](glean/references/chatgpt-pages.md) and the [acceptance checklist](../../../docs/chatgpt-pages-testing.md).
+ChatGPT defaults to a private editable Page when no explicit, retained, session, project, or user destination and no raw-file request wins. Preserve the full in-chat clip and follow-up output alongside a verified Page link; honor explicit short-response or Page-only requests. Missing required tools before any write allow Markdown chat/file fallback only for the built-in default, with a truthful explanation. Refusals and uncertain writes require recovery, never silent redirection. Exports read current Page content, including manual edits, and are not automatically synchronized. Pages are not a schema-1 provider or traditional chat Canvas. Claude workflows remain unchanged.

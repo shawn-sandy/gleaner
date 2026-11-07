@@ -122,7 +122,7 @@ test('no host is told to show less than the full clip by default', () => {
     return text.slice(from, to);
   };
   const stepSeven = between(glean, '7. **Confirm and preview', '**Tagging the chat.**');
-  const delivery = between(glean, '**This conversation** (the default)', '**Google Drive**\n');
+  const delivery = between(glean, '**This conversation** (only when resolved to chat; the default on Claude hosts)', '**Google Drive**\n');
   const presentation = between(contract, '## Present after the save result', '## Optional executable renderer');
   assert.match(stepSeven, /full clip inline, on every host/);
   assert.match(stepSeven, /short preview/);
@@ -557,7 +557,7 @@ test('kept lookups and declines stay scoped so reuse never saves to the wrong pl
   const glean = read('plugins/gleaner/skills/glean/SKILL.md');
   const contract = read('plugins/gleaner/skills/preferences/references/contract.md');
   const prompts = glean.slice(glean.indexOf('### Fewer permission prompts'), glean.indexOf('### Collecting parts'));
-  const stepSix = glean.slice(glean.indexOf('6. **Save it**'), glean.indexOf('**This conversation** (the default)'));
+  const stepSix = glean.slice(glean.indexOf('6. **Save it**'), glean.indexOf('**This conversation** (only when resolved to chat; the default on Claude hosts)'));
   const drive = glean.slice(glean.indexOf('**Google Drive**\n'), glean.indexOf('**Cowork project**\n'));
   const notion = glean.slice(glean.indexOf('**Notion**\n'), glean.indexOf('**Artifact**\n'));
   const updateFails = glean.slice(glean.indexOf('**If the update fails,**'), glean.indexOf('**Fallback:**'));

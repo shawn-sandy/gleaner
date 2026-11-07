@@ -2,7 +2,7 @@
   "base_commit": "060603a79a6aa23e939716daae7ff2953e483ab8",
   "sha256": {
     "plugins/gleaner/skills/glean/scripts/bookmark.mjs": "f9d66ad9cc4ddf17dbde33e37485803be0871073ee719b07a10f6bbad655fd90",
-    "plugins/gleaner/skills/preferences/references/contract.md": "d92f62e8a03b6d29124dfbb0cf6ff2fab0839d36fa04e50a16647ac3df3bcd44",
+    "plugins/gleaner/skills/preferences/references/contract.md": "ab4ece40558e927e5d839ea59174bf4cce5e4dbef3788f0fa98ff1a956ae1da3",
     "plugins/gleaner/skills/preferences/references/examples/user.yaml": "44830e2a2feda5896bed67407a1744d0b52e950d601b989bf4d5c1587371d6a3",
     "plugins/gleaner/skills/preferences/references/examples/project.yaml": "c59305527ed3bf13948e1e3ae35eaa8f3271d9897e056b5e7f6a2cd47cd4e51f",
     "package.json": "c283cef12f9d9ff026b70a832939d601fb5eb287871db566051cd835c5448749",
@@ -24,9 +24,9 @@
     },
     {
       "path": "plugins/gleaner/skills/glean/SKILL.md",
-      "start": "   **This conversation** (the default)\n",
+      "start": "   **This conversation** (only when resolved to chat; the default on Claude hosts)\n",
       "end": "   **Google Drive**\n",
-      "sha256": "bf36d327d2126e7238b96924120f9a45ec843ad03e4ede1c99c5fd2218009f5c"
+      "sha256": "696229cf5e95896b8407e766074b3a6fbcd406d8d7c62cce5ff1bfc7783f838a"
     },
     {
       "path": "plugins/gleaner/skills/youtube/SKILL.md",

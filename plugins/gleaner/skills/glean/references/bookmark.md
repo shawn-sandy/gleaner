@@ -47,7 +47,7 @@ Record a save receipt from tool evidence: `status` is `saved`, `chat`, `failed`,
 
 ## Present after the save result
 
-**ChatGPT Page exception:** Only for an explicitly selected or retained ChatGPT Page clip, follow [ChatGPT editable Pages](chatgpt-pages.md). After readback verifies a Page save/update, use its short confirmation and canonical link instead of the full-clip requirement below, including for YouTube and follow-ups. An explicit full-clip request or presentation recovery still shows current Page content. An uncertain or failed Page write never enables this exception and never silently redirects to another destination. The optional renderer below remains unchanged; do not use its default full preview as a Page save operation. Claude and non-Page delivery always keep the rules below.
+**ChatGPT Page delivery:** For a resolved built-in, explicitly selected, or retained ChatGPT Page clip, follow [ChatGPT editable Pages](chatgpt-pages.md). After readback verifies a Page save/update, preserve full in-chat output and add a short confirmation with the verified canonical link. Honor explicit short-response or Page-only requests. Report uncertain or failed persistence separately while retaining available in-chat content. The optional renderer does not create or verify Pages. Claude and non-Page delivery keep the rules below.
 
 Always show the full clip in the active conversation after a successful save or update, on every host and for every destination, including saves triggered by existing aliases, YouTube, parts, answers, and follow-ups. It is separate from an attached file, and neither an attachment, a saved link, nor a summary replaces it.
 

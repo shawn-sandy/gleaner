@@ -10,7 +10,7 @@ Read one saved Gleaner clip, suggest three follow-ups the user can start right a
 
 Clips, their destinations, and the clip format come from Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it when you need to find, read, or save a clip.
 
-**ChatGPT Page clips only:** For an explicitly named or retained Page clip, read [ChatGPT editable Pages](../glean/references/chatgpt-pages.md) before finding or saving it. Read current Page content and headers, preserve manual edits, and use guarded section edits rather than whole-document replacement. Follow this skill’s earlier-session updated-copy policy. A verified Page update returns the three choices and its canonical link without repeating the full clip unless requested. This exception does not apply to Claude or other destinations.
+**ChatGPT Page clips only:** For an explicitly named or retained Page clip, including a clip saved through the built-in default, read [ChatGPT editable Pages](../glean/references/chatgpt-pages.md) before finding or saving it. Read current Page content and headers, preserve manual edits, and use guarded section edits. Follow this skill’s earlier-session updated-copy policy. Preserve the current in-chat response and add the verified canonical Page link; honor explicit short-response or Page-only requests. Report failures without suppressing available in-chat content. Claude and other destinations retain existing behavior.
 
 ## Find the clip
 

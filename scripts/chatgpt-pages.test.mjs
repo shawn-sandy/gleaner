@@ -23,9 +23,9 @@ test('all skill entry points and shared presentation expose the scoped Page adap
   for (const path of ['glean/SKILL.md', 'youtube/SKILL.md', 'follow-up/SKILL.md', 'preferences/SKILL.md', 'glean/references/bookmark.md']) {
     assert.match(read(`plugins/gleaner/skills/${path}`), /chatgpt-pages\.md/);
   }
-  assert.match(glean, /host-gated storage, failure recovery, and verified-Page short-confirmation rules take precedence/);
+  assert.match(glean, /host-gated storage and failure recovery take precedence/);
   assert.match(read('plugins/gleaner/skills/glean/references/bookmark.md'), /After readback verifies a Page save\/update/);
-  assert.match(adapter, /explicit full-clip|show the full clip here/);
+  assert.match(adapter, /show the full clip here/);
   assert.match(adapter, /An uncertain or failed|failed.*Page|failed.*write/i);
 });
 
@@ -47,7 +47,7 @@ test('Page capabilities, exports, and formats cannot silently change preferences
   assert.match(adapter, /new editable clip requires create, read, and edit/);
   assert.match(adapter, /Wait for that choice rather than silently changing destination/);
   assert.match(adapter, /raw-Markdown\/HTML-only request needs a choice/);
-  assert.match(adapter, /Persistent Page defaults and Page clip lists are not supported/);
+  assert.match(adapter, /built-in default, not a storable provider/);
   assert.match(adapter, /Read the current Page, including manual edits/);
   assert.match(adapter, /older export is not automatically synchronized/);
   assert.match(adapter, /Do not automatically generate HTML companions/);
@@ -61,7 +61,7 @@ test('Page destination descriptions stay synchronized without new manifest permi
   const frontmatter = parse(glean.split('---')[1]);
   for (const description of [marketplace.plugins[0].description, plugin.description, frontmatter.description, read('README.md').split('\n\n')[2]]) {
     assert.match(description, /editable Pages?|editable Page/);
-    assert.match(description, /explicit request/);
+    assert.match(description, /no destination or raw-file request wins/);
     assert.match(description, /Page tools are available/);
   }
   assert.equal(marketplace.version, undefined);
@@ -120,4 +120,103 @@ test('Android acceptance verifies desktop edits through mobile reading without r
     assert.match(rows[0], /no Android editing required/);
     assert.doesNotMatch(rows[0], /reopen and request an edit/);
   }
+});
+
+
+test('built-in routing preserves destination and format precedence without changing other hosts', () => {
+  for (const text of [adapter, read('plugins/gleaner/skills/preferences/references/contract.md')]) {
+    assert.match(text, /built-in Page default/);
+    assert.match(text, /raw Markdown/);
+    assert.match(text, /session.*project.*user/);
+  }
+  assert.match(adapter, /explicit destination flag, explicit destination wording, identified retained clip destination and format, session destination, project destination, user destination/);
+  assert.match(adapter, /missing required tools permit automatic Markdown chat\/file fallback only for the built-in default/);
+  assert.match(adapter, /Access denial or confirmed write rejection.*never silent fallback/);
+  assert.match(adapter, /preserve the existing full in-chat clip output/);
+  assert.match(adapter, /Page-only delivery/);
+  assert.match(adapter, /without suppressing available in-chat content/);
+  assert.match(adapter, /find explicitly scoped to Pages or using the resolved built-in Page default/);
+  assert.doesNotMatch(glean, /default on every surface|Otherwise the default is This conversation/);
+  for (const path of ['youtube/SKILL.md', 'follow-up/SKILL.md', 'glean/references/bookmark.md']) {
+    const text = read(`plugins/gleaner/skills/${path}`);
+    assert.doesNotMatch(text, /short confirmations instead of full|without repeating the full clip unless requested|short confirmation and canonical link instead/);
+  }
+});
+
+
+test('save and find sections agree with host defaults and README destinations', () => {
+  const storage = glean.slice(glean.indexOf('   **ChatGPT Page delivery:**'), glean.indexOf('   **Google Drive**'));
+  assert.match(storage, /This conversation.*only when resolved to chat; the default on Claude hosts/);
+  assert.doesNotMatch(storage, /This conversation.*\(the default\)/);
+  const find = glean.slice(glean.indexOf('## Clip index (on demand)'));
+  assert.match(find, /Search the resolved host destination/);
+  assert.match(find, /In ChatGPT, when the built-in Page default applies, search Pages/);
+  assert.match(find, /Explicit non-Page scopes never run Page search/);
+  assert.match(find, /unchanged Claude default/);
+  assert.match(find, /existing unscoped conversation-tag search/);
+  assert.doesNotMatch(find, /With none set, the default is This conversation/);
+  const table = read('README.md').split('### Choosing where clips go')[1].split('Folders are created')[0];
+  assert.match(table, /Editable Page.*ChatGPT default.*raw-file request wins/);
+  assert.match(table, /This conversation.*Claude default/);
+  assert.doesNotMatch(table, /Default everywhere/);
+});
+
+
+test('quick starts and acceptance checks distinguish Page defaults from chat fallback', () => {
+  for (const path of ['README.md', 'plugins/gleaner/skills/README.md']) {
+    const text = read(path);
+    assert.doesNotMatch(text, /its default, the chat|ChatGPT gives you the clip as a Markdown file in the conversation/);
+    assert.match(text, /Missing.*Page tools before a write/);
+  }
+  const checks = read('docs/chatgpt-pages-testing.md');
+  assert.match(checks, /Missing tools, built-in default.*Automatic Markdown chat\/file delivery/);
+  assert.match(checks, /Missing tools, explicit or retained Page.*ask for an alternative/);
+  const install = read('docs/chatgpt-marketplace.md');
+  assert.match(install, /Page tools available, and no raw-file request.*one private editable Page/);
+  assert.match(install, /winning explicit or saved raw Markdown request/);
+  assert.doesNotMatch(install, /With Drive connected but no preferences or destination request, a save stays in the chat/);
+});
+
+
+test('README unreachable-destination guidance preserves Page recovery semantics', () => {
+  const readme = read('README.md');
+  assert.doesNotMatch(readme, /If a destination can't be reached, Gleaner gives you the clip as a file/);
+  assert.match(readme, /For destinations using the generic fallback/);
+  assert.match(readme, /after a refusal or confirmed rejection, report the failure and ask for an alternative/);
+  assert.match(readme, /after an uncertain write or failed readback, retain the Page identity and reconcile the same operation/);
+  assert.match(readme, /Do not claim that no Page was saved while its write outcome is uncertain/);
+});
+
+
+test('bundled storage disclosures and requirements identify the ChatGPT Page default', () => {
+  for (const path of ['plugins/gleaner/README.md', 'docs/requirements.md', 'docs/bookmark-previews.md']) {
+    const text = read(path);
+    assert.match(text, /private editable Page/);
+    assert.match(text, /raw-file request/);
+    assert.match(text, /missing required Page tools before any write/i);
+    assert.match(text, /explicit or retained Pages require an alternative choice/);
+    assert.doesNotMatch(text, /Writes clips\*\* only where you choose|Sends\*\* clip content only to the destinations you choose|Clips come back in the conversation by default|default destination remains the conversation/);
+  }
+});
+
+
+test('overview and preference scenarios do not promise default Markdown files', () => {
+  const overview = read('README.md').split('## Skills')[0];
+  assert.doesNotMatch(overview, /hands it to you as a Markdown file in ChatGPT|Gives you each clip as a Markdown file in ChatGPT/);
+  assert.match(overview, /private editable Page/);
+  const checks = read('docs/preferences-testing.md');
+  assert.match(checks, /ChatGPT raw-file exception/);
+  assert.match(checks, /ChatGPT missing Page tools/);
+  assert.match(checks, /Host-specific chat delivery.*explicitly select `--to chat`/);
+  assert.match(checks, /Chat-only delivery without attachments.*Explicitly select `--to chat`/);
+  assert.doesNotMatch(checks, /a normal save still uses the conversation/);
+});
+
+
+test('YouTube completion delegates delivery instead of selecting a chat-file default', () => {
+  const intro = read('plugins/gleaner/skills/youtube/SKILL.md').split('## Get the video')[0];
+  assert.match(intro, /Finish with glean steps 6 and 7 through the resolved delivery route/);
+  assert.match(intro, /Only when the resolved destination is This conversation, use host-specific chat-file delivery/);
+  assert.match(intro, /A resolved Page uses native Page delivery.*do not generate an unrequested file or export/);
+  assert.doesNotMatch(intro, /including host-specific file delivery \(Markdown in ChatGPT/);
 });
