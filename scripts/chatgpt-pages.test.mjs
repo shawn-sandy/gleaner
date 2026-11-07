@@ -92,6 +92,7 @@ test('explicit older-Page follow-ups and Page-scoped finds can enter the ChatGPT
     assert.match(text, /follow-up explicitly identif/);
     assert.match(text, /earlier session|older clip/);
     assert.match(text, /find (?:is )?explicitly scoped to Pages/);
+    assert.match(text, /read-only presentation or export request/);
     assert.match(text, /ChatGPT/);
     assert.match(text, /Claude/);
   }
