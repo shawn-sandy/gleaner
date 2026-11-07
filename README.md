@@ -2,7 +2,7 @@
 
 **Gather the best of what you read into tagged, searchable clips.**
 
-Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its skills also work from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and hands it to you as a Markdown file in ChatGPT or an HTML file in Claude, or saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved there and it finds it. Shared local-first preferences manage save destinations and formats with optional Google Drive sync.
+Gleaner is a Claude plugin for the Chrome side panel and the Claude Code desktop browser, and its skills also work from ChatGPT's connected Chrome tabs and Work browser. Ask it in plain language to keep a page or a YouTube video, or just the parts that matter, and it writes a short, structured summary, tags it, files it by category, and hands it to you as a Markdown file in ChatGPT or an HTML file in Claude, or saves it to Google Drive, Notion, a Cowork project, your Claude Code project, or a private claude.ai artifact. Later, ask what you saved there and it finds it. Shared local-first preferences manage save destinations and formats with optional Google Drive sync. ChatGPT can also save an editable Page on explicit request when Page tools are available; Claude behavior is unchanged.
 
 ```text
 You:     grab the part about animation lengths, for the motion post
@@ -199,6 +199,9 @@ For a summary, ask for the summary explicitly, as in the example above. This cre
 | Save a discussion to Drive | Save our discussion about [topic] as a Google Doc in Drive. |
 | Store the clip just shown | Save that clip to Drive. |
 | Request Markdown | Save this as Markdown and show the full clip here. |
+| Save an editable ChatGPT Page | Save this clip as an editable ChatGPT Page, or save [URL] --to page. |
+| Update a Page clip | Add the tools list to the Page clip we saved in this conversation. |
+| Export a Page clip | Export the current Page clip as Markdown, including my edits. |
 | Add to a clip | Add your explanation about [topic] to the clip we saved in this conversation. |
 | Find clips | Show my saved clips about [topic]. |
 | Maintain the ChatGPT index | Refresh my clip index. |
@@ -816,6 +819,9 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+- ChatGPT: optionally save clips as editable Pages with `--to page`, preserve manual edits during same-session updates, and return short confirmations after verified Page saves. Requires available Page tools; persistent defaults and traditional chat Canvas are not supported. Claude Code behavior, HTML rendering, and shared preference schema remain unchanged.
 
 **2.15.4** (2026-11-03)
 
