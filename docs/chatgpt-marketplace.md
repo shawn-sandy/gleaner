@@ -53,7 +53,9 @@ Every successful save or update displays the full clip directly in the ChatGPT c
 - [ ] Accessible Chrome tab clipping works where the connector exposes tabs
 - [ ] Work browser clipping works in Work mode
 - [ ] With both Work browser and connected tabs available, a named browser/tab wins; otherwise the surface identifying the requested page wins, with Work preferred only when both identify it. An ambiguous page prompts for a choice, and later highlight/page-facts reads use the selected page.
-- [ ] With no preferences set, `save this page` displays the full clip inline and returns an attached `.md` file when supported (with the format unset, `auto`, or `markdown`); without attachments, it delivers the full clip inline once, outside a surrounding code block, and accurately reports chat-only delivery
+- [ ] With no preferences set, Page tools available, and no raw-file request, `save this page` creates one private editable Page and displays the full clip inline with its verified Page link (format unset or `auto`)
+- [ ] A winning explicit or saved raw Markdown request when only the built-in default would apply uses chat/file delivery: full inline clip and a `.md` attachment when supported; without attachments, deliver the full inline clip once and report chat-only delivery
+- [ ] With required Page tools missing before any write, the built-in default falls back to Markdown chat/file delivery and explains that Pages are unavailable and what was delivered; explicit or retained Pages require an alternative choice
 - [ ] On ChatGPT mobile, the entire clip is readable without tapping a file; a verified Markdown attachment appears separately as `Download Markdown (.md)` with no promise that it opens a preview pane
 - [ ] On ChatGPT mobile, count the approval prompts across two Drive saves in one conversation: the second save repeats no preference or folder lookup, and a declined prompt is not shown again
 - [ ] Saves and updates, including YouTube and follow-ups, show the full clip even for external destinations, preserving notes, source limitations, timestamp links, actual code fences, and the final copyable prompt
@@ -62,7 +64,7 @@ Every successful save or update displays the full clip directly in the ChatGPT c
 - [ ] A native preview failure falls back to the full inline clip without retrying the save
 - [ ] New saves do not automatically generate HTML companions; an explicit HTML download works only where supported and never changes the configured primary destination
 - [ ] Google Drive creates a clip in `Browser Research/<Category>`
-- [ ] With Drive connected but no preferences or destination request, a save stays in the chat. An explicit Drive request uses `Browser Research/<Category>`; a configured folder ID or explicit folder name takes precedence, without changing persistent defaults.
+- [ ] With Drive connected, Page tools available, and no preferences, destination request, or raw-file request, a save creates a private editable Page with full inline content and its verified link. An explicit Drive request uses `Browser Research/<Category>`; a configured folder ID or explicit folder name takes precedence, without changing persistent defaults.
 - [ ] A video saves from its description with a **Channel** line, and one with no description asks for an optional short one
 - [ ] Available browser capabilities are discovered before retrieval; a Work browser opens a supplied video URL even with no video tab open, while connected tabs read only matching existing tabs
 - [ ] After a throttled fetch, an eligible, untried browser reads the description or transcript and the clip saves normally; no premature blocked-content question appears

@@ -25,7 +25,8 @@ The Page tests are imported by the existing bookmark test suite. The protected-f
 | Destination precedence | Say “as a Page --to chat.” | Chat delivery; no Page write. |
 | Unrelated save | Save another article without selecting Pages. | Resolve normal host defaults independently; retained explicit destinations do not become sticky. |
 | Format | Explicitly request a Page and raw Markdown only. | Ask which delivery or Page plus export; no silent conversion. |
-| Missing tools | Use a session without create/read/edit support. | No false save; choice of alternative, no silent fallback. |
+| Missing tools, built-in default | Make an unconfigured ChatGPT save without create/read/edit support before any write. | Automatic Markdown chat/file delivery with a truthful explanation; no Page save claim. |
+| Missing tools, explicit or retained Page | Explicitly select a Page or update a retained Page without required tools before any write. | Explain the limitation and ask for an alternative; no silent fallback. |
 | Access failure | Use an authorized controlled read-only/deleted test Page. | Original retained; no automatic replacement or permission change. |
 | Stale hash | Change the target after read, before write. | Conflict handled by rereading; intervening edit preserved. |
 | Uncertain create | Exercise an authorized failure or fixture. | Same creation key and arguments; no second Page. |

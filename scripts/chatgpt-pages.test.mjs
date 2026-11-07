@@ -160,3 +160,19 @@ test('save and find sections agree with host defaults and README destinations', 
   assert.match(table, /This conversation.*Claude default/);
   assert.doesNotMatch(table, /Default everywhere/);
 });
+
+
+test('quick starts and acceptance checks distinguish Page defaults from chat fallback', () => {
+  for (const path of ['README.md', 'plugins/gleaner/skills/README.md']) {
+    const text = read(path);
+    assert.doesNotMatch(text, /its default, the chat|ChatGPT gives you the clip as a Markdown file in the conversation/);
+    assert.match(text, /Missing.*Page tools before a write/);
+  }
+  const checks = read('docs/chatgpt-pages-testing.md');
+  assert.match(checks, /Missing tools, built-in default.*Automatic Markdown chat\/file delivery/);
+  assert.match(checks, /Missing tools, explicit or retained Page.*ask for an alternative/);
+  const install = read('docs/chatgpt-marketplace.md');
+  assert.match(install, /Page tools available, and no raw-file request.*one private editable Page/);
+  assert.match(install, /winning explicit or saved raw Markdown request/);
+  assert.doesNotMatch(install, /With Drive connected but no preferences or destination request, a save stays in the chat/);
+});
