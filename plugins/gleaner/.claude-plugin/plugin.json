@@ -1,7 +1,7 @@
 {
   "name": "gleaner",
   "displayName": "Gleaner",
-  "version": "2.15.4",
+  "version": "2.15.5",
   "description": "Save web pages, passages, answers, and YouTube videos as tagged clips. Get Markdown in ChatGPT or HTML in Claude; save to Drive, Notion, Cowork, Claude Code, or private claude.ai artifacts. ChatGPT supports editable Pages on explicit request when Page tools are available. Shared local-first preferences and optional Drive sync. Reads the Chrome side panel, Claude Code desktop browser, and ChatGPT connected Chrome tabs and Work browser.",
   "author": {
     "name": "Shawn Sandy",

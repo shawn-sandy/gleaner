@@ -820,7 +820,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.5** (2026-11-07)
 - ChatGPT: optionally save clips as editable Pages with `--to page`, preserve manual edits during same-session updates, and return short confirmations after verified Page saves. Requires available Page tools; persistent defaults and traditional chat Canvas are not supported. Claude Code behavior, HTML rendering, and shared preference schema remain unchanged.
 
 **2.15.4** (2026-11-03)
