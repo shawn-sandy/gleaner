@@ -186,3 +186,15 @@ test('README unreachable-destination guidance preserves Page recovery semantics'
   assert.match(readme, /after an uncertain write or failed readback, retain the Page identity and reconcile the same operation/);
   assert.match(readme, /Do not claim that no Page was saved while its write outcome is uncertain/);
 });
+
+
+test('bundled storage disclosures and requirements identify the ChatGPT Page default', () => {
+  for (const path of ['plugins/gleaner/README.md', 'docs/requirements.md', 'docs/bookmark-previews.md']) {
+    const text = read(path);
+    assert.match(text, /private editable Page/);
+    assert.match(text, /raw-file request/);
+    assert.match(text, /missing required Page tools before any write/i);
+    assert.match(text, /explicit or retained Pages require an alternative choice/);
+    assert.doesNotMatch(text, /Writes clips\*\* only where you choose|Sends\*\* clip content only to the destinations you choose|Clips come back in the conversation by default|default destination remains the conversation/);
+  }
+});

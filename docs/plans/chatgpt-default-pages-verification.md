@@ -29,3 +29,7 @@ CodeRabbit’s missing-tools acceptance finding and outside-diff quick-start/set
 ## Page recovery documentation correction
 
 Validated CodeRabbit’s outside-diff README finding on `4f7890f`: the unreachable-destination paragraph still promised generic fallback for every destination. Qualified that promise and documented refusal, confirmed rejection, uncertain-write/readback reconciliation, and default-only missing-tool recovery separately. Added a focused regression check; no runtime instructions or protected fixtures changed. Local validation, Markdown lint, 140 tests, and whitespace checks passed. Live/device gates remain pending.
+
+## Bundled storage disclosures
+
+Validated the Codex finding against `3141bf0`: the bundled plugin README still promised chat-only/selected-only storage, and requirements and bookmark-preview guidance still named chat as the universal default. Updated those three guides to disclose built-in private Page persistence, destination/raw-file precedence, default-only missing-tool fallback, and refusal/uncertain-write recovery while preserving Claude delivery. Added a focused disclosure regression check. Local validation, Markdown lint, 141 tests, and whitespace checks passed; no runtime instructions or protected fixtures changed, and live/device gates remain pending.
