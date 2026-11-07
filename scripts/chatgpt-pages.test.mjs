@@ -142,3 +142,21 @@ test('built-in routing preserves destination and format precedence without chang
     assert.doesNotMatch(text, /short confirmations instead of full|without repeating the full clip unless requested|short confirmation and canonical link instead/);
   }
 });
+
+
+test('save and find sections agree with host defaults and README destinations', () => {
+  const storage = glean.slice(glean.indexOf('   **ChatGPT Page delivery:**'), glean.indexOf('   **Google Drive**'));
+  assert.match(storage, /This conversation.*only when resolved to chat; the default on Claude hosts/);
+  assert.doesNotMatch(storage, /This conversation.*\(the default\)/);
+  const find = glean.slice(glean.indexOf('## Clip index (on demand)'));
+  assert.match(find, /Search the resolved host destination/);
+  assert.match(find, /In ChatGPT, when the built-in Page default applies, search Pages/);
+  assert.match(find, /Explicit non-Page scopes never run Page search/);
+  assert.match(find, /unchanged Claude default/);
+  assert.match(find, /existing unscoped conversation-tag search/);
+  assert.doesNotMatch(find, /With none set, the default is This conversation/);
+  const table = read('README.md').split('### Choosing where clips go')[1].split('Folders are created')[0];
+  assert.match(table, /Editable Page.*ChatGPT default.*raw-file request wins/);
+  assert.match(table, /This conversation.*Claude default/);
+  assert.doesNotMatch(table, /Default everywhere/);
+});

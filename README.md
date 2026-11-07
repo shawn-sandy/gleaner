@@ -383,7 +383,8 @@ Notes are searchable and show up in your clip index. If you don't give one, the 
 
 | Destination | How to choose it | Needs |
 | --- | --- | --- |
-| **This conversation** → `.md` in ChatGPT, `.html` in Claude (`.md` in either with the `markdown` format) | Default everywhere; "just give me the file", or `--to chat` | Nothing |
+| **Editable Page** → native editable content plus the full in-chat clip and verified Page link | ChatGPT default when no explicit, retained, session, project, or user destination and no raw-file request wins; or `--to page` | ChatGPT Page create/read/edit tools and access; missing tools before a write allow explained Markdown fallback only for the built-in default |
+| **This conversation** → `.md` in ChatGPT, `.html` in Claude (`.md` in either with the `markdown` format) | Claude default; "just give me the file", `--to chat`, or a winning raw-file request when only the ChatGPT built-in default would apply | Nothing |
 | **Google Drive** → `Browser Research/<category>/` | "save to Drive", or `--to drive` | Google Drive connector |
 | Another Drive folder | "save to my Research folder" | Google Drive connector |
 | **Cowork project** → `browser-research/<category>/` | "save to my Serve513 project", or "this project" inside Cowork | Claude desktop app open and connected |

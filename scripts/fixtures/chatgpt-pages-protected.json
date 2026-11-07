@@ -24,9 +24,9 @@
     },
     {
       "path": "plugins/gleaner/skills/glean/SKILL.md",
-      "start": "   **This conversation** (the default)\n",
+      "start": "   **This conversation** (only when resolved to chat; the default on Claude hosts)\n",
       "end": "   **Google Drive**\n",
-      "sha256": "bf36d327d2126e7238b96924120f9a45ec843ad03e4ede1c99c5fd2218009f5c"
+      "sha256": "696229cf5e95896b8407e766074b3a6fbcd406d8d7c62cce5ff1bfc7783f838a"
     },
     {
       "path": "plugins/gleaner/skills/youtube/SKILL.md",
