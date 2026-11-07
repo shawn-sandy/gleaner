@@ -16,6 +16,8 @@ After writing the video clip, fill glean's [shared bookmark model](../glean/refe
 
 **ChatGPT video edits:** after each addition or correction to a saved video clip, display the complete updated clip in the final reply under glean step 7, subject to the bookmark contract’s per-request short-preview, download-only, and no-preview exceptions. When attachments are unavailable and the conversation is the destination, show the full clip as the delivery itself. Reuse the current source material; a change summary and Markdown download alone do not complete the update. For a preview complaint, use the bookmark contract’s presentation recovery without saving again.
 
+**ChatGPT Page delivery only:** When the destination is explicitly an editable ChatGPT Page or an update targets a retained Page clip, use [ChatGPT editable Pages](../glean/references/chatgpt-pages.md) for saving, guarded updates, and verified-Page short confirmations instead of full inline video delivery. The source, transcript, blocked-content, and chapter rules below remain unchanged. Claude and ordinary ChatGPT saves do not use this exception.
+
 ## Get the video
 
 1. **Find the video ID** in the URL the user gave or the tab they're on: `youtube.com/watch?v=<id>`, `youtu.be/<id>`, `youtube.com/shorts/<id>`, `youtube.com/live/<id>`, or `m.youtube.com`. The clip's **Source** is always `https://www.youtube.com/watch?v=<id>`, with `t=`, `list=`, `si=`, and tracking parameters dropped, so the duplicate check matches the same video saved from any link.

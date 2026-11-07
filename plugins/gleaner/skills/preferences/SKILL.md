@@ -8,6 +8,8 @@ argument-hint: '[setup | show | update | reset | sync]'
 
 Read and follow the [shared preferences contract](references/contract.md) directly for every invocation. It defines the schema, resolution, verification, storage, and synchronization procedures; do not maintain a second copy of those rules here. Use only tools available in this session. This skill is Markdown instructions, not a background service.
 
+**ChatGPT Pages only:** Editable Page saves are temporary explicit requests through [ChatGPT editable Pages](../glean/references/chatgpt-pages.md). “Always save as a Page” is not supported as a persistent default: explain that limit, leave preferences unchanged, and offer a temporary save. Never write a Page provider or Page clip-list alias into schema 1. Claude preference behavior and the shared contract remain unchanged.
+
 ## Operations
 
 | Operation | Behavior |

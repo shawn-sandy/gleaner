@@ -1,0 +1,44 @@
+{
+  "base_commit": "060603a79a6aa23e939716daae7ff2953e483ab8",
+  "sha256": {
+    "plugins/gleaner/skills/glean/scripts/bookmark.mjs": "f9d66ad9cc4ddf17dbde33e37485803be0871073ee719b07a10f6bbad655fd90",
+    "plugins/gleaner/skills/preferences/references/contract.md": "d92f62e8a03b6d29124dfbb0cf6ff2fab0839d36fa04e50a16647ac3df3bcd44",
+    "plugins/gleaner/skills/preferences/references/examples/user.yaml": "44830e2a2feda5896bed67407a1744d0b52e950d601b989bf4d5c1587371d6a3",
+    "plugins/gleaner/skills/preferences/references/examples/project.yaml": "c59305527ed3bf13948e1e3ae35eaa8f3271d9897e056b5e7f6a2cd47cd4e51f",
+    "package.json": "c283cef12f9d9ff026b70a832939d601fb5eb287871db566051cd835c5448749",
+    "package-lock.json": "4d3643219ce6c71ddcb222c3c53e72c136cc2856546c8c6523b6e5901966833a",
+    ".claude/settings.json": "63bd4e4fec0f17ca51b10a00c4ed2724cb8e3c2b9a6887056b7a7664d61029f4",
+    "scripts/release.mjs": "934d17c8aa30b73c33c4d797fa1936750c2c9cc9d7fc0c3a476508cb118faf9c",
+    "scripts/auto-release.mjs": "ac7b562f2f4e2794760d37df6562df3f44cbe75d43ef9a84a142a673a9bd0b99",
+    ".github/workflows/validate.yml": "744c002c4c8afa324f99732c3be08ed3aeeb9b00c44e94dac001087615d30a97",
+    ".github/workflows/release.yml": "3c39d06f11802963eddc44c3cccb23a9883b64cabb4708f29307ec802e73c302",
+    ".github/workflows/auto-release.yml": "060c743cc06223af7b4967cc9257410d682a7cbaf8f06dc1e21619edbf06e7b6",
+    ".github/workflows/cut-release.yml": "fd14e5dc72551cf835fdd880e42ab090965dce8045c80f88ef8eb3fb9d0408a8"
+  },
+  "sections": [
+    {
+      "path": "plugins/gleaner/skills/glean/SKILL.md",
+      "start": "   **Artifact**\n",
+      "end": "   **Updating a clip saved this session**",
+      "sha256": "5b42ba37133a234e1c0a1490f6ddc27dee72d9d6c0eaceecf4217074f511c964"
+    },
+    {
+      "path": "plugins/gleaner/skills/glean/SKILL.md",
+      "start": "   **This conversation** (the default)\n",
+      "end": "   **Google Drive**\n",
+      "sha256": "bf36d327d2126e7238b96924120f9a45ec843ad03e4ede1c99c5fd2218009f5c"
+    },
+    {
+      "path": "plugins/gleaner/skills/youtube/SKILL.md",
+      "start": "## Get the video\n",
+      "end": "## Parts of a video\n",
+      "sha256": "c912425c488dfa3a6f9001144d9378ebe07458594abb515a9baa9564b19b2f72"
+    },
+    {
+      "path": "plugins/gleaner/skills/follow-up/SKILL.md",
+      "start": "## Review it\n",
+      "end": "## When the user picks one\n",
+      "sha256": "324d477ed97cd267ef2815f3b4751d0b326b2b9a16b55882c8230ae5b8d2a505"
+    }
+  ]
+}

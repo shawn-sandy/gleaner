@@ -646,3 +646,6 @@ test('YouTube transcript script waits for an ad and never opens the panel during
   assert.equal(longAd.ad, true);
   assert.equal(longAd.opened, false);
 });
+
+// ChatGPT-only instruction boundaries and protected Claude compatibility files.
+await import('./chatgpt-pages.test.mjs');

@@ -182,3 +182,7 @@ Gleaner reads the clip's link, TL;DR, note, content, and the links inside it, th
 All existing save commands show the full clip in the conversation after saving, wherever it was stored, including `@gleaner save <URL>` in ChatGPT and `/gleaner:glean <URL>` in Claude Code. Both use one bookmark model for metadata, summary, HTML, and the conversation copy. The stored format and configured destination remain independent of presentation. Say "short preview" for a compact layout, or "no preview" for just the outcome, for one request without changing storage preferences. With nothing saved or attached, the clip is shown anyway, since it's the only copy.
 
 See [the cross-platform examples](../../../docs/bookmark-previews.md) for the same bookmark in ChatGPT and Claude Code, HTML companion behavior, and offline versus live testing limits.
+
+## Editable Pages in ChatGPT
+
+With Page creation, read, and edit tools available, ask “save this clip as an editable ChatGPT Page” or use `--to page`. Later additions update the same Page and preserve manual edits. Verified Page saves return a short confirmation and Page link; ask “show the full clip here” to read it in chat or “export the current Page as Markdown” for a file. Persistent Page defaults and traditional chat Canvas are not supported. Existing Claude destinations and presentation do not change. See [Page workflow](glean/references/chatgpt-pages.md) and the [acceptance checklist](../../../docs/chatgpt-pages-testing.md).
