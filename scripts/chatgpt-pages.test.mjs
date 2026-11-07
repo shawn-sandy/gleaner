@@ -23,9 +23,9 @@ test('all skill entry points and shared presentation expose the scoped Page adap
   for (const path of ['glean/SKILL.md', 'youtube/SKILL.md', 'follow-up/SKILL.md', 'preferences/SKILL.md', 'glean/references/bookmark.md']) {
     assert.match(read(`plugins/gleaner/skills/${path}`), /chatgpt-pages\.md/);
   }
-  assert.match(glean, /host-gated storage, failure recovery, and verified-Page short-confirmation rules take precedence/);
+  assert.match(glean, /host-gated storage and failure recovery take precedence/);
   assert.match(read('plugins/gleaner/skills/glean/references/bookmark.md'), /After readback verifies a Page save\/update/);
-  assert.match(adapter, /explicit full-clip|show the full clip here/);
+  assert.match(adapter, /show the full clip here/);
   assert.match(adapter, /An uncertain or failed|failed.*Page|failed.*write/i);
 });
 
@@ -47,7 +47,7 @@ test('Page capabilities, exports, and formats cannot silently change preferences
   assert.match(adapter, /new editable clip requires create, read, and edit/);
   assert.match(adapter, /Wait for that choice rather than silently changing destination/);
   assert.match(adapter, /raw-Markdown\/HTML-only request needs a choice/);
-  assert.match(adapter, /Persistent Page defaults and Page clip lists are not supported/);
+  assert.match(adapter, /built-in default, not a storable provider/);
   assert.match(adapter, /Read the current Page, including manual edits/);
   assert.match(adapter, /older export is not automatically synchronized/);
   assert.match(adapter, /Do not automatically generate HTML companions/);
@@ -61,7 +61,7 @@ test('Page destination descriptions stay synchronized without new manifest permi
   const frontmatter = parse(glean.split('---')[1]);
   for (const description of [marketplace.plugins[0].description, plugin.description, frontmatter.description, read('README.md').split('\n\n')[2]]) {
     assert.match(description, /editable Pages?|editable Page/);
-    assert.match(description, /explicit request/);
+    assert.match(description, /no destination or raw-file request wins/);
     assert.match(description, /Page tools are available/);
   }
   assert.equal(marketplace.version, undefined);
@@ -119,5 +119,26 @@ test('Android acceptance verifies desktop edits through mobile reading without r
     assert.match(rows[0], /Edit the Page on web or desktop/);
     assert.match(rows[0], /no Android editing required/);
     assert.doesNotMatch(rows[0], /reopen and request an edit/);
+  }
+});
+
+
+test('built-in routing preserves destination and format precedence without changing other hosts', () => {
+  for (const text of [adapter, read('plugins/gleaner/skills/preferences/references/contract.md')]) {
+    assert.match(text, /built-in Page default/);
+    assert.match(text, /raw Markdown/);
+    assert.match(text, /session.*project.*user/);
+  }
+  assert.match(adapter, /explicit destination flag, explicit destination wording, identified retained clip destination and format, session destination, project destination, user destination/);
+  assert.match(adapter, /missing required tools permit automatic Markdown chat\/file fallback only for the built-in default/);
+  assert.match(adapter, /Access denial or confirmed write rejection.*never silent fallback/);
+  assert.match(adapter, /preserve the existing full in-chat clip output/);
+  assert.match(adapter, /Page-only delivery/);
+  assert.match(adapter, /without suppressing available in-chat content/);
+  assert.match(adapter, /find explicitly scoped to Pages or using the resolved built-in Page default/);
+  assert.doesNotMatch(glean, /default on every surface|Otherwise the default is This conversation/);
+  for (const path of ['youtube/SKILL.md', 'follow-up/SKILL.md', 'glean/references/bookmark.md']) {
+    const text = read(`plugins/gleaner/skills/${path}`);
+    assert.doesNotMatch(text, /short confirmations instead of full|without repeating the full clip unless requested|short confirmation and canonical link instead/);
   }
 });

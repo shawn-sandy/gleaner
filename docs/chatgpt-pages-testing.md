@@ -23,7 +23,7 @@ The Page tests are imported by the existing bookmark test suite. The protected-f
 | YouTube | Save a description-only video with chapter links as a Page. | Basis, limitations, channel, and timestamps remain intact. |
 | Follow-up | Request three follow-ups for the Page clip. | Same Page; three dated choices; earlier text preserved. |
 | Destination precedence | Say “as a Page --to chat.” | Chat delivery; no Page write. |
-| Unrelated save | Save another article without selecting Pages. | Existing default applies; retained Page does not redirect it. |
+| Unrelated save | Save another article without selecting Pages. | Resolve normal host defaults independently; retained explicit destinations do not become sticky. |
 | Format | Explicitly request a Page and raw Markdown only. | Ask which delivery or Page plus export; no silent conversion. |
 | Missing tools | Use a session without create/read/edit support. | No false save; choice of alternative, no silent fallback. |
 | Access failure | Use an authorized controlled read-only/deleted test Page. | Original retained; no automatic replacement or permission change. |
@@ -32,7 +32,7 @@ The Page tests are imported by the existing bookmark test suite. The protected-f
 | Uncertain update | Exercise an authorized failure or fixture. | Read and reconcile before retry; no repeated insertion. |
 | Duplicate | Locate an older Page clip by canonical Source. | Verified match and updated-copy policy; older Page unchanged. |
 | Ambiguity | Save two clips and make an ambiguous update. | Clarification before editing either. |
-| Preferences | Ask “always save as a Page.” | Explain temporary support; preference files unchanged. |
+| Preferences | Ask “always save as a Page.” | Explain built-in default and any winning saved destination; preference files unchanged. |
 | Android reading | Edit the Page on web or desktop, then open and reopen Page/link on an actual Android device. | Readability, access, links, and latest web/desktop edits verified; no Android editing required. |
 
 Do not trigger real failures by disrupting production systems or weakening security. Mark unavailable cases not tested. Static fixtures and controlled assistant-written notes do not establish actual human editing or Android rendering.
@@ -44,3 +44,25 @@ Capture baseline behavior before changing instructions and repeat with the branc
 Page-like tools visible to Claude must not activate the ChatGPT route. The existing meanings of `--to chat`, `--to drive`, `--to notion`, `--to local`, and `--to artifact` must remain intact. Traditional chat Canvas must not be claimed. Packaging validation is separate from these live checks.
 
 Block release on a changed Claude default or format, altered preference schema, lost manual edit, duplicate creation after retry, silent fallback, or an unsupported Canvas/Android claim. Merging plugin changes can auto-release: complete the gate before merge. Roll back the feature commits through normal repository review; keep created Pages and permissions intact.
+
+## Default Page acceptance gates
+
+All cases below are pending live verification with the installed branch. Record host, prompt, version, destination provenance, receipt, Page ID, and readback. Static instruction checks cannot establish these results.
+
+| Case | Required result |
+| --- | --- |
+| Unconfigured supplied-text save | Exactly one private Page; complete content read back; full inline clip plus verified Page link. |
+| Description-only YouTube | Same resolver; source limitations and timestamps preserved in both deliveries. |
+| Blocked source | No Page before sufficient source content or explicit link-only choice. |
+| Saved Drive/Notion or explicit destination | Existing destination wins; no Page write. |
+| Raw Markdown explicit or saved; HTML chat-file request | Chat/file delivery when only built-in default would apply. |
+| Explicit Page plus raw-file-only request | Ask before writing. |
+| Missing Page tools before write | Built-in default alone falls back to Markdown with truthful explanation. |
+| Refusal, uncertain create, failed readback | No silent fallback or duplicate; retain identity and reconcile pending writes. |
+| Follow-ups and manual edits | Same Page, preserved changes and current inline output. |
+| Short response or Page-only | Honor requested delivery. |
+| Page failure with available content | Show available in-chat content and report persistence failure separately. |
+| Unconfigured find | Search Pages with verified clip metadata, pagination and bounded-coverage disclosure. |
+| Invalid preferences or unavailable configured destination | Existing recovery; Page default does not take over. |
+
+Keep the implementation PR in draft until installed-plugin, critical live ChatGPT, actual Android reading, and live Claude compatibility evidence is complete. No merge or release is authorized by this checklist.

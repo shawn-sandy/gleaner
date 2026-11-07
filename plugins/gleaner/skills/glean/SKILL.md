@@ -1,6 +1,6 @@
 ---
 name: glean
-description: Gleaner's web clipper. Save pages, passages, answers, or YouTube videos as tagged clips in ChatGPT Markdown, Claude HTML, Drive, Notion, Cowork, Claude Code, or private claude.ai artifacts. ChatGPT supports editable Pages on explicit request when Page tools are available. Use for glean, glean it, saving, bookmarking, filing, or finding clips. Reads the Chrome side panel, Claude Code desktop browser, and ChatGPT connected Chrome tabs and Work browser.
+description: Gleaner's web clipper. Save pages, passages, answers, or YouTube videos as tagged clips in Drive, Notion, local files, or Claude HTML. ChatGPT defaults to editable Pages when Page tools are available and no destination or raw-file request wins, preserving in-chat output. Use for glean, glean it, saving, bookmarking, filing, or finding clips. Reads connected Chrome tabs, Work browser, and Claude browsers.
 argument-hint: '[--to chat | drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
@@ -10,7 +10,8 @@ Gather the best of what you read into tagged, searchable clips. Use shared local
 
 Save what the user is reading, or an answer you gave about it, as a summarized, tagged clip in one of six places:
 
-- **This conversation** (default on every surface): a Markdown (`.md`) file in ChatGPT or an HTML (`.html`) file in Claude. An explicit or saved `markdown` choice gives `.md` in either host. The clip stays in the chat, not in a stored file, but a host that can search earlier conversations can still find the tagged chat later (step 7, Tagging the chat), and a configured clip list gets its row (step 6, Clip list).
+- **Editable Page** (ChatGPT built-in default): when no explicit, retained, session, project, or user destination wins and no raw-file request wins, save the complete clip to a private editable Page and preserve the current in-chat clip with a verified Page link. See the ChatGPT Page route below.
+- **This conversation** (Claude default; explicit or raw-file ChatGPT delivery): a Markdown (`.md`) file in ChatGPT or an HTML (`.html`) file in Claude. An explicit or saved `markdown` choice gives `.md` in either host. The clip stays in the chat, not in a stored file, but a host that can search earlier conversations can still find the tagged chat later (step 7, Tagging the chat), and a configured clip list gets its row (step 6, Clip list).
 - **Google Drive:** uses the Google Drive connector.
 - **Cowork project:** a local folder on the user's computer. Requires the Claude desktop app to be open and connected.
 - **This project** (Claude Code): the folder the Claude Code session is working in.
@@ -21,7 +22,7 @@ This skill does not write to claude.ai Projects; those can only be read from Cow
 
 ## Shared bookmark workflow
 
-**ChatGPT Page route:** Only in ChatGPT, for an explicit editable Page destination (`--to page`), an update to a retained Page clip, a read-only presentation or export request for one (such as “show the full clip here”), a follow-up explicitly identifying a Page clip (including an older clip), or a find explicitly scoped to Pages, read [ChatGPT editable Pages](references/chatgpt-pages.md). Its host-gated storage, failure recovery, and verified-Page short-confirmation rules take precedence over the generic save/update/full-preview instructions below for that route only. Do not load or use this route on Claude, even if Page tools are visible. Ordinary saves keep all existing behavior.
+**ChatGPT Page route:** Only in ChatGPT, after shared preference resolution, use [ChatGPT editable Pages](references/chatgpt-pages.md) for a new save with the built-in Page default, an explicit editable Page destination (`--to page`), an update to a retained Page clip, a read-only presentation or export request for one, a follow-up explicitly identifying a Page clip (including an older clip), or a find explicitly scoped to Pages or using the effective Page default. Its host-gated storage and failure recovery take precedence over generic save/update fallback instructions. Preserve full in-chat output alongside the verified Page link. Do not load or use this route on Claude, even if Page tools are visible.
 
 **ChatGPT completion rule:** For every save and every later edit (including “add”, “expand”, “correct”, and “update”), include the complete current clip as readable Markdown in the final reply unless this request explicitly asks for short, download-only, or no preview; when the conversation is the only destination (no attachment is possible), the full clip is the delivery itself and those requests do not suppress it, as the bookmark contract says. A successful file write plus an “Updated” sentence and download link is unfinished delivery. Apply this rule again on each edit, even when an earlier reply showed the full clip.
 
@@ -292,8 +293,8 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - **Answer clip:** a **Save answer** with no parts collected is a part clip made of that answer, or of one part per question and answer for a back-and-forth (see Collecting parts).
 
 2. **Resolve preferences, then pick the destination.**
-   - **ChatGPT Page requests only:** use [ChatGPT editable Pages](references/chatgpt-pages.md) for destination/format resolution, duplicate checks, and retained Page identity after loading the shared contract. A native Page is not a raw Markdown file. All other hosts and requests follow the unchanged rules below.
-   - Read the shared preferences contract, load valid stores, run enabled sync when due, and follow its first-save setup rule when unconfigured (it skips the prompt while the default is This conversation). Resolve destination and format with their scopes before any duplicate check. Invalid configuration stays untouched; offer explicit session settings to continue.
+   - **ChatGPT defaults and Page requests:** after loading valid preferences and enabled sync, apply the destination resolution in [ChatGPT editable Pages](references/chatgpt-pages.md), including default-only raw-file handling. Other hosts retain the rules below. This also governs unconfigured finds; it never overrides a configured destination.
+   - Read the shared preferences contract, load valid stores, run enabled sync when due, and follow its first-save setup rule when unconfigured (it skips the prompt for the built-in Page or conversation default). Resolve destination and format with their scopes before any duplicate check. Invalid configuration stays untouched; offer explicit session settings to continue.
    - The following environment defaults apply only when no higher-precedence setting exists or setup is skipped. A configured destination uses its verified ID/path throughout this save, never a fresh lookup by label. Check format support before proceeding; `markdown` means raw Markdown, not Notion content or HTML.
    - Keep the resolved clip base path or remote ID for duplicate checks, recent-tag reads, category organization, and the final save. A temporary alternative requires the user's choice and a fresh duplicate check; never modify the permanent default because it is unreachable.
    - **Adding to a clip saved this session** (see Clips saved this session): after preference sync, retain that clip’s verified destination and format as the session override and skip the duplicate check below. Changed persistent defaults do not move an existing clip. An explicit different destination makes a new clip using the rules below; an incompatible format change requires a choice before updating.
@@ -302,7 +303,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
    - "Save it as an artifact", "make it an artifact", or "save to my artifacts" means the Artifact destination, the same as `--to artifact`.
    - "Just give me the file", "in the chat", or "don't save it anywhere" means This conversation, the same as `--to chat`. "Save it as a Google Doc" or "put it in Browser Research" means Drive. When Drive is selected without a configured folder ID or an explicit folder name, use `Browser Research` as its base folder, with the category subfolder from step 4. This folder default never selects Drive over the conversation or a saved destination preference.
    - If the user names Drive, a Drive folder, a Cowork project, or "this project" / "this repo" / "here", use that. "This project" only applies in Claude Code; in Cowork it means the current Cowork project.
-   - **Otherwise the default is This conversation** on every surface: the Chrome side panel, ChatGPT, Claude Code, and Cowork. With no saved preference, store the clip somewhere only when the user names a destination.
+   - **Otherwise use the host default:** ChatGPT uses the built-in Page route after raw-file exceptions; Claude, Claude Code, Cowork, and the Claude Chrome side panel keep This conversation. Connecting Drive alone never selects it.
    - **Check for an existing clip of this page** (page clips only; part clips skip this, since saving several parts of one page is expected):
      - **The URLs to match:** the page URL with tracking parameters such as `utm_*` stripped, plus the page facts' `canonical` when there is one. A clip whose Source is either one is a match.
      - This conversation: skip the check, since nothing is stored to search.
@@ -457,7 +458,7 @@ A page gets one clip per session. Once a clip of a page is saved, later saves an
 
    Apply the host-specific HTML delivery rules in [the bookmark contract](references/bookmark.md#store-with-the-existing-workflow), preserving this primary destination and format. Record verified save results before rendering the conversation preview.
 
-   **ChatGPT Page requests only:** create, read back, and update through [ChatGPT editable Pages](references/chatgpt-pages.md). Use its guarded edits instead of whole-document replacement and its explicit recovery choice instead of the generic automatic update-failure fallback. Return to step 7 for the scoped Page confirmation and existing chat tag/list maintenance.
+   **ChatGPT Page delivery:** create, read back, and update through [ChatGPT editable Pages](references/chatgpt-pages.md). Use its guarded edits instead of whole-document replacement and its explicit recovery choice instead of the generic automatic update-failure fallback. Return to step 7 for the scoped Page confirmation and existing chat tag/list maintenance.
 
    **This conversation** (the default)
    - The clip stays in this chat and there are no folders; the clip's **Category:** line does that job. A configured clip list still gets its row (Clip list, below). The save happens in this chat only: never publish the clip as an artifact or write it into the project for this destination.
