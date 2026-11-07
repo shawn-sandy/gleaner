@@ -33,7 +33,7 @@ The Page tests are imported by the existing bookmark test suite. The protected-f
 | Duplicate | Locate an older Page clip by canonical Source. | Verified match and updated-copy policy; older Page unchanged. |
 | Ambiguity | Save two clips and make an ambiguous update. | Clarification before editing either. |
 | Preferences | Ask “always save as a Page.” | Explain temporary support; preference files unchanged. |
-| Android | Open and reopen Page/link on an actual Android device. | Readability, access, links, and latest edits verified. |
+| Android reading | Edit the Page on web or desktop, then open and reopen Page/link on an actual Android device. | Readability, access, links, and latest web/desktop edits verified; no Android editing required. |
 
 Do not trigger real failures by disrupting production systems or weakening security. Mark unavailable cases not tested. Static fixtures and controlled assistant-written notes do not establish actual human editing or Android rendering.
 

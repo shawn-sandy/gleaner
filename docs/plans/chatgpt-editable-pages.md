@@ -126,7 +126,7 @@ Verify that all existing preference examples still validate without migration an
 | Lost access or deletion | Use a controlled test Page. | No automatic recreation, overwrite, or permission change. |
 | Multiple clips | Save two different sources and request an ambiguous update. | Gleaner asks which clip; no unintended edit. |
 | Earlier-session clip | Locate an existing older Page clip. | Existing updated-copy policy remains in force unless a separately approved policy change exists. |
-| Mobile | Open the link and preview in Android; reopen and request an edit. | Readability, links, access, and latest content verified on that device. |
+| Mobile reading | Edit the Page on web or desktop, then open and reopen its link and preview on Android. | Readability, links, access, and the latest web/desktop changes verified on Android; no Android editing required. |
 
 Use pasted source material for initial tests so browser and transcript failures do not obscure Page delivery results. Exercise actual URL retrieval separately. Mark unavailable negative scenarios as not tested; a mocked response is not a live service failure. Ask the maintainer to complete device-only or unavailable-account checks and record the evidence.
 

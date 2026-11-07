@@ -2,7 +2,7 @@
 
 ## Host boundary and routing
 
-Use this reference only when the active assistant host is ChatGPT and an explicit destination request selects an editable ChatGPT Page (`--to page`), or an update targets a Page clip retained in this conversation. An article called a page, a selected Page, or visible Page tools alone do not select this destination. Never use this route in Claude Code, Claude web, Cowork, or the Chrome side panel hosted by Claude, even when Page tools are visible. Those hosts keep the existing destinations, defaults, HTML, previews, and preference behavior.
+Use this reference only when the active assistant host is ChatGPT and an explicit destination request selects an editable ChatGPT Page (`--to page`), an update targets a Page clip retained in this conversation, a follow-up explicitly identifies a Page clip (including one from an earlier session), or a find is explicitly scoped to Pages. An article called a page, a selected Page, or visible Page tools alone do not select this destination. Never use this route in Claude Code, Claude web, Cowork, or the Chrome side panel hosted by Claude, even when Page tools are visible. Those hosts keep the existing destinations, defaults, HTML, previews, and preference behavior.
 
 This reference takes precedence over glean's generic save, update-failure, and full-preview instructions only for the selected ChatGPT Page route. It changes storage and presentation, never source extraction or the evidence needed for a video summary. Continue glean steps 1–5 and the YouTube blocked-content rules. Never create a Page for blocked content until those rules authorize a clip.
 
@@ -16,7 +16,7 @@ Discover tools actually exposed in this session, then follow their current schem
 
 Run glean's shared preference resolution, including enabled sync, before duplicate checks. Keep invalid-store and unresolved-conflict handling. Page content is native editable Markdown blocks, not a raw `.md` file. An explicit Page destination with no explicit format requests native delivery for this save, without changing a saved format setting. An explicitly combined Page and raw-Markdown/HTML-only request needs a choice between native Page delivery, a file, or Page plus an export. Do not silently discard an explicit format request. No preference schema or stored values change.
 
-When required tools or access are unavailable, report that no Page was saved or changed and offer chat/file delivery. Wait for that choice rather than silently changing destination. Do not probe other accounts or destinations after a refusal.
+Before any write is attempted, unavailable tools or access mean no Page was saved or changed; report that and offer chat/file delivery. Wait for that choice rather than silently changing destination. After an attempted creation or update, report a confirmed rejection as not committed only when the tool establishes that outcome. If a write may have committed or readback fails, report the outcome as uncertain or verification pending, retain any returned Page ID, canonical URL, creation key, and original arguments, and reconcile the same operation before offering another save. Do not claim no Page was saved merely because readback lost access, and do not prompt for a duplicate creation. Do not probe other accounts or destinations after a refusal.
 
 ## Identity and duplicate handling
 

@@ -84,3 +84,39 @@ test('Claude HTML templates, chat delivery, video extraction, and follow-up rule
     assert.equal(createHash('sha256').update(section).digest('hex'), sha256, `Protected section changed: ${path} ${start}`);
   }
 });
+
+test('explicit older-Page follow-ups and Page-scoped finds can enter the ChatGPT route', () => {
+  const boundary = adapter.slice(adapter.indexOf('Use this reference only'), adapter.indexOf('This reference takes precedence'));
+  const entry = glean.split('\n').find(line => line.startsWith('**ChatGPT Page route:**'));
+  for (const text of [boundary, entry]) {
+    assert.match(text, /follow-up explicitly identif/);
+    assert.match(text, /earlier session|older clip/);
+    assert.match(text, /find (?:is )?explicitly scoped to Pages/);
+    assert.match(text, /ChatGPT/);
+    assert.match(text, /Claude/);
+  }
+  assert.match(boundary, /selected Page, or visible Page tools alone do not select/);
+  assert.match(adapter, /do not overwrite or delete the older Page/);
+});
+
+test('failed readback after a write remains pending instead of claiming no save', () => {
+  const capabilities = adapter.slice(adapter.indexOf('## Capabilities and format'), adapter.indexOf('## Identity and duplicate handling'));
+  assert.match(capabilities, /Before any write is attempted/);
+  assert.match(capabilities, /After an attempted creation or update/);
+  assert.match(capabilities, /confirmed rejection as not committed only when the tool establishes/);
+  assert.match(capabilities, /write may have committed or readback fails/);
+  assert.match(capabilities, /uncertain or verification pending/);
+  assert.match(capabilities, /retain any returned Page ID, canonical URL, creation key, and original arguments/);
+  assert.match(capabilities, /do not prompt for a duplicate creation/);
+  assert.doesNotMatch(capabilities, /When required tools or access are unavailable, report that no Page was saved/);
+});
+
+test('Android acceptance verifies desktop edits through mobile reading without requiring mobile edits', () => {
+  for (const path of ['docs/plans/chatgpt-editable-pages.md', 'docs/chatgpt-pages-testing.md']) {
+    const rows = read(path).split('\n').filter(line => /^\| (Mobile reading|Android reading) \|/.test(line));
+    assert.equal(rows.length, 1);
+    assert.match(rows[0], /Edit the Page on web or desktop/);
+    assert.match(rows[0], /no Android editing required/);
+    assert.doesNotMatch(rows[0], /reopen and request an edit/);
+  }
+});
