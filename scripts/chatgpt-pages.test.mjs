@@ -211,3 +211,12 @@ test('overview and preference scenarios do not promise default Markdown files', 
   assert.match(checks, /Chat-only delivery without attachments.*Explicitly select `--to chat`/);
   assert.doesNotMatch(checks, /a normal save still uses the conversation/);
 });
+
+
+test('YouTube completion delegates delivery instead of selecting a chat-file default', () => {
+  const intro = read('plugins/gleaner/skills/youtube/SKILL.md').split('## Get the video')[0];
+  assert.match(intro, /Finish with glean steps 6 and 7 through the resolved delivery route/);
+  assert.match(intro, /Only when the resolved destination is This conversation, use host-specific chat-file delivery/);
+  assert.match(intro, /A resolved Page uses native Page delivery.*do not generate an unrequested file or export/);
+  assert.doesNotMatch(intro, /including host-specific file delivery \(Markdown in ChatGPT/);
+});

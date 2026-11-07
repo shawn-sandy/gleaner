@@ -37,3 +37,7 @@ Validated the Codex finding against `3141bf0`: the bundled plugin README still p
 ## Overview and preference acceptance corrections
 
 Validated both Codex findings on `2d5946b`: removed the two remaining overview promises of default Markdown files and updated the preference scenarios for host-specific defaults. Chat-delivery scenarios now explicitly select `--to chat`; separate cases cover ChatGPT Page creation, raw-file exceptions, missing tools, and refusal/uncertain-write recovery. Drive connection alone retains each host’s default. Added a focused regression check. Local validation, Markdown lint, 142 tests, and whitespace checks passed; no runtime instructions or protected fixtures changed, and live/device gates remain pending.
+
+## YouTube completion routing correction
+
+Validated Codex’s finding on `0c9d08f`: YouTube’s shared completion paragraph still described host-specific files without a destination condition. It now delegates to the resolved glean route, limits chat-file delivery to This conversation, and explicitly avoids unrequested files/exports for Pages. Added a focused instruction-contract check. Local validation, Markdown lint, 143 tests, and whitespace checks passed. Video extraction and all protected content/fixtures remain unchanged; live/device gates remain pending.
