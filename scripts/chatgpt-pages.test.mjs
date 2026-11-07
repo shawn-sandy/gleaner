@@ -198,3 +198,16 @@ test('bundled storage disclosures and requirements identify the ChatGPT Page def
     assert.doesNotMatch(text, /Writes clips\*\* only where you choose|Sends\*\* clip content only to the destinations you choose|Clips come back in the conversation by default|default destination remains the conversation/);
   }
 });
+
+
+test('overview and preference scenarios do not promise default Markdown files', () => {
+  const overview = read('README.md').split('## Skills')[0];
+  assert.doesNotMatch(overview, /hands it to you as a Markdown file in ChatGPT|Gives you each clip as a Markdown file in ChatGPT/);
+  assert.match(overview, /private editable Page/);
+  const checks = read('docs/preferences-testing.md');
+  assert.match(checks, /ChatGPT raw-file exception/);
+  assert.match(checks, /ChatGPT missing Page tools/);
+  assert.match(checks, /Host-specific chat delivery.*explicitly select `--to chat`/);
+  assert.match(checks, /Chat-only delivery without attachments.*Explicitly select `--to chat`/);
+  assert.doesNotMatch(checks, /a normal save still uses the conversation/);
+});

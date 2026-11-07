@@ -33,3 +33,7 @@ Validated CodeRabbit’s outside-diff README finding on `4f7890f`: the unreachab
 ## Bundled storage disclosures
 
 Validated the Codex finding against `3141bf0`: the bundled plugin README still promised chat-only/selected-only storage, and requirements and bookmark-preview guidance still named chat as the universal default. Updated those three guides to disclose built-in private Page persistence, destination/raw-file precedence, default-only missing-tool fallback, and refusal/uncertain-write recovery while preserving Claude delivery. Added a focused disclosure regression check. Local validation, Markdown lint, 141 tests, and whitespace checks passed; no runtime instructions or protected fixtures changed, and live/device gates remain pending.
+
+## Overview and preference acceptance corrections
+
+Validated both Codex findings on `2d5946b`: removed the two remaining overview promises of default Markdown files and updated the preference scenarios for host-specific defaults. Chat-delivery scenarios now explicitly select `--to chat`; separate cases cover ChatGPT Page creation, raw-file exceptions, missing tools, and refusal/uncertain-write recovery. Drive connection alone retains each host’s default. Added a focused regression check. Local validation, Markdown lint, 142 tests, and whitespace checks passed; no runtime instructions or protected fixtures changed, and live/device gates remain pending.
