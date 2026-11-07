@@ -398,7 +398,7 @@ Folders are created the first time they're needed. Stored clips are saved as Mar
 
 A clip in the conversation isn't stored anywhere, so a follow-up in a later session can't read it. Download or copy it, or name a stored destination. A [clip list](#clip-list), when you've set one up, still gets its row. The chat itself is tagged, though, so where your host can search past conversations a later search can point you back to it (see [Finding your clips](#finding-your-clips)).
 
-If a destination can't be reached, Gleaner gives you the clip as a file and says plainly that it wasn't saved. It never claims a save that didn't happen.
+For destinations using the generic fallback, if the destination can't be reached, Gleaner delivers the clip through chat/file delivery and says where it was not saved. Page recovery follows separate rules: after a refusal or confirmed rejection, report the failure and ask for an alternative; after an uncertain write or failed readback, retain the Page identity and reconcile the same operation before another save. Do not claim that no Page was saved while its write outcome is uncertain. Only missing required Page tools before any write permit automatic Markdown fallback for the built-in default; explicit or retained Pages still require an alternative choice. Gleaner never claims a save that was not verified.
 
 > Gleaner can't write to claude.ai Projects. Cowork can read them but not add files to them.
 

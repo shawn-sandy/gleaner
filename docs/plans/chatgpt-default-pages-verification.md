@@ -25,3 +25,7 @@ Reviewed the protected chat-delivery section diff individually: only its heading
 ## Documentation review corrections
 
 CodeRabbit’s missing-tools acceptance finding and outside-diff quick-start/setup and installation-check findings were valid against the reviewed commit. Split the acceptance cases for built-in fallback versus explicit/retained alternatives; aligned both quick starts, setup explanations, and installation checks with Page-default, raw-file, and missing-tool behavior. The destination-table portion was already fixed in `aa01130`. Added a focused documentation regression check. No protected fixtures changed in this correction. Local validation, Markdown lint, 139 tests, and whitespace checks passed; live/device evidence remains pending.
+
+## Page recovery documentation correction
+
+Validated CodeRabbit’s outside-diff README finding on `4f7890f`: the unreachable-destination paragraph still promised generic fallback for every destination. Qualified that promise and documented refusal, confirmed rejection, uncertain-write/readback reconciliation, and default-only missing-tool recovery separately. Added a focused regression check; no runtime instructions or protected fixtures changed. Local validation, Markdown lint, 140 tests, and whitespace checks passed. Live/device gates remain pending.

@@ -176,3 +176,13 @@ test('quick starts and acceptance checks distinguish Page defaults from chat fal
   assert.match(install, /winning explicit or saved raw Markdown request/);
   assert.doesNotMatch(install, /With Drive connected but no preferences or destination request, a save stays in the chat/);
 });
+
+
+test('README unreachable-destination guidance preserves Page recovery semantics', () => {
+  const readme = read('README.md');
+  assert.doesNotMatch(readme, /If a destination can't be reached, Gleaner gives you the clip as a file/);
+  assert.match(readme, /For destinations using the generic fallback/);
+  assert.match(readme, /after a refusal or confirmed rejection, report the failure and ask for an alternative/);
+  assert.match(readme, /after an uncertain write or failed readback, retain the Page identity and reconcile the same operation/);
+  assert.match(readme, /Do not claim that no Page was saved while its write outcome is uncertain/);
+});
