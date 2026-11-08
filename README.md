@@ -821,6 +821,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+
+- Remove the optional Node bookmark renderer (`bookmark.mjs`) so the plugin ships only Markdown, YAML, JSON, and images, as the Claude plugin directory requires. Every host now follows the bookmark contract and the clip list and bookmarks file rules directly; saved clips and destinations are unchanged.
+
 **2.15.6** (2026-11-07)
 
 - ChatGPT: default new unconfigured clips to editable Pages while preserving full in-chat output and adding a verified Page link. Explicit/saved destinations, retained clips, and raw-file requests keep precedence; missing Page tools before a write fall back truthfully to Markdown. Refused or uncertain writes never silently redirect. Claude workflows and schema 1 remain unchanged; installed-plugin, Android, and live Claude checks remain release gates.
