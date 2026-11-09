@@ -71,6 +71,8 @@ Every successful save or update displays the full clip directly in the ChatGPT c
 - [ ] An explicitly named browser, a declined permission, and host tool requirements remain respected during fallback; failed routes are not retried in a loop
 - [ ] If all eligible routes fail, ask once and create or change no clip; report fetch throttling separately from observed browser errors
 - [ ] An initial explicit link-only request skips content retrieval while retaining preferences, duplicate checks, storage, and preview handling
+- [ ] `@gleaner save <YouTube watch URL>`, “save video” with a `youtu.be` share link, and “save details” with a Shorts link load the YouTube skill before generic page extraction; transcript failure follows the video fallback rules
+- [ ] “Save this” on an identified YouTube video tab uses the YouTube skill; ambiguous tabs prompt for the intended video; articles with embedded videos and YouTube channel or playlist URLs without a video ID do not become guessed video clips
 - [ ] On ChatGPT mobile with no browser access and an unreadable YouTube URL, one question offers pasted content or an explicit link-only bookmark; no clip is created or changed before a choice, and no desktop switch is required
 - [ ] A verified access-denied result is reported accurately; a generic fetch failure is not asserted to be a YouTube block
 - [ ] Pasted descriptions and transcripts produce supported summaries without another fetch; missing timestamps or passages never produce invented time links or parts

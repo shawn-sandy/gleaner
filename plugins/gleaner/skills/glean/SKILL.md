@@ -1,6 +1,6 @@
 ---
 name: glean
-description: Gleaner's web clipper. Save pages, passages, answers, or YouTube videos as tagged clips in Drive, Notion, local files, or Claude HTML. ChatGPT defaults to editable Pages when Page tools are available and no destination or raw-file request wins, preserving in-chat output. Use for glean, glean it, saving, bookmarking, filing, or finding clips. Reads connected Chrome tabs, Work browser, and Claude browsers.
+description: Gleaner's web clipper. Save pages, passages, or answers and route YouTube video saves to gleaner:youtube as tagged clips in Drive, Notion, local files, or Claude HTML. ChatGPT defaults to editable Pages when Page tools are available and no destination or raw-file request wins, preserving in-chat output. Use for glean, glean it, saving, bookmarking, filing, or finding clips. Reads connected Chrome tabs, Work browser, and Claude browsers.
 argument-hint: '[--to chat | drive | notion | artifact | local | cowork:"Project" | <path>]'
 ---
 
@@ -19,6 +19,16 @@ Save what the user is reading, or an answer you gave about it, as a summarized, 
 - **Artifact** (on request): a private claude.ai web page per clip, published with the Artifact tool.
 
 This skill does not write to claude.ai Projects; those can only be read from Cowork, not written to.
+
+## Route YouTube saves first
+
+Before generic page retrieval, summarization, or saving, identify whether the requested source is a YouTube video. For a supplied video URL, immediately load and follow Gleaner’s [youtube skill](../youtube/SKILL.md) (`gleaner:youtube`); do not wait for the user to name that skill or ask for a transcript. “Save”, “save video”, “save details”, “glean”, “clip”, and “bookmark” all trigger this handoff, including `@gleaner save <YouTube URL>`.
+
+Recognize video URLs on `youtube.com` (including `www` and `m` subdomains) with `/watch?v=<id>`, `/shorts/<id>`, or `/live/<id>`, and `youtu.be/<id>`, including timestamp, playlist, and share parameters. A channel, search, or playlist URL with no video ID is not a video save; resolve the intended video before handing off. Do not match another site merely because its path or query contains “youtube.com”.
+
+For “save this video” or “save this” without a URL, first apply the Understanding requests rules: a bare “save this” with parts collected or a highlight is Save clip rather than a whole-video save, even if a YouTube tab is open, and needs no tab identification; parts taken from a YouTube video still follow the youtube skill. Only when neither applies, identify the requested tab using the browser rules below, then load the youtube skill as soon as its URL identifies a YouTube video, before extracting page content. If the requested tab or video remains ambiguous, ask which video. An article that merely embeds or links to YouTube stays a page clip unless the request targets the video.
+
+The youtube skill owns video retrieval, canonical URLs, transcript and description fallbacks, source limitations, and timestamped summaries. This skill still supplies shared preferences, duplicate checks, storage, and presentation; when youtube reads glean for those rules, continue the video workflow without handing off recursively. Never replace the video workflow with a generic page or link-only save because the transcript is unavailable; apply youtube’s fallback rules. This routing applies in both ChatGPT and Claude.
 
 ## Shared bookmark workflow
 
