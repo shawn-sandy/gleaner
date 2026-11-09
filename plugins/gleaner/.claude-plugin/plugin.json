@@ -1,7 +1,7 @@
 {
   "name": "gleaner",
   "displayName": "Gleaner",
-  "version": "2.15.6",
+  "version": "2.15.7",
   "description": "Gleaner's web clipper. Save pages, passages, answers, or YouTube videos as tagged clips in Drive, Notion, local files, or Claude HTML. ChatGPT defaults to editable Pages when Page tools are available and no destination or raw-file request wins, preserving in-chat output. Use for glean, glean it, saving, bookmarking, filing, or finding clips. Reads connected Chrome tabs, Work browser, and Claude browsers.",
   "author": {
     "name": "Shawn Sandy",

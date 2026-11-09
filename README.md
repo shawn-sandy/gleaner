@@ -821,7 +821,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.7** (2026-11-09)
 
 - Remove the optional Node bookmark renderer (`bookmark.mjs`) so the plugin ships only Markdown, YAML, JSON, and images, as the Claude plugin directory requires. Every host now follows the bookmark contract and the clip list and bookmarks file rules directly; saved clips and destinations are unchanged.
 
