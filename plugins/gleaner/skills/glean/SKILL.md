@@ -66,7 +66,7 @@ If it isn't clear which tab "the page" is, such as several open tabs with none m
 **Built-in browser specifics:**
 - **Pane closed or no tabs:** if `tabs_context` shows no open tabs and the user didn't give a URL, ask them to open the page in the Browser pane (Cmd+Shift+B on Mac, Ctrl+Shift+B on Windows) or paste the URL. Don't guess which page they meant.
 - **Pane hidden:** reading still works while the pane is hidden. Just mention which page you clipped, since the user may not be looking at it.
-- **Site approvals:** if a tool says the site isn't allowed yet, call `request_access` for that site when the tool exists, with the scope `site` rather than `once`, since a clip reads the page more than once and a one-time grant ends after the first read; wait for the answer, then retry. If access is declined, say so and stop.
+- **Site approvals:** if a tool says the site isn't allowed yet, call `request_access` for that site when the tool exists, with the scope `site` rather than `once`, since a clip reads the page more than once and a one-time grant ends after the first read; wait for the answer, then retry. If access is declined, say so, then follow "A browser read that fails" below.
 - **Sign-ins:** the pane has its own browser profile, separate from the user's Chrome. If a page is behind a login or paywall there, clip what's visible and mention that signing in within the pane would get the rest.
 
 **ChatGPT specifics:**

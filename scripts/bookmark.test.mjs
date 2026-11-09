@@ -169,6 +169,11 @@ test('a failed browser read falls back to one fetch that cannot bypass access or
   assert.match(rule, /don't try again/i);
   // A declined fetch is still final.
   assert.match(rule, /declined fetch ends it/);
+  // The built-in browser's decline branch must hand off to this rule, not stop before it runs.
+  const approvals = glean.slice(glean.indexOf('- **Site approvals:**'), glean.indexOf('- **Sign-ins:**'));
+  assert.ok(approvals.length > 0, 'site approvals bullet exists');
+  assert.doesNotMatch(approvals, /declined, say so and stop/);
+  assert.match(approvals, /declined[^.]*A browser read that fails/);
 });
 
 test('YouTube transcript fallback stays behind Chrome and never hides automation', () => {
