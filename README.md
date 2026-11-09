@@ -116,14 +116,14 @@ See [Gleaner requirements](docs/requirements.md) for the full list by surface, d
 
 ```text
 /plugin marketplace add shawn-sandy/gleaner
-/plugin install gleaner@shawn-sandy
+/plugin install gleaner@gleaner
 ```
 
 Or from your shell:
 
 ```bash
 claude plugin marketplace add shawn-sandy/gleaner
-claude plugin install gleaner@shawn-sandy --scope user
+claude plugin install gleaner@gleaner --scope user
 ```
 
 In Claude Code the skills are also available as `/gleaner:glean`, `/gleaner:youtube`, `/gleaner:preferences`, and `/gleaner:follow-up`.
@@ -138,6 +138,19 @@ A plugin installed from the terminal at user scope also appears in the desktop a
 ### Upgrading from clip to glean
 
 Version 2.0.0 renames the `clip` skill to `glean`. Replace `/gleaner:clip` with `/gleaner:glean` in saved prompts and shortcuts; the old command is no longer available. Customizations now live in `plugins/gleaner/skills/glean/SKILL.md`.
+
+### Upgrading from shawn-sandy to gleaner
+
+The marketplace is now named `gleaner` instead of `shawn-sandy`, so the install ID changed from `gleaner@shawn-sandy` to `gleaner@gleaner`. To move an existing Claude Code install, run these in your shell:
+
+```bash
+claude plugin uninstall gleaner@shawn-sandy --keep-data
+claude plugin marketplace remove shawn-sandy
+claude plugin marketplace add shawn-sandy/gleaner
+claude plugin install gleaner@gleaner --scope user
+```
+
+`--keep-data` keeps the plugin's local data directory when the old install is removed.
 
 The plugin is still named **Gleaner**, and saved items are still called **clips**. Existing clips, natural-language requests such as "save this page," and `/gleaner:youtube` are unchanged. After updating the plugin in Claude Code, run `/reload-plugins` if the new command is not available.
 
@@ -695,7 +708,7 @@ gleaner/
 │       └── release/
 │           └── SKILL.md            # /release: write the changelog entry, then npm run release
 ├── .claude-plugin/
-│   └── marketplace.json            # marketplace "shawn-sandy"
+│   └── marketplace.json            # marketplace "gleaner"
 ├── .github/
 │   └── workflows/
 │       ├── auto-release.yml        # releases every plugin change merged to main: npm run release, push to main, run release.yml
@@ -820,6 +833,10 @@ When a merge to `main` changes the version, the [release workflow](.github/workf
 MIT © Shawn Sandy
 
 ## Changelog
+
+**Unreleased**
+
+- The marketplace is renamed from `shawn-sandy` to `gleaner`, so the Claude Code install command is now `/plugin install gleaner@gleaner`. Existing installs from `shawn-sandy` must be reinstalled; see [Upgrading from shawn-sandy to gleaner](#upgrading-from-shawn-sandy-to-gleaner).
 
 **2.15.7** (2026-11-09)
 

@@ -74,7 +74,7 @@ const cases = [
   ['missing icon', metadata, './assets/icon-small.png', './missing.svg', /ENOENT/],
   ['malformed JSON', marketplace, '"name":', 'name:', /JSON/],
   ['wrong plugin source', marketplace, './plugins/gleaner', './plugins/missing', /ENOENT/],
-  ['marketplace version', marketplace, '"name": "shawn-sandy",', '"name": "shawn-sandy", "version": "1.0.0",', /version belongs/],
+  ['marketplace version', marketplace, '"name": "gleaner",', '"name": "gleaner", "version": "1.0.0",', /version belongs/],
   ['broken guide link', 'README.md', '](docs/chatgpt-marketplace.md)', '](docs/missing.md)', /ENOENT/],
 ];
 for (const [name, file, from, to, message] of cases) {
