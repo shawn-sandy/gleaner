@@ -151,6 +151,26 @@ test('kept lookups and declines stay scoped so reuse never saves to the wrong pl
   assert.match(notion, /still rejects a tag[^.]*once/i);
 });
 
+test('a failed browser read falls back to one fetch that cannot bypass access or skip safeguards', () => {
+  const glean = read('plugins/gleaner/skills/glean/SKILL.md');
+  const start = glean.indexOf('**A browser read that fails:**');
+  assert.ok(start >= 0, 'section exists');
+  const rule = glean.slice(start, glean.indexOf('\n\n', start));
+  // Triggers: an error, no text, or a declined site approval, with a browser present.
+  assert.match(rule, /errors[^.]*no text[^.]*declined/i);
+  assert.match(rule, /once/);
+  assert.match(rule, /without a browser/);
+  // A fetch is a model's rewrite, so the prompt must ask for the page itself.
+  assert.match(rule, /full text[^.]*headings[^.]*links/i);
+  // A fetched page has no selection and no markup to run the Page facts script on.
+  assert.match(rule, /highlight[^.]*Page facts/i);
+  // It must not turn into a way around a sign-in wall, a paywall, or a bot check.
+  assert.match(rule, /sign-in[^.]*paywall[^.]*bot check/i);
+  assert.match(rule, /don't try again/i);
+  // A declined fetch is still final.
+  assert.match(rule, /declined fetch ends it/);
+});
+
 test('YouTube transcript fallback stays behind Chrome and never hides automation', () => {
   const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
   const stepFour = youtube.slice(youtube.indexOf('4. **Read the transcript**'), youtube.indexOf('5. **Check the description.**'));
