@@ -167,6 +167,10 @@ test('a failed browser read falls back to one fetch that cannot bypass access or
   // It must not turn into a way around a sign-in wall, a paywall, or a bot check.
   assert.match(rule, /sign-in[^.]*paywall[^.]*bot check/i);
   assert.match(rule, /don't try again/i);
+  // A barrier page is not content: never save it, and never let it or a cut-off page replace an earlier clip.
+  assert.doesNotMatch(rule, /clip what came back/);
+  assert.match(rule, /save nothing from it[^.]*keep any existing clip/i);
+  assert.match(rule, /cut off[^.]*only the part[^.]*never[^.]*replace/i);
   // A declined fetch is still final.
   assert.match(rule, /declined fetch ends it/);
   // The built-in browser's decline branch must hand off to this rule, not stop before it runs.
