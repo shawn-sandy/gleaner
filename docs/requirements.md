@@ -25,11 +25,12 @@ Any one of:
 
 ## Destinations
 
-Clips come back in the conversation by default, which needs nothing. Every other destination is optional.
+ChatGPT defaults to a private editable Page when no explicit, retained, session, project, or user destination and no raw-file request wins, preserving the full in-chat clip with a verified Page link. Claude keeps conversation delivery by default. Missing required Page tools before any write allow explained Markdown chat/file fallback only for the built-in default; explicit or retained Pages require an alternative choice. Refusals and uncertain writes use Page recovery, never silent fallback.
 
 | Destination | Needs |
 | --- | --- |
-| This conversation (`.md` in ChatGPT, `.html` in Claude) | Nothing. Finding that chat again in a later session needs a host that can search past conversations, such as Claude Code desktop, or claude.ai with chat search turned on |
+| Editable Page (ChatGPT built-in default) | Current Page create/read/edit tools and access; Gleaner does not install tools or grant access |
+| This conversation (`.md` in ChatGPT, `.html` in Claude; explicit, raw-file, or eligible fallback delivery in ChatGPT) | Nothing. Finding that chat again in a later session needs a host that can search past conversations, such as Claude Code desktop, or claude.ai with chat search turned on |
 | Google Drive | The Google Drive connector, with permission to create files in the target folder |
 | Cowork project | The Claude desktop app, open and connected |
 | This project (`--to local`) | A Claude Code session |
@@ -46,7 +47,7 @@ claude.ai Projects aren't a destination: Cowork can read them but not write to t
 - **follow-up:** needs a Gleaner clip, recognized by its **Saved:** and **Category:** lines, its Notion properties, or the `Gleaner clip` generator line in an HTML clip. It reads a stored clip with its destination's tool (the Drive or Notion connector, the Artifact tool, or a local file read), so that tool must be available; an attached or pasted clip needs none. A clip given only in the conversation isn't stored, so a later session can't find it.
 - **preferences:** settings persist in local user storage, with optional project overrides. Drive sync needs a Drive connector that can read and update the preferences document; a create-only connector leaves sync pending. Hosts without local file access can keep settings in a Google Drive document instead, if you choose to, which needs a connector that can create, read, and update it. Without either, settings last for the session only. See [Shared preferences](../README.md#shared-preferences).
 
-Node.js isn't needed to use Gleaner. The [bookmark renderer](../plugins/gleaner/skills/glean/scripts/bookmark.mjs) is an optional helper, and hosts without Node follow the same instructions directly.
+Node.js isn't needed to use Gleaner. The plugin ships only instructions, metadata, and icons, and every host follows the same instructions directly.
 
 ## Developing Gleaner
 
