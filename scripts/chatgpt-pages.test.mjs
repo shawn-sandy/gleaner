@@ -220,3 +220,37 @@ test('YouTube completion delegates delivery instead of selecting a chat-file def
   assert.match(intro, /A resolved Page uses native Page delivery.*do not generate an unrequested file or export/);
   assert.doesNotMatch(intro, /including host-specific file delivery \(Markdown in ChatGPT/);
 });
+
+const youtube = read('plugins/gleaner/skills/youtube/SKILL.md');
+const route = glean.slice(glean.indexOf('## Route YouTube saves first'), glean.indexOf('## Shared bookmark workflow'));
+
+test('every YouTube URL form glean routes is one the youtube skill can parse', () => {
+  const idStep = youtube.split('\n').find(line => line.startsWith('1. **Find the video ID**'));
+  assert.ok(route && idStep);
+  for (const form of ['/watch?v=', '/shorts/', '/live/', '/embed/', 'music']) {
+    if (route.includes(form)) assert.ok(idStep.includes(form), `routed but not parseable: ${form}`);
+  }
+});
+
+test('collected parts or a highlight decide a bare "save this" before video-tab routing', () => {
+  const paragraph = route.split('\n\n').find(p => p.includes('without a URL'));
+  assert.ok(paragraph);
+  const precedence = paragraph.search(/collected|highlight/i);
+  assert.ok(precedence >= 0, 'no collected-parts or highlight rule');
+  assert.ok(precedence < paragraph.search(/identify the requested tab/), 'precedence must come before tab identification');
+});
+
+test('ChatGPT read-only transcript step saves from a usable description first', () => {
+  const step = youtube.split('\n').find(line => line.startsWith('5. If the browser can click'));
+  assert.ok(step);
+  assert.match(step, /description/);
+  assert.match(step, /transcript lines/);
+});
+
+test('ChatGPT later-edit guidance limits in-place Page updates to Page clips and defers other clips to glean', () => {
+  const start = youtube.indexOf('### Continue or correct a saved clip');
+  const paragraph = youtube.slice(start, youtube.indexOf('\n\n', youtube.indexOf('\n\n', start) + 2));
+  assert.ok(start >= 0);
+  assert.match(paragraph, /Page clip/);
+  assert.match(paragraph, /glean/);
+});

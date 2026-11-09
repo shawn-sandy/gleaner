@@ -42,7 +42,7 @@ A bare video URL without a save instruction does not itself request a save. Do n
 2. Discover the actual browser tools and follow their guidance. Honor the named browser or tab. Otherwise use the eligible Work browser, then matching connected Chrome tabs, as described in glean. A browser extension being installed does not establish an active connection.
 3. Open a supplied URL only through a browser that supports navigation. Connected-tab tools read existing matching tabs; do not invent navigation, click, or JavaScript capabilities. With no eligible browser route, use the session’s web retrieval tool.
 4. Read the title, channel, description, chapters, and any transcript returned. On Shorts, resolve the canonical watch URL for the same video ID before attempting regular-player transcript access when the browser supports it.
-5. If the browser can click or run the supported script, open **Show transcript** and read the lines as described under “In ChatGPT”. With read-only connected tabs, ask the user to open **…more**, then **Show transcript**, and reread that tab; request pasted text if the tab still provides none.
+5. If the browser can click or run the supported script, open **Show transcript** and read the lines as described under “In ChatGPT”. With read-only connected tabs, follow “In ChatGPT” when requesting a transcript. If a usable description is available but no transcript was returned and the request does not require transcript lines, save from the description before offering transcript retrieval.
 6. If a fetch fails, check for an eligible, untried browser before concluding that content is unavailable. Stop exhausted routes; do not bypass access controls or install caption downloaders.
 
 ### Content limits and mobile requests
@@ -63,7 +63,7 @@ An explicit Markdown export uses the current clip and the host’s supported fil
 
 ### Continue or correct a saved clip
 
-For later requests such as “add a workflow list”, “include the commands”, or “correct the tool name”, identify the retained clip and use supported source material. Read the current Page before editing it, preserve manual changes and existing notes, and update the same retained Page using guarded operations. If several clips could match, ask which one.
+For later requests such as “add a workflow list”, “include the commands”, or “correct the tool name”, identify the retained clip and use supported source material. When updating a retained Page clip from this session in place, read the current Page, preserve manual changes and existing notes, and update the same Page using guarded operations. For other cases, follow glean’s update and updated-copy rules. If several clips could match, ask which one.
 
 After each verified edit, show the complete updated clip under the same presentation rules. Do not refetch the video merely to change its presentation or move existing content to a Page. A failed content read must not erase an earlier sourced summary. For an older clip from another session, follow glean’s updated-copy policy rather than silently overwriting it.
 
