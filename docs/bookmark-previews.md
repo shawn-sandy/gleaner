@@ -69,11 +69,11 @@ The paths above illustrate the naming convention, not files created by this docu
 
 ## Implementation and validation limits
 
-The runtime remains instructions in [glean](../plugins/gleaner/skills/glean/SKILL.md) and its [shared bookmark contract](../plugins/gleaner/skills/glean/references/bookmark.md). Extraction runs once; storage uses the existing destination adapters; presentation checks available capabilities. An optional dependency-free [Node renderer](../plugins/gleaner/skills/glean/scripts/bookmark.mjs) generates deterministic HTML companions and Markdown from that model. It does not fetch, save, resolve preferences, or call connectors. Hosts that support returned sandbox attachment URLs set the renderer’s `attachmentLinks: true` capability so the Markdown preview keeps those downloads clickable; standalone HTML still links only HTTP(S) URLs. Hosts without Node follow the same contract directly. The helper emits the full `content_markdown` by default, with images, non-HTTP(S) links, and raw HTML made inert, and the compact layout in its `short` mode.
+The runtime remains instructions in [glean](../plugins/gleaner/skills/glean/SKILL.md) and its [shared bookmark contract](../plugins/gleaner/skills/glean/references/bookmark.md). Extraction runs once; storage uses the existing destination adapters; presentation checks available capabilities. The plugin ships no executable renderer; every host follows the same contract directly.
 
-The optional renderer's compact HTML includes an expandable full clip as escaped Markdown text. Existing chat HTML and Artifact publishing retain their richer full-clip HTML template, including clickable chapter links. Neither renderer executes source HTML or scripts. When attachments or local writes are unavailable, the readable preview still works, but an HTML download cannot be promised.
+Chat HTML and Artifact publishing use the full-clip HTML template, including clickable chapter links, and never execute source HTML or scripts. When attachments or local writes are unavailable, the readable preview still works, but an HTML download cannot be promised.
 
-The offline tests exercise the renderer, native-component mock, save receipts, metadata consistency, unchanged schema-1 example data, Drive locators, duplicate skip/update receipts, missing source details, YouTube content, and error fallbacks. Instruction-reference checks ensure the relevant skills route to the common contract. These are not automated browser, connector, duplicate-search, preference-sync, or live model-execution tests.
+The offline tests are instruction-reference checks: they ensure the relevant skills route to the common contract and that its presentation, clip list, and permission rules stay in place. These are not automated browser, connector, duplicate-search, preference-sync, or live model-execution tests.
 
 Run `npm ci`, `npm run validate`, and `npm test`. After loading the updated plugin, maintainers should verify:
 
@@ -88,7 +88,7 @@ Run `npm ci`, `npm run validate`, and `npm test`. After loading the updated plug
 
 ## ChatGPT repeated-edit and preview-recovery checks
 
-Run these as live instruction-following checks after loading the plugin; offline renderer tests do not prove that a model follows the final-reply rule.
+Run these as live instruction-following checks after loading the plugin; offline tests do not prove that a model follows the final-reply rule.
 
 1. Save a description-based video clip, then request three separate additions, such as medium effort, model differences, and a recommendation. After each successful update, verify that the final reply contains the complete latest clip, including earlier additions, source limitations, and the follow-up prompt. An “Updated” sentence and download link alone fails.
 2. Say “the md downloads every time; can you fix this?” Verify that the very next final reply displays the complete current clip. It may read the known saved file once but must not create or replace a file, retry source retrieval, merely explain the limitation, or promise a mobile file viewer.

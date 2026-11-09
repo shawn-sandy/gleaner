@@ -184,7 +184,7 @@ function preferences(data, inherited = {}) {
   }
 }
 
-check('shared bookmark contract and renderer references', () => {
+check('shared bookmark contract and references', () => {
   const file = `${plugin}/skills/glean/references/bookmark.md`;
   text(read(file), 'shared bookmark contract');
   references(file);

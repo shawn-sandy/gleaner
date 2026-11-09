@@ -47,7 +47,7 @@ claude.ai Projects aren't a destination: Cowork can read them but not write to t
 - **follow-up:** needs a Gleaner clip, recognized by its **Saved:** and **Category:** lines, its Notion properties, or the `Gleaner clip` generator line in an HTML clip. It reads a stored clip with its destination's tool (the Drive or Notion connector, the Artifact tool, or a local file read), so that tool must be available; an attached or pasted clip needs none. A clip given only in the conversation isn't stored, so a later session can't find it.
 - **preferences:** settings persist in local user storage, with optional project overrides. Drive sync needs a Drive connector that can read and update the preferences document; a create-only connector leaves sync pending. Hosts without local file access can keep settings in a Google Drive document instead, if you choose to, which needs a connector that can create, read, and update it. Without either, settings last for the session only. See [Shared preferences](../README.md#shared-preferences).
 
-Node.js isn't needed to use Gleaner. The [bookmark renderer](../plugins/gleaner/skills/glean/scripts/bookmark.mjs) is an optional helper, and hosts without Node follow the same instructions directly.
+Node.js isn't needed to use Gleaner. The plugin ships only instructions, metadata, and icons, and every host follows the same instructions directly.
 
 ## Developing Gleaner
 
