@@ -33,7 +33,7 @@ Use glean step 6 with the destination and format from step 2. Presentation never
 
 In ChatGPT, do not automatically generate or deliver HTML companions for chat, Drive, Notion, or local Markdown saves. Keep `html_file` null when no HTML was requested or retained from an existing clip, and omit the HTML action without reporting an error. Generate HTML only for an explicit HTML download or Artifact request, or to maintain an existing clip's retained HTML format/companion during an update. In Claude, keep the HTML delivery behavior below. This host rule changes neither configured destinations nor explicit format choices.
 
-When HTML is needed, generate it from the same bookmark before saving; fill in confirmed action links afterward when possible. The existing full-clip HTML template in step 6 remains the default for chat HTML and Artifact publishing. It keeps all sections and links. Do not replace an existing richly formatted full clip with a companion during updates.
+When HTML is needed, generate it from the same bookmark before saving; fill in confirmed action links afterward when possible. Build every HTML output from the existing full-clip HTML template in step 6, including chat HTML, Artifact publishing, and the companions and attachments below; it keeps all sections and links. A companion or attachment is a standalone file, so add the page basics above its `<title>` as step 6 does for a chat HTML file. Do not replace an existing richly formatted full clip with a companion during updates.
 
 When the host rule above calls for HTML, deliver it without changing the primary storage format:
 

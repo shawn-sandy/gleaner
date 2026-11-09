@@ -85,6 +85,10 @@ test('page, YouTube, and follow-up instructions route through shared presentatio
   assert.match(contract, /“Use a Markdown preview”/);
   assert.doesNotMatch(contract, /“Use Markdown” or “use a chat preview” changes presentation only/);
   assert.match(contract, /Preview failure must never trigger another save/);
+  // No renderer builds companions now, so the contract must name their template.
+  const html = contract.slice(contract.indexOf('When HTML is needed'), contract.indexOf('When the host rule above calls for HTML'));
+  assert.match(html, /full-clip HTML template[^.]*companions and attachments/);
+  assert.match(html, /standalone file[^.]*page basics/);
 });
 
 test('saves avoid repeating permission prompts for the same access', () => {
