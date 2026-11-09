@@ -1,6 +1,6 @@
 ---
 name: youtube
-description: Gleaner's YouTube clipper. Saves a video or moment from it as a tagged summary clip from its transcript or description, with timestamped chapter links. Use when keeping or clipping a YouTube video.
+description: Gleaner's YouTube clipper. Saves a video or moment from it as a tagged summary clip from its transcript or description, with timestamped chapter links. Use when asked to save, save details, glean, bookmark, keep, or clip a YouTube video, Shorts, or video moment, including a bare YouTube URL with a save request.
 argument-hint: "[--to chat | drive | notion | artifact | local | <path>]"
 ---
 
@@ -8,7 +8,7 @@ argument-hint: "[--to chat | drive | notion | artifact | local | <path>]"
 
 Clip a YouTube video into a Gleaner clip: a summary written from the video's transcript, read from YouTube's own transcript panel where the browser allows it, or else from its description, with its channel, key moments that link to the second they happen, and the description's useful links. Where the panel can't be read, a transcript the user pastes gets the same fuller summary and lets them clip moments.
 
-This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, adding to a clip saved this session, shared preference setup and synchronization, destinations and formats, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube edge case, which points back here.
+This skill covers only what's different about video. Everything else (understanding requests, notes, the `--to` flag, collecting parts, adding to a clip saved this session, shared preference setup and synchronization, destinations and formats, duplicate checks, categories and tags, file names, saving, confirming, and finding clips) follows Gleaner's glean skill (`gleaner:glean`, at `../glean/SKILL.md` relative to this skill's folder). Read it first and use it as written, with the changes below; skip its YouTube routing handoff and edge case, which point back here. Once this skill is loaded, continue here rather than routing back to yourself.
 
 Before any video save, run glean step 2 including its shared preferences contract before duplicate detection. Reuse the resolved destination and format through saving; reading the video never overrides preferences.
 
