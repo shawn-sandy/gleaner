@@ -834,6 +834,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+
+- When a browser is available but reading a page errors, returns no text, or site access is declined, Gleaner now fetches the page once and clips what comes back, saying it was read without a browser. If the fetch returns only a sign-in page, paywall notice, or bot check, nothing is saved from it, any existing clip is kept, and it is not retried. A cut-off fetch is flagged as partial and never replaces a fuller clip.
+
 **2.15.9** (2026-11-09)
 
 - Route YouTube save requests, including Shorts and “save this video”, to the YouTube skill before generic page extraction so video sourcing and transcript fallbacks apply.
