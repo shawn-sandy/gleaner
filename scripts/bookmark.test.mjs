@@ -50,6 +50,13 @@ test('clip list instructions keep the list out of saves, duplicates, and finds',
   // Otherwise adding five parts to one clip writes five rows.
   assert.match(list, /update adds one only when the clip's link changed/i);
   assert.match(list, /never rewrite/i);
+  // No script builds the row any more, so the text must say what each store gets.
+  assert.doesNotMatch(list, /row's `(?:cells|line)`/);
+  assert.match(list.slice(list.indexOf('**Google Drive:**'), list.indexOf('**Cowork project or local folder:**')), /column order[^.]*append_values/);
+  // A pipe in a title or link would add a column to the Markdown table.
+  const localList = list.slice(list.indexOf('**Cowork project or local folder:**'), list.indexOf('**Notion:**'));
+  assert.match(localList, /backslash[^.]*pipe/i);
+  assert.match(localList, /HTTP\(S\)[^.]*Markdown link[^.]*%7C/);
   // Notion's Clip is a URL property, so a local path needs its own text property.
   assert.match(list.slice(list.indexOf('**Notion:**')), /Clip is a URL property[^.]*web link; a local[^.]*Path text property/);
   // A user-picked list database may lack a column, and the row write would fail on it.
