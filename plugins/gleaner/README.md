@@ -36,7 +36,7 @@ On earlier versions, add the marketplace first:
 
 ```text
 /plugin marketplace add shawn-sandy/gleaner
-/plugin install gleaner@shawn-sandy
+/plugin install gleaner@gleaner
 ```
 
 The [Gleaner repository](https://github.com/shawn-sandy/gleaner) has install steps, the full usage guide, troubleshooting, and the changelog.

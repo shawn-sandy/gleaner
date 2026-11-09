@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Claude Code plugin marketplace (`shawn-sandy`) that ships one plugin, `gleaner`, with four skills, `glean`, `youtube`, `preferences`, and `follow-up`. There is no application runtime or build; static validator and release-script tests are available: the product is the prose in the four `SKILL.md` files under `plugins/gleaner/skills/` (mostly `glean/SKILL.md`), which the model reads raw at runtime.
+A Claude Code plugin marketplace (`gleaner`) that ships one plugin, `gleaner`, with four skills, `glean`, `youtube`, `preferences`, and `follow-up`. There is no application runtime or build; static validator and release-script tests are available: the product is the prose in the four `SKILL.md` files under `plugins/gleaner/skills/` (mostly `glean/SKILL.md`), which the model reads raw at runtime.
 
 ## Validate
 
