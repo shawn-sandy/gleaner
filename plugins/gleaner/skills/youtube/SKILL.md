@@ -18,6 +18,55 @@ After writing the video clip, fill glean's [shared bookmark model](../glean/refe
 
 **ChatGPT Page delivery:** Delegate destination resolution to glean, including the built-in ChatGPT Page default and raw-file exceptions; do not add a video-specific resolver. Use [ChatGPT editable Pages](../glean/references/chatgpt-pages.md) for Page saves and guarded updates. Preserve full in-chat video output alongside the verified Page link, unless a short response or Page-only delivery was requested. Source, transcript, blocked-content, and chapter rules remain unchanged. Claude never uses this route.
 
+## ChatGPT usage
+
+Use this section only when the active host is ChatGPT, including mobile. It explains the request-to-save workflow; the existing video extraction rules and linked references remain authoritative. Do not infer tool access from the device, app, subscription, or an installed browser extension.
+
+### Requests that use this skill
+
+| Request | Action |
+| --- | --- |
+| `@gleaner save https://www.youtube.com/watch?v=<id>` | Load this skill and save a sourced video summary. |
+| “Save this video” with a `youtu.be` or Shorts link | Resolve the video ID and use the same workflow as a watch URL. |
+| “Save full details” with a YouTube video link | Keep supported tools, commands, steps, and links within the existing summary rules; do not claim to have watched or transcribed the video. |
+| “Save this” while a YouTube video tab is identified | Use the identified video; ask which one if several tabs could match. |
+| “Save the part from 3:10 to 5:40” | Use transcript lines for that range; without them, request the passage or offer the whole-video clip. |
+| “Save link only” with a video link | Follow the explicit link-only route in the blocked-content reference without attempting a content summary. |
+| “Add the tools used” or “add the commands” | Update the clearly identified clip from verified source material; ask for missing material rather than inventing details. |
+
+A bare video URL without a save instruction does not itself request a save. Do not require a special slash command, the word “YouTube”, or an explicit `gleaner:youtube` invocation when the request and video URL already identify the task.
+
+### Read the video with available tools
+
+1. Load glean for shared preference resolution and duplicate handling, then continue this skill without another handoff. Read [ChatGPT unavailable-content handling](references/chatgpt-blocked-content.md) before selecting retrieval.
+2. Discover the actual browser tools and follow their guidance. Honor the named browser or tab. Otherwise use the eligible Work browser, then matching connected Chrome tabs, as described in glean. A browser extension being installed does not establish an active connection.
+3. Open a supplied URL only through a browser that supports navigation. Connected-tab tools read existing matching tabs; do not invent navigation, click, or JavaScript capabilities. With no eligible browser route, use the session’s web retrieval tool.
+4. Read the title, channel, description, chapters, and any transcript returned. On Shorts, resolve the canonical watch URL for the same video ID before attempting regular-player transcript access when the browser supports it.
+5. If the browser can click or run the supported script, open **Show transcript** and read the lines as described under “In ChatGPT”. With read-only connected tabs, ask the user to open **…more**, then **Show transcript**, and reread that tab; request pasted text if the tab still provides none.
+6. If a fetch fails, check for an eligible, untried browser before concluding that content is unavailable. Stop exhausted routes; do not bypass access controls or install caption downloaders.
+
+### Content limits and mobile requests
+
+A usable description supports a description-based summary even without a transcript. State its source basis and the missing-transcript limitation. Timestamp links must come from transcript lines or description chapters; never estimate them. A transcript without timestamps supports a summary but not invented timestamp links. “Full details” does not authorize filling gaps from assumptions.
+
+On mobile, accept a shared YouTube URL and use whatever tools this session actually exposes. Opening the video in the YouTube app does not make its content readable here. After eligible routes fail, follow the blocked-content reference’s single choice between supplied content and an explicitly authorized link-only bookmark; do not create or change a clip while that choice is pending. If the page was successfully read but its description is empty, follow “No description” instead. A missing transcript alone is not a blocked-content failure.
+
+When a description or transcript is pasted later, use it directly without fetching again merely to repeat retrieval. Label the basis accurately and preserve the existing clip if the supplied text cannot support the requested addition.
+
+### Save and show the result
+
+Resolve destinations through glean’s shared preferences. When no explicit, retained, session, project, or saved destination and no raw-file request wins, ChatGPT defaults to a private editable Page when Page tools are available. Follow [ChatGPT editable Pages](../glean/references/chatgpt-pages.md) for creation, verification, unavailable-tool fallback, and recovery; do not silently redirect an explicit Page request.
+
+Save the complete source-grounded clip, including verified video metadata, tags, useful description links, sourced Key moments, and limitations. After a verified save, show the complete readable clip in chat alongside the returned Page link or actual delivery receipt, unless this request explicitly asks for a short response, Page-only delivery, or another supported preview exception. Do not report a successful save from an attempted write alone, or substitute a link-only receipt for the normal full preview.
+
+An explicit Markdown export uses the current clip and the host’s supported file-delivery route. Do not automatically produce HTML companions or claim that a Page or attachment will open in a particular mobile pane.
+
+### Continue or correct a saved clip
+
+For later requests such as “add a workflow list”, “include the commands”, or “correct the tool name”, identify the retained clip and use supported source material. Read the current Page before editing it, preserve manual changes and existing notes, and update the same retained Page using guarded operations. If several clips could match, ask which one.
+
+After each verified edit, show the complete updated clip under the same presentation rules. Do not refetch the video merely to change its presentation or move existing content to a Page. A failed content read must not erase an earlier sourced summary. For an older clip from another session, follow glean’s updated-copy policy rather than silently overwriting it.
+
 ## Get the video
 
 1. **Find the video ID** in the URL the user gave or the tab they're on: `youtube.com/watch?v=<id>`, `youtu.be/<id>`, `youtube.com/shorts/<id>`, `youtube.com/live/<id>`, or `m.youtube.com`. The clip's **Source** is always `https://www.youtube.com/watch?v=<id>`, with `t=`, `list=`, `si=`, and tracking parameters dropped, so the duplicate check matches the same video saved from any link.
