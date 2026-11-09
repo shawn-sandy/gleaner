@@ -834,7 +834,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.9** (2026-11-09)
 
 - Route YouTube save requests, including Shorts and “save this video”, to the YouTube skill before generic page extraction so video sourcing and transcript fallbacks apply.
 
