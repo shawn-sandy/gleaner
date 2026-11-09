@@ -1,6 +1,6 @@
 ---
 name: youtube
-description: Gleaner's YouTube clipper. Saves a video or moment from it as a tagged summary clip from its transcript or description, with timestamped chapter links. Use when asked to save, save details, glean, bookmark, keep, or clip a YouTube video, Shorts, or video moment, including a bare YouTube URL with a save request.
+description: Gleaner's YouTube video clipper. Use for requests to save a video, save this video, save video details, save full details, glean, clip, bookmark, or keep a YouTube video, Short, livestream, or timestamped moment. Trigger when a YouTube or youtu.be video URL is supplied with a save request, including @gleaner save <URL>, or when save this refers to an identified YouTube video tab; the request need not say YouTube or name this skill. Saves tagged summaries from the transcript or description with sourced timestamp links.
 argument-hint: "[--to chat | drive | notion | artifact | local | <path>]"
 ---
 
