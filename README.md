@@ -834,7 +834,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.8** (2026-11-09)
 
 - The marketplace is renamed from `shawn-sandy` to `gleaner`, so the Claude Code install command is now `/plugin install gleaner@gleaner`. Existing installs from `shawn-sandy` must be reinstalled; see [Upgrading from shawn-sandy to gleaner](#upgrading-from-shawn-sandy-to-gleaner).
 
