@@ -18,7 +18,7 @@ Merging a plugin change to `main` already releases it through `.github/workflows
    ```
 
    Describe what changed for the user, not the implementation.
-3. **Check the five descriptions.** If this release changes destinations or surfaces, confirm the `marketplace.json` plugin description, the `plugin.json` description, the glean SKILL.md frontmatter `description`, the README intro paragraph, and the `plugins/gleaner/README.md` intro all name the same set. Fix any that drift.
+3. **Check the five descriptions.** If this release changes destinations or surfaces, confirm the `marketplace.json` plugin description, the `plugin.json` description, the glean SKILL.md frontmatter `description`, the README intro paragraph, and `plugins/gleaner/README.md` (destinations in its intro, surfaces in its "Reads pages" bullet) all name the same set. Fix any that drift.
 4. **Write the commit body** to a file outside the repository, such as your scratchpad: dash bullets wrapped near 70 columns, one per change; end with a `README: ...` bullet naming the README sections touched, including the changelog. The script uses the file verbatim, so end it with any trailers you add to commits.
 5. **Run the release.** Claude Code CLI must be on `PATH`; the script refuses to run without it so both strict Claude checks run rather than skip:
 

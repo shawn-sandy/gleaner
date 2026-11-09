@@ -32,7 +32,7 @@ Local validation parses all four Skills' frontmatter and ChatGPT metadata, check
 
 ## Editing rules
 
-- The list of destinations and surfaces appears in five places: the `marketplace.json` plugin description, the `plugin.json` description, the glean SKILL.md frontmatter `description`, the README intro paragraph, and the `plugins/gleaner/README.md` intro (the directory listing). When destinations or surfaces change, update all five in the same commit. The glean description must stay at most 500 characters and keep the "glean", "glean it", and "Gleaner" triggers.
+- The list of destinations and surfaces appears in five places: the `marketplace.json` plugin description, the `plugin.json` description, the glean SKILL.md frontmatter `description`, the README intro paragraph, and `plugins/gleaner/README.md` (the directory listing: destinations in its intro, surfaces in its "Reads pages" bullet). When destinations or surfaces change, update all five in the same commit. The glean description must stay at most 500 characters and keep the "glean", "glean it", and "Gleaner" triggers.
 - The README "Customizing" section refers to the glean SKILL.md by step number (steps 2, 3, 4 of `## Steps`). Renumbering or reordering steps means updating those references.
 - Each skill's `agents/openai.yaml` holds its ChatGPT display metadata and points at that skill's own `assets/icon-small.png` and `icon-large.png` (identical copies; replace all four sets together). Validation fails if those paths stop resolving.
 - Adding a skill means adding it to the `skills` array in `scripts/validate-skills.mjs`; otherwise it is silently not validated.
