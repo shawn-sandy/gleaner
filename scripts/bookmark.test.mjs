@@ -57,6 +57,10 @@ test('clip list instructions keep the list out of saves, duplicates, and finds',
   const localList = list.slice(list.indexOf('**Cowork project or local folder:**'), list.indexOf('**Notion:**'));
   assert.match(localList, /backslash[^.]*pipe/i);
   assert.match(localList, /HTTP\(S\)[^.]*Markdown link[^.]*%7C/);
+  // An unmatched parenthesis in an address ends the Markdown link early.
+  assert.match(localList, /HTTP\(S\)[^.]*Markdown link[^.]*%28[^.]*%29/);
+  // The ChatGPT index is a Markdown table too, so its links follow the same rule.
+  assert.match(read('plugins/gleaner/skills/glean/references/chatgpt-clip-index.md'), /Clip link cells[^.]*glean step 6[^.]*`Clip List\.md`/);
   // Notion's Clip is a URL property, so a local path needs its own text property.
   assert.match(list.slice(list.indexOf('**Notion:**')), /Clip is a URL property[^.]*web link; a local[^.]*Path text property/);
   // A user-picked list database may lack a column, and the row write would fail on it.
