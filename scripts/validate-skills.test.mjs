@@ -157,6 +157,46 @@ for (const code of [0, 1]) {
   });
 }
 
+const youtube = 'plugins/gleaner/skills/youtube/SKILL.md';
+const chrome = tool => `mcp__claude-in-chrome__${tool}`;
+
+function frontmatterField(source, field) {
+  return source.match(new RegExp(`^${field}: (.*)$`, 'm'))?.[1];
+}
+
+test('glean and youtube pre-approve the Chrome tools that inspect a page', () => {
+  for (const file of [glean, youtube]) {
+    const granted = frontmatterField(readFileSync(join(root, file), 'utf8'), 'allowed-tools')?.split(/[\s,]+/) ?? [];
+    for (const tool of ['tabs_context_mcp', 'get_page_text', 'find']) {
+      assert.ok(granted.includes(chrome(tool)), `${file} grants ${chrome(tool)}`);
+    }
+  }
+});
+
+const allowedToolsCases = [
+  ['a server-wide grant', 'mcp__claude-in-chrome'],
+  ['a wildcard grant', `${chrome('get_page_text')} mcp__claude-in-chrome__*`],
+  ['a tool that types or clicks', `${chrome('get_page_text')} ${chrome('computer')}`],
+  ['a tool that fills forms', `${chrome('get_page_text')},${chrome('form_input')}`],
+  ['a tool that runs scripts in the page', `${chrome('get_page_text')} ${chrome('javascript_tool')}`],
+  ['a read tool from another server', 'mcp__other__get_page_text'],
+  ['a tool that navigates a tab', `${chrome('get_page_text')} ${chrome('navigate')}`],
+  ['a tool that opens tabs', `${chrome('get_page_text')} ${chrome('tabs_create_mcp')}`],
+  ['a tool that closes tabs', `${chrome('get_page_text')} ${chrome('tabs_close_mcp')}`],
+  ['a list instead of a string', `[${chrome('get_page_text')}]`],
+];
+for (const [name, value] of allowedToolsCases) {
+  test(`rejects allowed-tools with ${name}`, t => {
+    const directory = fixture(t);
+    const path = join(directory, glean);
+    const source = readFileSync(path, 'utf8').replace(/^allowed-tools: .*\n/m, '');
+    writeFileSync(path, source.replace('name: glean\n', `name: glean\nallowed-tools: ${value}\n`));
+    const result = run(directory);
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.match(result.stderr, /allowed-tools/);
+  });
+}
+
 test('rejects an empty Skill body', t => {
   const directory = fixture(t);
   writeFileSync(join(directory, glean), '---\nname: glean\ndescription: Save research\n---\n');

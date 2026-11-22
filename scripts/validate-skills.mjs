@@ -32,6 +32,19 @@ function text(value, label, max = Infinity) {
     `${label} must be a nonempty string${max === Infinity ? '' : ` of at most ${max} characters`}`);
 }
 
+// A plugin skill's allowed-tools pre-approves tools on every install, in the user's own signed-in
+// browser, so only Claude in Chrome tools that inspect a page may be listed, each by its full name.
+// Anything that opens, navigates, or closes tabs, clicks, types, fills forms, uploads, or runs
+// scripts in the page keeps its prompt, since none of those limit which page or tab they touch.
+const readOnlyTools = new Set(['tabs_context_mcp', 'get_page_text', 'read_page', 'find']
+  .map(tool => `mcp__claude-in-chrome__${tool}`));
+function allowedTools(value) {
+  text(value, 'allowed-tools');
+  for (const tool of value.split(/[\s,]+/).filter(Boolean)) {
+    requireValue(readOnlyTools.has(tool), `allowed-tools may only pre-approve read-only Claude in Chrome tools: ${tool}`);
+  }
+}
+
 function localPath(base, target, kind = 'file') {
   text(target, 'local path');
   requireValue(!isAbsolute(target), `expected a relative path: ${target}`);
@@ -109,6 +122,7 @@ for (const name of skills) {
     requireValue(data.name === name, `name must match directory: ${name}`);
     text(data.description, 'description', 1024);
     if (data['argument-hint'] !== undefined) text(data['argument-hint'], 'argument-hint');
+    if (data['allowed-tools'] !== undefined) allowedTools(data['allowed-tools']);
     requireValue(source.slice(match[0].length).trim(), 'Skill body must not be empty');
     if (name === 'glean') {
       text(data.description, 'description', 500);
