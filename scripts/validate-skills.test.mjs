@@ -164,10 +164,10 @@ function frontmatterField(source, field) {
   return source.match(new RegExp(`^${field}: (.*)$`, 'm'))?.[1];
 }
 
-test('glean and youtube pre-approve the Chrome tools that read a page', () => {
+test('glean and youtube pre-approve the Chrome tools that inspect a page', () => {
   for (const file of [glean, youtube]) {
     const granted = frontmatterField(readFileSync(join(root, file), 'utf8'), 'allowed-tools')?.split(/[\s,]+/) ?? [];
-    for (const tool of ['tabs_context_mcp', 'tabs_create_mcp', 'navigate', 'get_page_text', 'find', 'tabs_close_mcp']) {
+    for (const tool of ['tabs_context_mcp', 'get_page_text', 'find']) {
       assert.ok(granted.includes(chrome(tool)), `${file} grants ${chrome(tool)}`);
     }
   }
@@ -180,6 +180,9 @@ const allowedToolsCases = [
   ['a tool that fills forms', `${chrome('get_page_text')},${chrome('form_input')}`],
   ['a tool that runs scripts in the page', `${chrome('get_page_text')} ${chrome('javascript_tool')}`],
   ['a read tool from another server', 'mcp__other__get_page_text'],
+  ['a tool that navigates a tab', `${chrome('get_page_text')} ${chrome('navigate')}`],
+  ['a tool that opens tabs', `${chrome('get_page_text')} ${chrome('tabs_create_mcp')}`],
+  ['a tool that closes tabs', `${chrome('get_page_text')} ${chrome('tabs_close_mcp')}`],
   ['a list instead of a string', `[${chrome('get_page_text')}]`],
 ];
 for (const [name, value] of allowedToolsCases) {

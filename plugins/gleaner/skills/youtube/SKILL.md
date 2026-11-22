@@ -2,7 +2,7 @@
 name: youtube
 description: Gleaner's YouTube video clipper. Use for requests to save a video, save this video, save video details, save full details, glean, clip, bookmark, or keep a YouTube video, Short, livestream, or timestamped moment. Trigger when a YouTube or youtu.be video URL is supplied with a save request, including @gleaner save <URL>, or when save this refers to an identified YouTube video tab; the request need not say YouTube or name this skill. Saves tagged summaries from the transcript or description with sourced timestamp links.
 argument-hint: "[--to chat | drive | notion | artifact | local | <path>]"
-allowed-tools: mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__find mcp__claude-in-chrome__tabs_close_mcp
+allowed-tools: mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__find
 ---
 
 # Gleaner for YouTube

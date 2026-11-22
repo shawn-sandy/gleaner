@@ -33,9 +33,10 @@ function text(value, label, max = Infinity) {
 }
 
 // A plugin skill's allowed-tools pre-approves tools on every install, in the user's own signed-in
-// browser, so only these read-only Claude in Chrome tools may be listed, each by its full name.
-// Anything that clicks, types, fills forms, uploads, or runs scripts in the page keeps its prompt.
-const readOnlyTools = new Set(['tabs_context_mcp', 'tabs_create_mcp', 'navigate', 'get_page_text', 'read_page', 'find', 'tabs_close_mcp']
+// browser, so only Claude in Chrome tools that inspect a page may be listed, each by its full name.
+// Anything that opens, navigates, or closes tabs, clicks, types, fills forms, uploads, or runs
+// scripts in the page keeps its prompt, since none of those limit which page or tab they touch.
+const readOnlyTools = new Set(['tabs_context_mcp', 'get_page_text', 'read_page', 'find']
   .map(tool => `mcp__claude-in-chrome__${tool}`));
 function allowedTools(value) {
   text(value, 'allowed-tools');
