@@ -834,7 +834,7 @@ MIT © Shawn Sandy
 
 ## Changelog
 
-**Unreleased**
+**2.15.11** (2026-11-22)
 
 - In Claude Code, page and video saves in Claude in Chrome ask for fewer approvals. For the turn that runs them, the glean and youtube skills pre-approve only the Chrome tools that inspect a page: listing tabs, reading page text, and finding elements. Opening, navigating, and closing tabs, running Gleaner's page scripts (the highlight check, page facts, and YouTube's details and transcript), and clicking still ask, since those tools can act on any page or tab; "always allow" covers them for the rest of the session. The Chrome extension's own site permissions are a separate setting.
 
