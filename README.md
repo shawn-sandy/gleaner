@@ -834,6 +834,10 @@ MIT © Shawn Sandy
 
 ## Changelog
 
+**Unreleased**
+
+- In Claude Code, page and video saves in Claude in Chrome ask for fewer approvals. For the turn that runs them, the glean and youtube skills pre-approve the Chrome tools that list, open, and close tabs, go to a page, read its text, and find elements on it. Running Gleaner's page scripts (the highlight check, page facts, and YouTube's details and transcript) and clicking still ask, since those tools can act on the page; "always allow" covers them for the rest of the session. The Chrome extension's own site permissions are a separate setting.
+
 **2.15.10** (2026-11-09)
 
 - When a browser is available but reading a page errors, returns no text, or site access is declined, Gleaner now fetches the page once and clips what comes back, saying it was read without a browser. If the fetch returns only a sign-in page, paywall notice, or bot check, nothing is saved from it, any existing clip is kept, and it is not retried. A cut-off fetch is flagged as partial and never replaces a fuller clip.

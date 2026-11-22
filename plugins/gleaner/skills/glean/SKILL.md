@@ -2,6 +2,7 @@
 name: glean
 description: Gleaner's web clipper. Save pages, passages, or answers and route YouTube video saves to gleaner:youtube as tagged clips in Drive, Notion, local files, or Claude HTML. ChatGPT defaults to editable Pages when Page tools are available and no destination or raw-file request wins, preserving in-chat output. Use for glean, glean it, saving, bookmarking, filing, or finding clips. Reads connected Chrome tabs, Work browser, and Claude browsers.
 argument-hint: '[--to chat | drive | notion | artifact | local | cowork:"Project" | <path>]'
+allowed-tools: mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__find mcp__claude-in-chrome__tabs_close_mcp
 ---
 
 # Gleaner
