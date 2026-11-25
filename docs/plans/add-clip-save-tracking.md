@@ -13,7 +13,7 @@ Exploration, 2026-11-25. Nothing in the skills has changed yet. This note asks h
 
 - **Gleaner has no app code or database.** The product is the prose in four `SKILL.md` files plus their references. A "clip" is whatever the save writes: a Markdown or HTML file, a Google Doc, a Notion page, a claude.ai artifact, a ChatGPT Page, or a clip shown in the chat. Its header lines (Source, Saved, Category, Type, Tags, Note, Scope, Supersedes) are its only stored metadata.
 - **A "save" is an action, not a stored record.** In Gleaner, a save is one run of glean step 6 that creates or rewrites a clip. Nothing durable names that event. The closest traces are the chat tag line written for every save and update, a clip list row (only when the user turned the list on), and a **Supersedes:** line on an updated copy.
-- **The clip already has an ID, but it lives only in memory.** The bookmark model's `id` field is an opaque ID kept for same-session updates. The rule says to generate a new one for updated copies, and the ID is never written into the clip (`bookmark.md:11`). So a clip from an earlier session can be identified only by its Source URL and Saved date.
+- **The clip already has an ID, but it is persisted only in HTML.** The bookmark model's `id` field is an opaque ID kept for same-session updates, and a new one is generated for updated copies (`bookmark.md:11`). Full-template HTML (artifacts, HTML clips, HTML companions) already stores it as a `gleaner:id` meta value (`bookmark.md:44`). Markdown files, Google Docs, Notion pages, and chat clips don't store it, so in those an earlier-session clip can be identified only by its Source URL and Saved date.
 - **In-place updates exist, but only within one conversation.** A clip saved in this conversation is rewritten where it lives (glean `SKILL.md:589-597`). A clip from an earlier session is never edited: changing it means an updated copy with a Supersedes line (glean `SKILL.md:298`, `:329`; follow-up `SKILL.md:85`). That copy is the "saved as a new clip" behavior the request wants to avoid.
 - **Proposal, smallest version:** write two header lines into every clip, `**Clip ID:**` (stable for the life of the clip) and `**Save ID:**` (new on every save). Record the Save ID in the chat tag line and the clip list row, so the clip and its save point at each other. Then let an explicit "update my clip" request rewrite an earlier-session clip in place, guarded by a read-before-write check on its Save ID.
 - **Recommendation:** ship the two ID lines and the tag line change first (no behavior change, nothing to migrate). Add cross-session in-place updates second, opt-in and per destination, starting with local files and Notion, where the connector can rewrite a clip without changing its link.
@@ -26,7 +26,7 @@ Every clip starts from one in-memory bookmark (`glean/references/bookmark.md:9-2
 
 | Field | What it holds today | Persisted in the clip? |
 | --- | --- | --- |
-| `id` | Opaque ID, kept for same-session updates, new for updated copies | No |
+| `id` | Opaque ID, kept for same-session updates, new for updated copies | Only in full-template HTML, as a `gleaner:id` meta value (`bookmark.md:44`) |
 | `url` | The first Source URL; canonical and extra sources kept in session state | Yes, as **Source:** |
 | `saved_at` | The Saved date, YYYY-MM-DD, kept on same-session updates | Yes, as **Saved:** |
 | `destination` | Provider, label, and verified `remote_id` or `path` | No (implied by where the clip lives) |
@@ -78,7 +78,7 @@ Add two header lines just under **Saved:** in both step 3 templates:
 **Save ID:** gs-2026-11-25-8c41d2
 ```
 
-- **Clip ID** is the bookmark's `id`, now persisted. It never changes for the life of the clip: not on a same-session update, not on a cross-session in-place update, and not when Drive has to re-upload the clip under a new link. A new clip (including "as a new clip", "separately") gets a new one.
+- **Clip ID** is the bookmark's `id`, now persisted in every format, and the same value as the HTML `gleaner:id` meta. It never changes for the life of the clip: not on a same-session update, not on a cross-session in-place update, and not when Drive has to re-upload the clip under a new link. A new clip (including "as a new clip", "separately") gets a new one.
 - **Save ID** is new on every save or update of the clip. It names the save the current content came from. The date in it is the save's date, which may be later than **Saved:**, the clip's creation date.
 - **Updated copies** keep their own new Clip ID, as today, so a Supersedes chain still reads as separate clips. Only an in-place update keeps the Clip ID (see the next section).
 - **Format:** a fixed prefix and a hex body, so a reader can validate the value with one pattern before trusting it. Clip text is untrusted data; a line that doesn't match the pattern is ignored, not obeyed.
@@ -115,9 +115,9 @@ Today: "Clips from earlier sessions are never updated" (`SKILL.md:298`). Propose
 The ChatGPT Page route already does this (`chatgpt-pages.md:49-55`); generalize it:
 
 1. Find the clip by Clip ID when the request carries one, otherwise by the existing search. Ask when several match.
-2. Read the clip's current content and its Save ID. The current content is the clip, manual edits included; never rebuild it from session memory.
+2. Read the clip's current content and a change marker: the provider's revision or version when the connector returns one (a Notion `last_edited_time`, an artifact version), otherwise a hash of the full content. The current content is the clip, manual edits included; never rebuild it from session memory.
 3. Build the update from that content.
-4. Just before writing, read the Save ID again. If it changed, someone saved in between: reread and rebuild, once. If it changes again, stop and offer an updated copy.
+4. Just before writing, read the change marker again. A Save ID check alone is not enough: a manual edit changes the content without changing the Save ID. If the marker changed, the clip was edited or saved in between: reread and rebuild, once. If it changes again, stop and offer an updated copy.
 5. Write, then read back and check the new Save ID landed.
 
 ### Per-destination matrix
@@ -126,7 +126,7 @@ The ChatGPT Page route already does this (`chatgpt-pages.md:49-55`); generalize 
 | --- | --- | --- | --- | --- |
 | Local folder, Cowork, This project | Overwrite same path | Yes: overwrite after read-before-write | Yes | Overwriting clobbers manual edits unless the update starts from the file just read. A category change moves the file, as today. |
 | Notion | `update-page` with `replace_content` | Yes: same call, properties updated | Yes | Best fit: Clip ID and Save ID are queryable properties. |
-| ChatGPT Page | Guarded block edits | Yes, already specified for follow-ups on retained Pages | Yes | Closest to the target design; generalize its guards to the other destinations. |
+| ChatGPT Page | Guarded block edits | Possible: guarded block edits on the found Page | Yes | Needs a rule change: an earlier-session Page keeps the updated-copy policy and gets a new Page with a Supersedes link (`chatgpt-pages.md:35`). Its same-session guards are the closest model for the other destinations. |
 | Artifact | Republish the same scratch path without `url` | Possible: `read`, then publish with that artifact's `url` | Yes | Needs a rule change: step 6 forbids publishing to an existing artifact's `url` (`SKILL.md:526`). The Artifact tool requires a read first and refuses stale writes, which gives the guard for free. |
 | Google Drive | Upload new file, trash the old one | Partial: same upload-and-trash, keeping the Clip ID | No, the file ID changes | The connector can't change file content (`SKILL.md:595`). Today only a version this session saved may be trashed; trashing an earlier-session file is a new, riskier rule. The Clip ID is what keeps identity stable across the new link. |
 | This conversation | Give the whole clip again, replacing the earlier copy | No: an earlier chat can't be edited | Not applicable | Give the updated clip in this chat with the same Clip ID and a new Save ID, and say the old chat still holds the older version. |
@@ -138,7 +138,8 @@ When an in-place update can't run (Drive trash refused, a read-only artifact, a 
 ## Legacy clips and migration
 
 - **No bulk migration.** Writing IDs into every existing clip means editing earlier-session clips nobody asked to change, across connectors, with a permission prompt each. Skip it.
-- **Assign on first touch.** An existing clip with no Clip ID gets one the first time it is updated in place, in the same write. Until then, finds keep matching it by Source URL and Saved date, as today.
+- **Reuse the HTML ID.** A full-template HTML clip, or a Markdown clip whose verified companion carries a `gleaner:id` meta value, takes that value as its Clip ID instead of a new one, so the clip and its companion stay paired.
+- **Assign on first touch.** Any other existing clip with no Clip ID gets one the first time it is updated in place, in the same write. Until then, finds keep matching it by Source URL and Saved date, as today.
 - **Supersedes chains.** Each copy in an existing chain stays its own clip. An in-place update targets the newest copy only, found the way follow-up already does it (`follow-up/SKILL.md:27`). Older copies are never written to.
 - **Pre-category clips** (no **Saved:** or **Category:** line) stay outside this: they aren't verified Gleaner clips (`follow-up/SKILL.md:26`), so the existing offer of an updated copy with categories still applies.
 - **Chat tag lines and clip list rows** written before the change have no IDs. Finds treat a line without IDs the old way; new lines carry them. Older clip list rows are never rewritten (`SKILL.md:606`).
@@ -160,7 +161,8 @@ When an in-place update can't run (Drive trash refused, a read-only artifact, a 
 2. **Opt-in or default?** Should an existing-clip match default to updating in place, or keep offering the updated copy first? This note proposes in place as one of three choices, with no default switch until it has been used for a while.
 3. **History inside the clip?** A `## Save history` section (one dated line per Save ID) would keep the log with the clip itself, at the cost of words in every clip. The tag lines and clip list already hold the log, so this note leaves it out.
 4. **Drive:** is trashing an earlier-session file acceptable when the user asked for an in-place update, or should Drive stay on updated copies?
-5. **Artifact:** is lifting the "never publish with an existing `url`" rule acceptable for explicit in-place updates?
+5. **ChatGPT Page:** should an explicit in-place request lift the earlier-session updated-copy policy (`chatgpt-pages.md:35`) for Pages?
+6. **Artifact:** is lifting the "never publish with an existing `url`" rule acceptable for explicit in-place updates?
 
 ## Tests and rollout
 
@@ -173,7 +175,8 @@ Each one fails if the prose regresses:
 - The chat tag line format in step 7 ends with the two IDs.
 - The Clip list row lists Clip ID and Save ID, and a same-session update adds a row.
 - The Notion schema table includes Clip ID and Save ID.
-- The in-place update rule requires reading the current clip and rechecking its Save ID before writing, and forbids rebuilding from memory.
+- The in-place update rule requires reading the current clip and rechecking a revision or full-content hash before writing, and forbids rebuilding from memory.
+- A legacy HTML clip or companion with a `gleaner:id` meta value keeps that value as its Clip ID.
 - The Drive update path still trashes only after a successful upload, and keeps the Clip ID.
 - An ID line is matched by pattern and treated as data.
 - `chatgpt-pages.test.mjs` still passes: its baseline checks pin Claude templates and follow-up rules (`chatgpt-pages.test.mjs:71`, `:79`), so those assertions need updating in the same PR rather than being loosened.
@@ -182,7 +185,8 @@ Each one fails if the prose regresses:
 
 1. **PR 1, IDs only.** Header lines, bookmark field, tag line, clip list columns, Notion properties, find collapse by Clip ID. No behavior change for users beyond two new lines in each clip. Label `release:minor`, since clips gain new header lines.
 2. **PR 2, in-place updates for local folders and Notion,** with read-before-write. Label `release:minor`.
-3. **PR 3, Artifact and Drive,** after the open questions on them are decided.
-4. Each PR adds its Unreleased bullet in the README changelog and updates the README "Customizing" section only if step numbers change (they shouldn't). The destination list that appears in five places is unaffected, since no destination is added.
+3. **PR 3, ChatGPT Pages,** lifting the earlier-session updated-copy policy in `chatgpt-pages.md` and `follow-up/SKILL.md` for explicit in-place requests, with the Clip ID in the Page header and updated `chatgpt-pages.test.mjs` assertions.
+4. **PR 4, Artifact and Drive,** after the open questions on them are decided.
+5. Each PR adds its Unreleased bullet in the README changelog and updates the README "Customizing" section only if step numbers change (they shouldn't). The destination list that appears in five places is unaffected, since no destination is added.
 
 Before any of this, prototype by hand: save three clips with the two ID lines to a local folder and to Notion, update one in place from a new conversation, and check that finds and follow-up locate it by Clip ID.
