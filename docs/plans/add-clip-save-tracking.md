@@ -85,7 +85,7 @@ Add two header lines just under **Saved:** in both step 3 templates:
 
 ### The save points back at the clip
 
-- **Chat tag line** gains both IDs: `Gleaner clip · <Saved> · <title> · <Category> · #tags · <Source> · <Clip ID> · <Save ID>`. Every save and update already writes one, so the conversation becomes the save log, and finds collapse lines by Clip ID instead of by Source URL and date.
+- **Chat tag line** gains both IDs: `Gleaner clip · <Saved> · <title> · <Category> · #tags · <Source> · <Clip ID> · <Save ID>`. Every save and update already writes one, so the conversation becomes the save log. Finds collapse lines by Clip ID within one clip link: two files that share a Clip ID because one was copied stay separate results (see Copied IDs under Risks).
 - **Clip list row** gains Clip ID and Save ID columns, and same-session updates add a row every time instead of only when the link changed. The list then holds one row per save, and "the save a clip came from" is the row whose Save ID matches the clip's header.
 - **Notion** gets two text properties, Clip ID and Save ID. The existing rule already adds a missing property rather than failing (`SKILL.md:516`, `:607`).
 - **Artifact and HTML clips** get two rows in the header list; the template already turns every bold header line into a row (`SKILL.md:529`).
@@ -118,7 +118,8 @@ The ChatGPT Page route already does this (`chatgpt-pages.md:49-55`); generalize 
 2. Read the clip's current content and a change marker: the provider's revision or version when the connector returns one (a Notion `last_edited_time`, an artifact version), otherwise a hash of the full content. The current content is the clip, manual edits included; never rebuild it from session memory.
 3. Build the update from that content.
 4. Just before writing, read the change marker again. A Save ID check alone is not enough: a manual edit changes the content without changing the Save ID. If the marker changed, the clip was edited or saved in between: reread and rebuild, once. If it changes again, stop and offer an updated copy.
-5. Write, then read back and check the new Save ID landed.
+5. Write. Where the destination offers a conditional write, use it, so the write fails if the clip changed after step 4: the Artifact tool refuses a publish over a version it didn't read, and ChatGPT Page edits carry their own guards. Local files and Notion offer no conditional write or lock, so a short race remains between steps 4 and 5.
+6. Read back and compare the stored content with what was written. A mismatch means another writer got in during that race: report it, and offer to rebuild from the current content or save an updated copy. Never report the update as clean.
 
 ### Per-destination matrix
 
@@ -129,7 +130,7 @@ The ChatGPT Page route already does this (`chatgpt-pages.md:49-55`); generalize 
 | ChatGPT Page | Guarded block edits | Possible: guarded block edits on the found Page | Yes | Needs a rule change: an earlier-session Page keeps the updated-copy policy and gets a new Page with a Supersedes link (`chatgpt-pages.md:35`). Its same-session guards are the closest model for the other destinations. |
 | Artifact | Republish the same scratch path without `url` | Possible: `read`, then publish with that artifact's `url` | Yes | Needs a rule change: step 6 forbids publishing to an existing artifact's `url` (`SKILL.md:526`). The Artifact tool requires a read first and refuses stale writes, which gives the guard for free. |
 | Google Drive | Upload new file, trash the old one | Partial: same upload-and-trash, keeping the Clip ID | No, the file ID changes | The connector can't change file content (`SKILL.md:595`). Today only a version this session saved may be trashed; trashing an earlier-session file is a new, riskier rule. The Clip ID is what keeps identity stable across the new link. |
-| This conversation | Give the whole clip again, replacing the earlier copy | No: an earlier chat can't be edited | Not applicable | Give the updated clip in this chat with the same Clip ID and a new Save ID, and say the old chat still holds the older version. |
+| This conversation | Give the whole clip again, replacing the earlier copy | No: an earlier chat can't be edited | Not applicable | Always the updated-copy fallback: a new Clip ID and a Supersedes line naming the earlier clip's title as plain text, as follow-up does for a pasted clip today. |
 
 ### Fallback
 
@@ -139,10 +140,10 @@ When an in-place update can't run (Drive trash refused, a read-only artifact, a 
 
 - **No bulk migration.** Writing IDs into every existing clip means editing earlier-session clips nobody asked to change, across connectors, with a permission prompt each. Skip it.
 - **Reuse the HTML ID.** A full-template HTML clip, or a Markdown clip whose verified companion carries a `gleaner:id` meta value, takes that value as its Clip ID instead of a new one, so the clip and its companion stay paired.
-- **Assign on first touch.** Any other existing clip with no Clip ID gets one the first time it is updated in place, in the same write. Until then, finds keep matching it by Source URL and Saved date, as today.
+- **Assign on first touch.** Any other existing clip with no Clip ID gets one the first time it is updated in place, in the same write. Until then, finds keep matching it by Source URL and Saved date, as today. The in-place update keeps **Saved:**, so the new tag line has the same Source and Saved date as the old ones, plus the new Clip ID.
 - **Supersedes chains.** Each copy in an existing chain stays its own clip. An in-place update targets the newest copy only, found the way follow-up already does it (`follow-up/SKILL.md:27`). Older copies are never written to.
 - **Pre-category clips** (no **Saved:** or **Category:** line) stay outside this: they aren't verified Gleaner clips (`follow-up/SKILL.md:26`), so the existing offer of an updated copy with categories still applies.
-- **Chat tag lines and clip list rows** written before the change have no IDs. Finds treat a line without IDs the old way; new lines carry them. Older clip list rows are never rewritten (`SKILL.md:606`).
+- **Chat tag lines and clip list rows** written before the change have no IDs. Finds join a line without IDs to a clip with a Clip ID only when exactly one clip with an ID has that Source URL and Saved date. When several do, the old line stays a separate result rather than merging unrelated clips. Otherwise lines without IDs collapse the old way. Older clip list rows are never rewritten (`SKILL.md:606`).
 
 ## Risks and open questions
 
@@ -152,6 +153,7 @@ When an in-place update can't run (Drive trash refused, a read-only artifact, a 
 - **Manual edits.** Users edit clips by hand. An update that regenerates the clip from the bookmark instead of from the file just read loses those edits.
 - **Copied IDs.** A user who duplicates a clip file creates two clips with one Clip ID. Finds should list both and let the user pick, never merge them silently.
 - **Untrusted IDs.** Clip text comes from web pages. An ID line is data matched by pattern, never an instruction, and a malformed one is ignored.
+- **Concurrent writers.** Local files and Notion have no conditional write, so two sessions updating one clip at the same moment can still lose one update. The readback in step 6 reports it but can't prevent it. Accept that or keep those destinations on updated copies.
 - **More permission prompts.** A cross-session update adds a read, a guard reread, and a readback per save. The "Fewer permission prompts" rules still apply (`SKILL.md:259-266`).
 - **Drive link churn.** Every Drive update changes the clip's link, so links in older chats and clip list rows go to the trash. The Clip ID survives; the link does not.
 
